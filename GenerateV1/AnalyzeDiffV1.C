@@ -71,7 +71,7 @@ void AnalyzeDiffV1()
     TStopwatch * sw = new TStopwatch();
     sw->Start();
 
-    for (int i = 0; i<nanals; i++) {
+    for (int i = 7; i<8; i++) {
         for (int cbin = 0; cbin<ncentbins; cbin++) {
             for (int ebin = 0; ebin<netabins; ebin++) {
                 v1p_pt[i][cbin][ebin] = new TH1D(Form("v1p_pt_%s_c%d_e%d",AnalNames[i].data(),cbin,ebin), "", nptbins, ptbins);
@@ -136,7 +136,7 @@ void AnalyzeDiffV1()
                 v123even_eta[i][cbin][pbin]->SetXTitle(Form("%0.2f < p_{T} < %0.2f (GeV/c), %d to %d%%",ptbins[pbin],ptbins[pbin+1],centBins[cbin],centBins[cbin+1]));
             }
         }
-        TFile * tfParms = new TFile(Form("outputs_raw/results/%s.root",AnalNames[i].data()),"read");
+        TFile * tfParms = new TFile(Form("outputs/raw_outputs/results/%s.root",AnalNames[i].data()),"read");
         runParms[i] = (TH1D *) tfParms->Get(Form("%d-%d/runParms",(int)centBins[0],(int)centBins[1]));
     }
 
@@ -148,7 +148,7 @@ void AnalyzeDiffV1()
         sw->Continue();
         double elapse = sw->RealTime();
         cout << "  processing file: " << AnalNames[anal].data() << "\ttime elapsed: " << elapse << " seconds" << endl;
-        TFile * tfin = new TFile(Form("outputs_raw/results/%s.root",AnalNames[anal].data()),"read");
+        TFile * tfin = new TFile(Form("outputs/raw_outputs/results/%s.root",AnalNames[anal].data()),"read");
 
         for (int cbin = 0; cbin<ncentbins; cbin++) {
             TH1D * centbins = (TH1D *) tfin->Get(Form("%d-%d/centbins",(int)centBins[cbin],(int)centBins[cbin+1]));
@@ -777,8 +777,9 @@ void AnalyzeDiffV1()
 
 
     // write histograms to output file
-    if (!fopen("outputs_final","r")) system("mkdir outputs_final");
-    TFile * tfout = new TFile("outputs_final/v1Diff.root","recreate");
+    if (!fopen("outputs","r")) system("mkdir outputs");
+    if (!fopen("outputs/final_outputs","r")) system("mkdir outputs/final_outputs");
+    TFile * tfout = new TFile("outputs/final_outputs/v1Diff.root","recreate");
 
     for (int i = 0; i<nanals; i++) {
         TDirectory * tdAnal = (TDirectory *) tfout->mkdir(Form("%s",AnalNames[i].data()));
@@ -825,6 +826,6 @@ void AnalyzeDiffV1()
         runParms[i]->Write();
     }
 
-    cout << "\n ...Differential v1 results written out to outputs_final/v1Diff.root \n" << endl;
+    cout << "\n ...Differential v1 results written out to outputs/final_outputs/v1Diff.root \n" << endl;
 
 }

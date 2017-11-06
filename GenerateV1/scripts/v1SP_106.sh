@@ -19,6 +19,6 @@ if [ ! -d "results" ]; then
     mkdir results
     mkdir logs
 fi
-# root -l -b -q '/home/w955m639/v1flow/2015_PbPb/MixedV1/GenerateV1.C+("v1SP_106", "inlist.dat", 50)'
-root -l -b -q '/home/w955m639/v1flow/2015_PbPb/MixedV1/GenerateV1.C+("v1SP_106", "inlist.dat", 5000)' > logs/v1SP_106.logs
+# root -l -b -q '/home/w955m639/v1flow/2015_PbPb/GenerateV1/GenerateV1.C+("v1SP_106", "inlist.dat", 50)'
+root -l -b -q '/home/w955m639/v1flow/2015_PbPb/GenerateV1/GenerateV1.C+("v1SP_106", "inlist.dat", 5000)' > logs/v1SP_106.logs
 cd ..

@@ -25,7 +25,7 @@ static const int MaxEvents = 1e7;
 int MaxFiles = 3000;
 static const double VtxCut = 15.;
 static const int ncentbins = 8;
-static const int centBins[] = {0, 10, 20, 30, 40, 50, 60, 70, 80};
+static const double centBins[] = {0, 10, 20, 30, 40, 50, 60, 70, 80};
 static const int nanals = 16;
 string AnalNames[] = {
     "v1SP",   "v1SP_mid",   "v1SP_102",   "v1SP_106",   "v1SP_110",   "v1SP_114",   "v1SP_118",   "v1SP_122",
@@ -549,7 +549,7 @@ void ReadTree( GetEventInfo * info, string anal, string inlist ) {
             w123_pm[cbin][k]->GetXaxis()->SetRangeUser(0.301, 11.999);
         }
 
-        tdcent[cbin] = tfout->mkdir(Form("%d-%d",centBins[cbin],centBins[cbin+1]));
+        tdcent[cbin] = tfout->mkdir(Form("%d-%d",(int)centBins[cbin],(int)centBins[cbin+1]));
         tdcent[cbin]->cd();
 
         q1_p[cbin][0]->Write();
@@ -688,7 +688,7 @@ void ReadTree( GetEventInfo * info, string anal, string inlist ) {
 
     cout << "\n...leaving main event loop" << endl;
     cout << " Total number of events processed: " << NumEvents << endl;
-    cout << " Centrality range: " << centBins[0] << "-" << centBins[nbins] << "%" << endl;
+    cout << " Centrality range: " << (int)centBins[0] << "-" << (int)centBins[nbins] << "%" << endl;
     cout << " Vertex cut: " << VtxCut << " cm" << endl;
     cout << " MaxEvents: " << MaxEvents << endl;
     cout << " Number of events accepted: " << NumEvnts << "\n" << endl;

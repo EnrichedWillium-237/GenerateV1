@@ -62,7 +62,7 @@ TH1D * runParms[nanals];
 void v1plot_eta()
 {
 
-    TFile * tfinInt = new TFile("../outputs_final/v1Int.root");
+    TFile * tfinInt = new TFile("../outputs/final_outputs/v1Int.root");
     for (int i = 0; i<nanals; i++) {
         runParms[i] = (TH1D *) tfinInt->Get(Form("%s/runParms",AnalNames[i].data()));
         for (int cbin = 0; cbin<ncentbins; cbin++) {

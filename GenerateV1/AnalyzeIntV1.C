@@ -17,7 +17,7 @@ static const int netabins = 12;
 static const double etabins[] = {-2.4, -2.0, -1.6, -1.2, -0.8, -0.4,  0.0,
                      0.4,  0.8,  1.2,  1.6, 2.0,  2.4};
 static const int ncentbins = 8;
-static const double centBins[] = {0, 10, 20, 30, 40, 50, 60, 70, 80};
+static const int centBins[] = {0, 10, 20, 30, 40, 50, 60, 70, 80};
 static const int nanals = 16;
 string AnalNames[] = {
     "v1SP",   "v1SP_mid",   "v1SP_102",   "v1SP_106",   "v1SP_110",   "v1SP_114",   "v1SP_118",   "v1SP_122",
@@ -112,8 +112,8 @@ void AnalyzeIntV1()
             v123m_eta[i][cbin] = new TH1D(Form("v123m_eta_%s_%d",AnalNames[i].data(),cbin), "", netabins, etabins);
             v123odd_eta[i][cbin] = new TH1D(Form("v123odd_eta_%s_%d",AnalNames[i].data(),cbin), "", netabins, etabins);
         }
-        TFile * tfParms = new TFile(Form("outputs_raw/results/%s.root",AnalNames[i].data()),"read");
-        runParms[i] = (TH1D *) tfParms->Get(Form("%d-%d/runParms",(int)centBins[0],(int)centBins[1]));
+        TFile * tfParms = new TFile(Form("outputs/raw_outputs/results/%s.root",AnalNames[i].data()),"read");
+        runParms[i] = (TH1D *) tfParms->Get(Form("%d-%d/runParms",centBins[0],centBins[1]));
     }
 
 
@@ -185,13 +185,14 @@ void AnalyzeIntV1()
             v123even_eta[i][cbin]->Scale(0.5);
         }
     }
-    if (!fopen("outputs_final","r")) system("mkdir outputs_final");
-    TFile * tfout = new TFile("outputs_final/v1Int.root","recreate");
+    if (!fopen("outputs","r")) system("mkdir outputs");
+    if (!fopen("outputs/final_outputs","r")) system("mkdir outputs/final_outputs");
+    TFile * tfout = new TFile("outputs/final_outputs/v1Int.root","recreate");
     for (int i = 0; i<nanals; i++) {
         TDirectory * tdir = (TDirectory *) tfout->mkdir(Form("%s",AnalNames[i].data()));
         TDirectory * tdpt = (TDirectory *) tdir->mkdir("v1_pt");
         for (int cbin = 0; cbin<ncentbins; cbin++) {
-            TDirectory * tdirCent = (TDirectory *) tdpt->mkdir(Form("%d-%d",(int)centBins[cbin],(int)centBins[cbin+1]));
+            TDirectory * tdirCent = (TDirectory *) tdpt->mkdir(Form("%d-%d",centBins[cbin],centBins[cbin+1]));
             tdirCent->cd();
             v1p_pt[i][cbin]->Write();
             v1m_pt[i][cbin]->Write();
@@ -208,7 +209,7 @@ void AnalyzeIntV1()
         }
         TDirectory * tdeta = (TDirectory *) tdir->mkdir("v1_eta");
         for (int cbin = 0; cbin<ncentbins; cbin++) {
-            TDirectory * tdirCent = (TDirectory *) tdeta->mkdir(Form("%d-%d",(int)centBins[cbin],(int)centBins[cbin+1]));
+            TDirectory * tdirCent = (TDirectory *) tdeta->mkdir(Form("%d-%d",centBins[cbin],centBins[cbin+1]));
             tdirCent->cd();
             v1p_eta[i][cbin]->Write();
             v1m_eta[i][cbin]->Write();
@@ -231,7 +232,7 @@ void AnalyzeIntV1()
         runParms[i]->Write();
     }
 
-    cout << "\n...Integral v1 results written out to outputs_final/v1Int.root \n" << endl;
+    cout << "\n...Integral v1 results written out to outputs/final_outputs/v1Int.root \n" << endl;
 
 }
 
@@ -244,75 +245,75 @@ TGraphErrors * GetV1IntPt( string anal, string tag, int cbin, double etamin, dou
     if (tag == "2sub") sub2 = kTRUE;
     else if (tag == "112") mix112 = kTRUE;
     else if (tag == "123") mix123 = kTRUE;
-    TFile * tfin = new TFile(Form("outputs_raw/results/%s.root",anal.data()),"read");
+    TFile * tfin = new TFile(Form("outputs/raw_outputs/results/%s.root",anal.data()),"read");
 
-    TH1D * centbins = (TH1D *) tfin->Get(Form("%d-%d/centbins",(int)centBins[cbin],(int)centBins[cbin+1]));
-    TH2D * ptav = (TH2D *) tfin->Get(Form("%d-%d/ptav_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
-    TH2D * ptcnt = (TH2D *) tfin->Get(Form("%d-%d/ptcnt_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
-    TH2D * badcnt = (TH2D *) tfin->Get(Form("%d-%d/badcnt_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
-    TH1D * multTot = (TH1D *) tfin->Get(Form("%d-%d/multTot_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
+    TH1D * centbins = (TH1D *) tfin->Get(Form("%d-%d/centbins",centBins[cbin],centBins[cbin+1]));
+    TH2D * ptav = (TH2D *) tfin->Get(Form("%d-%d/ptav_%d",centBins[cbin],centBins[cbin+1],cbin));
+    TH2D * ptcnt = (TH2D *) tfin->Get(Form("%d-%d/ptcnt_%d",centBins[cbin],centBins[cbin+1],cbin));
+    TH2D * badcnt = (TH2D *) tfin->Get(Form("%d-%d/badcnt_%d",centBins[cbin],centBins[cbin+1],cbin));
+    TH1D * multTot = (TH1D *) tfin->Get(Form("%d-%d/multTot_%d",centBins[cbin],centBins[cbin+1],cbin));
     TH2D * q1_p;
     TH2D * q1_m;
     TH2D * w1_p;
     TH2D * w1_m;
     if (mix112) {
-        q1_p = (TH2D *) tfin->Get(Form("%d-%d/q112_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
-        q1_m = (TH2D *) tfin->Get(Form("%d-%d/q112_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
-        w1_p = (TH2D *) tfin->Get(Form("%d-%d/w112_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
-        w1_m = (TH2D *) tfin->Get(Form("%d-%d/w112_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
+        q1_p = (TH2D *) tfin->Get(Form("%d-%d/q112_p_%d",centBins[cbin],centBins[cbin+1],cbin));
+        q1_m = (TH2D *) tfin->Get(Form("%d-%d/q112_m_%d",centBins[cbin],centBins[cbin+1],cbin));
+        w1_p = (TH2D *) tfin->Get(Form("%d-%d/w112_p_%d",centBins[cbin],centBins[cbin+1],cbin));
+        w1_m = (TH2D *) tfin->Get(Form("%d-%d/w112_m_%d",centBins[cbin],centBins[cbin+1],cbin));
     } else if (mix123) {
-        q1_p = (TH2D *) tfin->Get(Form("%d-%d/q123_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
-        q1_m = (TH2D *) tfin->Get(Form("%d-%d/q123_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
-        w1_p = (TH2D *) tfin->Get(Form("%d-%d/w123_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
-        w1_m = (TH2D *) tfin->Get(Form("%d-%d/w123_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
+        q1_p = (TH2D *) tfin->Get(Form("%d-%d/q123_p_%d",centBins[cbin],centBins[cbin+1],cbin));
+        q1_m = (TH2D *) tfin->Get(Form("%d-%d/q123_m_%d",centBins[cbin],centBins[cbin+1],cbin));
+        w1_p = (TH2D *) tfin->Get(Form("%d-%d/w123_p_%d",centBins[cbin],centBins[cbin+1],cbin));
+        w1_m = (TH2D *) tfin->Get(Form("%d-%d/w123_m_%d",centBins[cbin],centBins[cbin+1],cbin));
     } else {
-        q1_p = (TH2D *) tfin->Get(Form("%d-%d/q1_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
-        q1_m = (TH2D *) tfin->Get(Form("%d-%d/q1_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
-        w1_p = (TH2D *) tfin->Get(Form("%d-%d/w1_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
-        w1_m = (TH2D *) tfin->Get(Form("%d-%d/w1_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
+        q1_p = (TH2D *) tfin->Get(Form("%d-%d/q1_p_%d",centBins[cbin],centBins[cbin+1],cbin));
+        q1_m = (TH2D *) tfin->Get(Form("%d-%d/q1_m_%d",centBins[cbin],centBins[cbin+1],cbin));
+        w1_p = (TH2D *) tfin->Get(Form("%d-%d/w1_p_%d",centBins[cbin],centBins[cbin+1],cbin));
+        w1_m = (TH2D *) tfin->Get(Form("%d-%d/w1_m_%d",centBins[cbin],centBins[cbin+1],cbin));
     }
-    TH2D * qxav1 = (TH2D *) tfin->Get(Form("%d-%d/qxav1_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
-    TH2D * qyav1 = (TH2D *) tfin->Get(Form("%d-%d/qyav1_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
-    TH2D * qxycnt = (TH2D *) tfin->Get(Form("%d-%d/qxycnt_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
+    TH2D * qxav1 = (TH2D *) tfin->Get(Form("%d-%d/qxav1_%d",centBins[cbin],centBins[cbin+1],cbin));
+    TH2D * qyav1 = (TH2D *) tfin->Get(Form("%d-%d/qyav1_%d",centBins[cbin],centBins[cbin+1],cbin));
+    TH2D * qxycnt = (TH2D *) tfin->Get(Form("%d-%d/qxycnt_%d",centBins[cbin],centBins[cbin+1],cbin));
 
-    double q1AB_p = ((TH2D *) tfin->Get(Form("%d-%d/q1AB_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q1AC_p = ((TH2D *) tfin->Get(Form("%d-%d/q1AC_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q1BC_p = ((TH2D *) tfin->Get(Form("%d-%d/q1BC_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q1AB_m = ((TH2D *) tfin->Get(Form("%d-%d/q1AB_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q1AC_m = ((TH2D *) tfin->Get(Form("%d-%d/q1AC_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q1BC_m = ((TH2D *) tfin->Get(Form("%d-%d/q1BC_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q1ABcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q1ABcnt_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q1ACcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q1ACcnt_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q1BCcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q1BCcnt_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q1ABcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q1ABcnt_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q1ACcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q1ACcnt_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q1BCcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q1BCcnt_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q1AB_p = ((TH2D *) tfin->Get(Form("%d-%d/q1AB_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q1AC_p = ((TH2D *) tfin->Get(Form("%d-%d/q1AC_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q1BC_p = ((TH2D *) tfin->Get(Form("%d-%d/q1BC_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q1AB_m = ((TH2D *) tfin->Get(Form("%d-%d/q1AB_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q1AC_m = ((TH2D *) tfin->Get(Form("%d-%d/q1AC_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q1BC_m = ((TH2D *) tfin->Get(Form("%d-%d/q1BC_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q1ABcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q1ABcnt_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q1ACcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q1ACcnt_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q1BCcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q1BCcnt_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q1ABcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q1ABcnt_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q1ACcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q1ACcnt_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q1BCcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q1BCcnt_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
 
-    double q2AB_p = ((TH2D *) tfin->Get(Form("%d-%d/q2AB_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q2AC_p = ((TH2D *) tfin->Get(Form("%d-%d/q2AC_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q2BC_p = ((TH2D *) tfin->Get(Form("%d-%d/q2BC_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q2AB_m = ((TH2D *) tfin->Get(Form("%d-%d/q2AB_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q2AC_m = ((TH2D *) tfin->Get(Form("%d-%d/q2AC_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q2BC_m = ((TH2D *) tfin->Get(Form("%d-%d/q2BC_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q2ABcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q2ABcnt_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q2ACcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q2ACcnt_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q2BCcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q2BCcnt_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q2ABcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q2ABcnt_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q2ACcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q2ACcnt_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q2BCcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q2BCcnt_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q2AB_p = ((TH2D *) tfin->Get(Form("%d-%d/q2AB_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q2AC_p = ((TH2D *) tfin->Get(Form("%d-%d/q2AC_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q2BC_p = ((TH2D *) tfin->Get(Form("%d-%d/q2BC_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q2AB_m = ((TH2D *) tfin->Get(Form("%d-%d/q2AB_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q2AC_m = ((TH2D *) tfin->Get(Form("%d-%d/q2AC_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q2BC_m = ((TH2D *) tfin->Get(Form("%d-%d/q2BC_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q2ABcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q2ABcnt_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q2ACcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q2ACcnt_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q2BCcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q2BCcnt_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q2ABcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q2ABcnt_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q2ACcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q2ACcnt_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q2BCcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q2BCcnt_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
 
-    double q3AB_p = ((TH2D *) tfin->Get(Form("%d-%d/q3AB_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q3AC_p = ((TH2D *) tfin->Get(Form("%d-%d/q3AC_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q3BC_p = ((TH2D *) tfin->Get(Form("%d-%d/q3BC_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q3AB_m = ((TH2D *) tfin->Get(Form("%d-%d/q3AB_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q3AC_m = ((TH2D *) tfin->Get(Form("%d-%d/q3AC_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q3BC_m = ((TH2D *) tfin->Get(Form("%d-%d/q3BC_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q3ABcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q3ABcnt_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q3ACcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q3ACcnt_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q3BCcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q3BCcnt_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q3ABcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q3ABcnt_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q3ACcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q3ACcnt_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q3BCcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q3BCcnt_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q3AB_p = ((TH2D *) tfin->Get(Form("%d-%d/q3AB_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q3AC_p = ((TH2D *) tfin->Get(Form("%d-%d/q3AC_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q3BC_p = ((TH2D *) tfin->Get(Form("%d-%d/q3BC_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q3AB_m = ((TH2D *) tfin->Get(Form("%d-%d/q3AB_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q3AC_m = ((TH2D *) tfin->Get(Form("%d-%d/q3AC_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q3BC_m = ((TH2D *) tfin->Get(Form("%d-%d/q3BC_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q3ABcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q3ABcnt_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q3ACcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q3ACcnt_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q3BCcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q3BCcnt_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q3ABcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q3ABcnt_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q3ACcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q3ACcnt_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q3BCcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q3BCcnt_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
 
     ptav->Divide(ptcnt);
     q1_p->Divide(w1_p);
@@ -372,62 +373,62 @@ TGraphErrors * GetV1IntPt( string anal, string tag, int cbin, double etamin, dou
     TH2D * w1_m_err[10];
     for (int k = 0; k<10; k++) {
         if (mix112) {
-            q1_p_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/q112_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1));
-            q1_m_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/q112_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1));
-            w1_p_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/w112_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1));
-            w1_m_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/w112_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1));
+            q1_p_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/q112_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1));
+            q1_m_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/q112_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1));
+            w1_p_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/w112_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1));
+            w1_m_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/w112_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1));
         } else if (mix123) {
-            q1_p_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/q123_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1));
-            q1_m_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/q123_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1));
-            w1_p_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/w123_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1));
-            w1_m_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/w123_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1));
+            q1_p_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/q123_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1));
+            q1_m_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/q123_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1));
+            w1_p_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/w123_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1));
+            w1_m_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/w123_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1));
         } else {
-            q1_p_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/q1_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1));
-            q1_m_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/q1_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1));
-            w1_p_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/w1_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1));
-            w1_m_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/w1_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1));
+            q1_p_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/q1_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1));
+            q1_m_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/q1_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1));
+            w1_p_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/w1_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1));
+            w1_m_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/w1_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1));
         }
         q1_p_err[k]->Divide(w1_p_err[k]);
         q1_m_err[k]->Divide(w1_m_err[k]);
 
-        double q1AB_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1AB_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q1AC_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1AC_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q1BC_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1BC_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q1AB_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1AB_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q1AC_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1AC_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q1BC_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1BC_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q1ABcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1ABcnt_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q1ACcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1ACcnt_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q1BCcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1BCcnt_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q1ABcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1ABcnt_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q1ACcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1ACcnt_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q1BCcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1BCcnt_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q1AB_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1AB_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q1AC_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1AC_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q1BC_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1BC_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q1AB_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1AB_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q1AC_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1AC_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q1BC_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1BC_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q1ABcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1ABcnt_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q1ACcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1ACcnt_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q1BCcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1BCcnt_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q1ABcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1ABcnt_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q1ACcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1ACcnt_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q1BCcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1BCcnt_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
 
-        double q2AB_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2AB_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q2AC_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2AC_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q2BC_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2BC_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q2AB_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2AB_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q2AC_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2AC_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q2BC_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2BC_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q2ABcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2ABcnt_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q2ACcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2ACcnt_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q2BCcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2BCcnt_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q2ABcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2ABcnt_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q2ACcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2ACcnt_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q2BCcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2BCcnt_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q2AB_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2AB_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q2AC_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2AC_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q2BC_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2BC_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q2AB_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2AB_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q2AC_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2AC_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q2BC_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2BC_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q2ABcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2ABcnt_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q2ACcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2ACcnt_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q2BCcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2BCcnt_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q2ABcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2ABcnt_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q2ACcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2ACcnt_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q2BCcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2BCcnt_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
 
-        double q3AB_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3AB_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q3AC_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3AC_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q3BC_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3BC_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q3AB_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3AB_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q3AC_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3AC_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q3BC_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3BC_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q3ABcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3ABcnt_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q3ACcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3ACcnt_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q3BCcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3BCcnt_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q3ABcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3ABcnt_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q3ACcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3ACcnt_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q3BCcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3BCcnt_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q3AB_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3AB_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q3AC_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3AC_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q3BC_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3BC_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q3AB_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3AB_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q3AC_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3AC_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q3BC_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3BC_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q3ABcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3ABcnt_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q3ACcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3ACcnt_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q3BCcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3BCcnt_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q3ABcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3ABcnt_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q3ACcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3ACcnt_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q3BCcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3BCcnt_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
 
         q1AB_p_err/=q1ABcnt_p_err;
         q1AC_p_err/=q1ACcnt_p_err;
@@ -604,75 +605,75 @@ TGraphErrors * GetV1IntEta( string anal, string tag, int cbin, double ptmin, dou
     if (tag == "2sub") sub2 = kTRUE;
     else if (tag == "112") mix112 = kTRUE;
     else if (tag == "123") mix123 = kTRUE;
-    TFile * tfin = new TFile(Form("outputs_raw/results/%s.root",anal.data()),"read");
+    TFile * tfin = new TFile(Form("outputs/raw_outputs/results/%s.root",anal.data()),"read");
 
-    TH1D * centbins = (TH1D *) tfin->Get(Form("%d-%d/centbins",(int)centBins[cbin],(int)centBins[cbin+1]));
-    TH2D * ptav = (TH2D *) tfin->Get(Form("%d-%d/ptav_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
-    TH2D * ptcnt = (TH2D *) tfin->Get(Form("%d-%d/ptcnt_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
-    TH2D * badcnt = (TH2D *) tfin->Get(Form("%d-%d/badcnt_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
-    TH1D * multTot = (TH1D *) tfin->Get(Form("%d-%d/multTot_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
+    TH1D * centbins = (TH1D *) tfin->Get(Form("%d-%d/centbins",centBins[cbin],centBins[cbin+1]));
+    TH2D * ptav = (TH2D *) tfin->Get(Form("%d-%d/ptav_%d",centBins[cbin],centBins[cbin+1],cbin));
+    TH2D * ptcnt = (TH2D *) tfin->Get(Form("%d-%d/ptcnt_%d",centBins[cbin],centBins[cbin+1],cbin));
+    TH2D * badcnt = (TH2D *) tfin->Get(Form("%d-%d/badcnt_%d",centBins[cbin],centBins[cbin+1],cbin));
+    TH1D * multTot = (TH1D *) tfin->Get(Form("%d-%d/multTot_%d",centBins[cbin],centBins[cbin+1],cbin));
     TH2D * q1_p;
     TH2D * q1_m;
     TH2D * w1_p;
     TH2D * w1_m;
     if (mix112) {
-        q1_p = (TH2D *) tfin->Get(Form("%d-%d/q112_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
-        q1_m = (TH2D *) tfin->Get(Form("%d-%d/q112_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
-        w1_p = (TH2D *) tfin->Get(Form("%d-%d/w112_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
-        w1_m = (TH2D *) tfin->Get(Form("%d-%d/w112_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
+        q1_p = (TH2D *) tfin->Get(Form("%d-%d/q112_p_%d",centBins[cbin],centBins[cbin+1],cbin));
+        q1_m = (TH2D *) tfin->Get(Form("%d-%d/q112_m_%d",centBins[cbin],centBins[cbin+1],cbin));
+        w1_p = (TH2D *) tfin->Get(Form("%d-%d/w112_p_%d",centBins[cbin],centBins[cbin+1],cbin));
+        w1_m = (TH2D *) tfin->Get(Form("%d-%d/w112_m_%d",centBins[cbin],centBins[cbin+1],cbin));
     } else if (mix123) {
-        q1_p = (TH2D *) tfin->Get(Form("%d-%d/q123_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
-        q1_m = (TH2D *) tfin->Get(Form("%d-%d/q123_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
-        w1_p = (TH2D *) tfin->Get(Form("%d-%d/w123_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
-        w1_m = (TH2D *) tfin->Get(Form("%d-%d/w123_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
+        q1_p = (TH2D *) tfin->Get(Form("%d-%d/q123_p_%d",centBins[cbin],centBins[cbin+1],cbin));
+        q1_m = (TH2D *) tfin->Get(Form("%d-%d/q123_m_%d",centBins[cbin],centBins[cbin+1],cbin));
+        w1_p = (TH2D *) tfin->Get(Form("%d-%d/w123_p_%d",centBins[cbin],centBins[cbin+1],cbin));
+        w1_m = (TH2D *) tfin->Get(Form("%d-%d/w123_m_%d",centBins[cbin],centBins[cbin+1],cbin));
     } else {
-        q1_p = (TH2D *) tfin->Get(Form("%d-%d/q1_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
-        q1_m = (TH2D *) tfin->Get(Form("%d-%d/q1_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
-        w1_p = (TH2D *) tfin->Get(Form("%d-%d/w1_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
-        w1_m = (TH2D *) tfin->Get(Form("%d-%d/w1_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
+        q1_p = (TH2D *) tfin->Get(Form("%d-%d/q1_p_%d",centBins[cbin],centBins[cbin+1],cbin));
+        q1_m = (TH2D *) tfin->Get(Form("%d-%d/q1_m_%d",centBins[cbin],centBins[cbin+1],cbin));
+        w1_p = (TH2D *) tfin->Get(Form("%d-%d/w1_p_%d",centBins[cbin],centBins[cbin+1],cbin));
+        w1_m = (TH2D *) tfin->Get(Form("%d-%d/w1_m_%d",centBins[cbin],centBins[cbin+1],cbin));
     }
-    TH2D * qxav1 = (TH2D *) tfin->Get(Form("%d-%d/qxav1_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
-    TH2D * qyav1 = (TH2D *) tfin->Get(Form("%d-%d/qyav1_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
-    TH2D * qxycnt = (TH2D *) tfin->Get(Form("%d-%d/qxycnt_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin));
+    TH2D * qxav1 = (TH2D *) tfin->Get(Form("%d-%d/qxav1_%d",centBins[cbin],centBins[cbin+1],cbin));
+    TH2D * qyav1 = (TH2D *) tfin->Get(Form("%d-%d/qyav1_%d",centBins[cbin],centBins[cbin+1],cbin));
+    TH2D * qxycnt = (TH2D *) tfin->Get(Form("%d-%d/qxycnt_%d",centBins[cbin],centBins[cbin+1],cbin));
 
-    double q1AB_p = ((TH2D *) tfin->Get(Form("%d-%d/q1AB_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q1AC_p = ((TH2D *) tfin->Get(Form("%d-%d/q1AC_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q1BC_p = ((TH2D *) tfin->Get(Form("%d-%d/q1BC_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q1AB_m = ((TH2D *) tfin->Get(Form("%d-%d/q1AB_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q1AC_m = ((TH2D *) tfin->Get(Form("%d-%d/q1AC_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q1BC_m = ((TH2D *) tfin->Get(Form("%d-%d/q1BC_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q1ABcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q1ABcnt_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q1ACcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q1ACcnt_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q1BCcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q1BCcnt_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q1ABcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q1ABcnt_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q1ACcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q1ACcnt_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q1BCcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q1BCcnt_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q1AB_p = ((TH2D *) tfin->Get(Form("%d-%d/q1AB_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q1AC_p = ((TH2D *) tfin->Get(Form("%d-%d/q1AC_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q1BC_p = ((TH2D *) tfin->Get(Form("%d-%d/q1BC_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q1AB_m = ((TH2D *) tfin->Get(Form("%d-%d/q1AB_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q1AC_m = ((TH2D *) tfin->Get(Form("%d-%d/q1AC_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q1BC_m = ((TH2D *) tfin->Get(Form("%d-%d/q1BC_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q1ABcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q1ABcnt_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q1ACcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q1ACcnt_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q1BCcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q1BCcnt_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q1ABcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q1ABcnt_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q1ACcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q1ACcnt_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q1BCcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q1BCcnt_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
 
-    double q2AB_p = ((TH2D *) tfin->Get(Form("%d-%d/q2AB_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q2AC_p = ((TH2D *) tfin->Get(Form("%d-%d/q2AC_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q2BC_p = ((TH2D *) tfin->Get(Form("%d-%d/q2BC_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q2AB_m = ((TH2D *) tfin->Get(Form("%d-%d/q2AB_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q2AC_m = ((TH2D *) tfin->Get(Form("%d-%d/q2AC_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q2BC_m = ((TH2D *) tfin->Get(Form("%d-%d/q2BC_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q2ABcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q2ABcnt_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q2ACcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q2ACcnt_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q2BCcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q2BCcnt_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q2ABcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q2ABcnt_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q2ACcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q2ACcnt_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q2BCcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q2BCcnt_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q2AB_p = ((TH2D *) tfin->Get(Form("%d-%d/q2AB_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q2AC_p = ((TH2D *) tfin->Get(Form("%d-%d/q2AC_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q2BC_p = ((TH2D *) tfin->Get(Form("%d-%d/q2BC_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q2AB_m = ((TH2D *) tfin->Get(Form("%d-%d/q2AB_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q2AC_m = ((TH2D *) tfin->Get(Form("%d-%d/q2AC_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q2BC_m = ((TH2D *) tfin->Get(Form("%d-%d/q2BC_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q2ABcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q2ABcnt_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q2ACcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q2ACcnt_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q2BCcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q2BCcnt_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q2ABcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q2ABcnt_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q2ACcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q2ACcnt_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q2BCcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q2BCcnt_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
 
-    double q3AB_p = ((TH2D *) tfin->Get(Form("%d-%d/q3AB_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q3AC_p = ((TH2D *) tfin->Get(Form("%d-%d/q3AC_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q3BC_p = ((TH2D *) tfin->Get(Form("%d-%d/q3BC_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q3AB_m = ((TH2D *) tfin->Get(Form("%d-%d/q3AB_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q3AC_m = ((TH2D *) tfin->Get(Form("%d-%d/q3AC_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q3BC_m = ((TH2D *) tfin->Get(Form("%d-%d/q3BC_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q3ABcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q3ABcnt_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q3ACcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q3ACcnt_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q3BCcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q3BCcnt_p_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q3ABcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q3ABcnt_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q3ACcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q3ACcnt_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
-    double q3BCcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q3BCcnt_m_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q3AB_p = ((TH2D *) tfin->Get(Form("%d-%d/q3AB_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q3AC_p = ((TH2D *) tfin->Get(Form("%d-%d/q3AC_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q3BC_p = ((TH2D *) tfin->Get(Form("%d-%d/q3BC_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q3AB_m = ((TH2D *) tfin->Get(Form("%d-%d/q3AB_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q3AC_m = ((TH2D *) tfin->Get(Form("%d-%d/q3AC_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q3BC_m = ((TH2D *) tfin->Get(Form("%d-%d/q3BC_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q3ABcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q3ABcnt_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q3ACcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q3ACcnt_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q3BCcnt_p = ((TH2D *) tfin->Get(Form("%d-%d/q3BCcnt_p_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q3ABcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q3ABcnt_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q3ACcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q3ACcnt_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
+    double q3BCcnt_m = ((TH2D *) tfin->Get(Form("%d-%d/q3BCcnt_m_%d",centBins[cbin],centBins[cbin+1],cbin)))->GetBinContent(1);
 
     ptav->Divide(ptcnt);
     q1_p->Divide(w1_p);
@@ -732,62 +733,62 @@ TGraphErrors * GetV1IntEta( string anal, string tag, int cbin, double ptmin, dou
     TH2D * w1_m_err[10];
     for (int k = 0; k<10; k++) {
         if (mix112) {
-            q1_p_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/q112_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1));
-            q1_m_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/q112_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1));
-            w1_p_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/w112_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1));
-            w1_m_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/w112_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1));
+            q1_p_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/q112_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1));
+            q1_m_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/q112_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1));
+            w1_p_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/w112_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1));
+            w1_m_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/w112_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1));
         } else if (mix123) {
-            q1_p_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/q123_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1));
-            q1_m_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/q123_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1));
-            w1_p_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/w123_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1));
-            w1_m_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/w123_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1));
+            q1_p_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/q123_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1));
+            q1_m_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/q123_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1));
+            w1_p_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/w123_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1));
+            w1_m_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/w123_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1));
         } else {
-            q1_p_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/q1_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1));
-            q1_m_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/q1_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1));
-            w1_p_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/w1_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1));
-            w1_m_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/w1_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1));
+            q1_p_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/q1_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1));
+            q1_m_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/q1_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1));
+            w1_p_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/w1_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1));
+            w1_m_err[k] = (TH2D *) tfin->Get(Form("%d-%d/err_calc/w1_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1));
         }
         q1_p_err[k]->Divide(w1_p_err[k]);
         q1_m_err[k]->Divide(w1_m_err[k]);
 
-        double q1AB_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1AB_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q1AC_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1AC_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q1BC_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1BC_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q1AB_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1AB_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q1AC_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1AC_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q1BC_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1BC_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q1ABcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1ABcnt_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q1ACcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1ACcnt_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q1BCcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1BCcnt_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q1ABcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1ABcnt_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q1ACcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1ACcnt_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q1BCcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1BCcnt_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q1AB_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1AB_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q1AC_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1AC_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q1BC_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1BC_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q1AB_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1AB_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q1AC_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1AC_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q1BC_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1BC_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q1ABcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1ABcnt_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q1ACcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1ACcnt_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q1BCcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1BCcnt_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q1ABcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1ABcnt_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q1ACcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1ACcnt_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q1BCcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q1BCcnt_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
 
-        double q2AB_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2AB_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q2AC_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2AC_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q2BC_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2BC_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q2AB_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2AB_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q2AC_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2AC_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q2BC_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2BC_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q2ABcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2ABcnt_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q2ACcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2ACcnt_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q2BCcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2BCcnt_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q2ABcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2ABcnt_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q2ACcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2ACcnt_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q2BCcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2BCcnt_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q2AB_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2AB_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q2AC_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2AC_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q2BC_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2BC_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q2AB_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2AB_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q2AC_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2AC_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q2BC_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2BC_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q2ABcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2ABcnt_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q2ACcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2ACcnt_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q2BCcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2BCcnt_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q2ABcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2ABcnt_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q2ACcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2ACcnt_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q2BCcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q2BCcnt_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
 
-        double q3AB_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3AB_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q3AC_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3AC_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q3BC_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3BC_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q3AB_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3AB_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q3AC_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3AC_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q3BC_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3BC_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q3ABcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3ABcnt_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q3ACcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3ACcnt_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q3BCcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3BCcnt_p_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q3ABcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3ABcnt_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q3ACcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3ACcnt_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
-        double q3BCcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3BCcnt_m_%d_%d",(int)centBins[cbin],(int)centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q3AB_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3AB_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q3AC_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3AC_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q3BC_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3BC_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q3AB_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3AB_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q3AC_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3AC_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q3BC_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3BC_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q3ABcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3ABcnt_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q3ACcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3ACcnt_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q3BCcnt_p_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3BCcnt_p_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q3ABcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3ABcnt_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q3ACcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3ACcnt_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
+        double q3BCcnt_m_err = ((TH2D *) tfin->Get(Form("%d-%d/err_calc/q3BCcnt_m_%d_%d",centBins[cbin],centBins[cbin+1],cbin,k+1)))->GetBinContent(1);
 
         q1AB_p_err/=q1ABcnt_p_err;
         q1AC_p_err/=q1ACcnt_p_err;
