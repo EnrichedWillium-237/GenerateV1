@@ -63,6 +63,8 @@ TH1D * runParms[nanals];
 
 void AnalyzeDiffV1()
 {
+    int minanal = 7;
+    int maxanal = 8;
 
     TH1::SetDefaultSumw2();
     TH2::SetDefaultSumw2();
@@ -71,7 +73,7 @@ void AnalyzeDiffV1()
     TStopwatch * sw = new TStopwatch();
     sw->Start();
 
-    for (int i = 7; i<8; i++) {
+    for (int i = minanal; i<maxanal; i++) {
         for (int cbin = 0; cbin<ncentbins; cbin++) {
             for (int ebin = 0; ebin<netabins; ebin++) {
                 v1p_pt[i][cbin][ebin] = new TH1D(Form("v1p_pt_%s_c%d_e%d",AnalNames[i].data(),cbin,ebin), "", nptbins, ptbins);
@@ -141,7 +143,7 @@ void AnalyzeDiffV1()
     }
 
     // retrieve raw histograms
-    for (int anal = 0; anal<=nanals; anal++) {
+    for (int anal = minanal; anal<maxanal; anal++) {
 
         bool sub2 = kFALSE;
         if (anal>7) sub2 = kTRUE;
@@ -781,7 +783,7 @@ void AnalyzeDiffV1()
     if (!fopen("outputs/final_outputs","r")) system("mkdir outputs/final_outputs");
     TFile * tfout = new TFile("outputs/final_outputs/v1Diff.root","recreate");
 
-    for (int i = 0; i<nanals; i++) {
+    for (int i = minanal; i<maxanal; i++) {
         TDirectory * tdAnal = (TDirectory *) tfout->mkdir(Form("%s",AnalNames[i].data()));
         TDirectory * tdPt = (TDirectory *) tdAnal->mkdir("v1_pt");
         for (int cbin = 0; cbin<ncentbins; cbin++) {
@@ -823,6 +825,7 @@ void AnalyzeDiffV1()
                 v123even_eta[i][cbin][pbin]->Write();
             }
         }
+        tdAnal->cd();
         runParms[i]->Write();
     }
 
