@@ -170,7 +170,7 @@ void diffV1_pT()
     hv1HFpm_pT_tmp->SetStats(0);
     hv1HFpm_pT_tmp->SetXTitle("p_{T} (GeV/c)");
     hv1HFpm_pT_tmp->SetYTitle("v_{1}");
-    hv1HFpm_pT_tmp->GetYaxis()->SetRangeUser(-0.14,0.14);
+    hv1HFpm_pT_tmp->GetYaxis()->SetRangeUser(-0.3, 0.3);
     hv1HFpm_pT_tmp->SetNdivisions(509);
     for (int cbin = 0; cbin<ncentbins; cbin++) {
 
@@ -182,7 +182,7 @@ void diffV1_pT()
             if (gridlines) padv1HFpm_pT->SetGrid();
             if (ebin == 3 || ebin == 7 || ebin == 11) padv1HFpm_pT->SetRightMargin(0.02);
             TH1D * hv1HFpm_pT = (TH1D *) hv1HFpm_pT_tmp->Clone(Form("hv1HFpm_pT_%c_%d",cbin,ebin));
-            hv1HFpm_pT->GetYaxis()->SetRangeUser(-0.14-0.1*cbin,0.14+0.1*cbin);
+            // hv1HFpm_pT->GetYaxis()->SetRangeUser(-0.14-0.1*cbin,0.14+0.1*cbin);
             if (ebin == 0 || ebin == 4) {
                 hv1HFpm_pT->GetYaxis()->CenterTitle();
                 hv1HFpm_pT->GetYaxis()->SetTitleSize(0.07);
@@ -324,7 +324,7 @@ void diffV1_pT()
     hv1HFoddeven_pT_tmp->SetStats(0);
     hv1HFoddeven_pT_tmp->SetXTitle("p_{T} (GeV/c)");
     hv1HFoddeven_pT_tmp->SetYTitle("v_{1}");
-    hv1HFoddeven_pT_tmp->GetYaxis()->SetRangeUser(-0.14,0.14);
+    hv1HFoddeven_pT_tmp->GetYaxis()->SetRangeUser(-0.3, 0.3);
     hv1HFoddeven_pT_tmp->SetNdivisions(509);
     for (int cbin = 0; cbin<ncentbins; cbin++) {
 
@@ -336,7 +336,7 @@ void diffV1_pT()
             if (gridlines) padv1HFoddeven_pT->SetGrid();
             if (ebin == 3 || ebin == 7 || ebin == 11) padv1HFoddeven_pT->SetRightMargin(0.02);
             TH1D * hv1HFoddeven_pT = (TH1D *) hv1HFoddeven_pT_tmp->Clone(Form("hv1HFoddeven_pT_%c_%d",cbin,ebin));
-            hv1HFoddeven_pT->GetYaxis()->SetRangeUser(-0.14-0.06*cbin,0.14+0.06*cbin);
+            // hv1HFoddeven_pT->GetYaxis()->SetRangeUser(-0.14-0.06*cbin,0.14+0.06*cbin);
             if (ebin == 0 || ebin == 4) {
                 hv1HFoddeven_pT->GetYaxis()->CenterTitle();
                 hv1HFoddeven_pT->GetYaxis()->SetTitleSize(0.07);
@@ -478,7 +478,7 @@ void diffV1_pT()
     hv1Trackpm_pT_tmp->SetStats(0);
     hv1Trackpm_pT_tmp->SetXTitle("p_{T} (GeV/c)");
     hv1Trackpm_pT_tmp->SetYTitle("v_{1}");
-    hv1Trackpm_pT_tmp->GetYaxis()->SetRangeUser(-0.05, 0.15);
+    hv1Trackpm_pT_tmp->GetYaxis()->SetRangeUser(-0.075, 0.3);
     hv1Trackpm_pT_tmp->SetNdivisions(509);
     for (int cbin = 0; cbin<ncentbins; cbin++) {
 
@@ -490,7 +490,7 @@ void diffV1_pT()
             if (gridlines) padv1Trackpm_pT->SetGrid();
             if (ebin == 3 || ebin == 7 || ebin == 11) padv1Trackpm_pT->SetRightMargin(0.02);
             TH1D * hv1Trackpm_pT = (TH1D *) hv1Trackpm_pT_tmp->Clone(Form("hv1Trackpm_pT_%c_%d",cbin,ebin));
-            hv1Trackpm_pT->GetYaxis()->SetRangeUser(-0.05-0.03, 0.15+0.03*cbin);
+            // hv1Trackpm_pT->GetYaxis()->SetRangeUser(-0.05-0.03, 0.15+0.03*cbin);
             if (ebin == 0 || ebin == 4) {
                 hv1Trackpm_pT->GetYaxis()->CenterTitle();
                 hv1Trackpm_pT->GetYaxis()->SetTitleSize(0.07);
@@ -538,9 +538,6 @@ void diffV1_pT()
         cv1Trackpm_pT[cbin]->Print(Form("plots/diffv1/diffv1_pT/v1_pm_pT_%s_cent%d-%d.png",AnalNames[anal].data(),centBins[cbin],centBins[cbin+1]),"png");
         if (close_plots) cv1Trackpm_pT[cbin]->Close();
     }
-
-
-
 
 
 }
