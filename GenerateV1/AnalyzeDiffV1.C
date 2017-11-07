@@ -23,7 +23,9 @@ static const int ncentbins = 8;
 static const int centBins[] = {0, 10, 20, 30, 40, 50, 60, 70, 80};
 static const int nanals = 16;
 string AnalNames[] = {
+    // 0         1             2             3             4             5             6             7
     "v1SP",   "v1SP_mid",   "v1SP_102",   "v1SP_106",   "v1SP_110",   "v1SP_114",   "v1SP_118",   "v1SP_122",
+    // 8         9            10            11            12            13            14            15
     "v1SPmc", "v1SPmc_mid", "v1SPmc_102", "v1SPmc_106", "v1SPmc_110", "v1SPmc_114", "v1SPmc_118", "v1SPmc_122"
 };
 
@@ -63,8 +65,8 @@ TH1D * runParms[nanals];
 
 void AnalyzeDiffV1()
 {
-    int minanal = 7;
-    int maxanal = 8;
+    int minanal = 0;
+    int maxanal = nanals;
 
     TH1::SetDefaultSumw2();
     TH2::SetDefaultSumw2();
@@ -410,20 +412,32 @@ void AnalyzeDiffV1()
                 TH1D * v123_m = 0;
 
                 xpt = (TH1D *) ptav->ProjectionX("xpt",ebin,(int)(ebin+0.001));
-                v1_p = (TH1D *) q1_p->ProjectionX("v1_p",ebin,(int)(ebin+0.001));
-                v1_m = (TH1D *) q1_m->ProjectionX("v1_m",ebin,(int)(ebin+0.001));
+                v1_p = new TH1D("v1_p", "", nptbins, ptbins);
+                v1_m = new TH1D("v1_m", "", nptbins, ptbins);
+                for (int pbin = 0; pbin<nptbins; pbin++) {
+                    v1_p->SetBinContent(pbin+1, q1_p->GetBinContent(pbin+1, ebin+1));
+                    v1_m->SetBinContent(pbin+1, q1_m->GetBinContent(pbin+1, ebin+1));
+                }
                 v1 = (TH1D *) v1_p->Clone("v1");
                 v1->Add(v1_m);
                 v1->Scale(0.5);
 
-                v112_p = (TH1D *) q112_p->ProjectionX("v112_p",ebin,(int)(ebin+0.001));
-                v112_m = (TH1D *) q112_m->ProjectionX("v112_m",ebin,(int)(ebin+0.001));
+                v112_p = new TH1D("v112_p", "", nptbins, ptbins);
+                v112_m = new TH1D("v112_m", "", nptbins, ptbins);
+                for (int pbin = 0; pbin<nptbins; pbin++) {
+                    v112_p->SetBinContent(pbin+1, q112_p->GetBinContent(pbin+1, ebin+1));
+                    v112_m->SetBinContent(pbin+1, q112_m->GetBinContent(pbin+1, ebin+1));
+                }
                 v112 = (TH1D *) v112_p->Clone("v112");
                 v112->Add(v112_m);
                 v112->Scale(0.5);
 
-                v123_p = (TH1D *) q123_p->ProjectionX("v123_p",ebin,(int)(ebin+0.001));
-                v123_m = (TH1D *) q123_m->ProjectionX("v123_m",ebin,(int)(ebin+0.001));
+                v123_p = new TH1D("v123_p", "", nptbins, ptbins);
+                v123_m = new TH1D("v123_m", "", nptbins, ptbins);
+                for (int pbin = 0; pbin<nptbins; pbin++) {
+                    v123_p->SetBinContent(pbin+1, q123_p->GetBinContent(pbin+1, ebin+1));
+                    v123_m->SetBinContent(pbin+1, q123_m->GetBinContent(pbin+1, ebin+1));
+                }
                 v123 = (TH1D *) v123_p->Clone("v1");
                 v123->Add(v123_m);
                 v123->Scale(0.5);
@@ -460,18 +474,30 @@ void AnalyzeDiffV1()
                 TH1D * v123e_m;
                 TH1D * v123e;
                 for (int i = 0; i<10; i++) {
-                    v1e_p = (TH1D *) q1_p_err[i]->ProjectionX(Form("v1e_p%d",i),ebin,(int)(ebin+0.001));
-                    v1e_m = (TH1D *) q1_p_err[i]->ProjectionX(Form("v1e_m%d",i),ebin,(int)(ebin+0.001));
+                    v1e_p = new TH1D(Form("v1e_p%d_%d_%d_%d",anal,cbin,ebin,i), "", nptbins, ptbins);
+                    v1e_m = new TH1D(Form("v1e_m%d_%d_%d_%d",anal,cbin,ebin,i), "", nptbins, ptbins);
+                    for (int pbin = 0; pbin<nptbins; pbin++) {
+                        v1e_p->SetBinContent(pbin+1, q1_p_err[i]->GetBinContent(pbin+1, ebin+1));
+                        v1e_m->SetBinContent(pbin+1, q1_m_err[i]->GetBinContent(pbin+1, ebin+1));
+                    }
                     v1e = (TH1D *) v1e_p->Clone(Form("v1e%d",i));
                     v1e->Scale(0.5);
 
-                    v112e_p = (TH1D *) q112_p_err[i]->ProjectionX(Form("v112e_p%d",i),ebin,(int)(ebin+0.001));
-                    v112e_m = (TH1D *) q112_p_err[i]->ProjectionX(Form("v112e_m%d",i),ebin,(int)(ebin+0.001));
+                    v112e_p = new TH1D(Form("v112e_p%d_%d_%d_%d",anal,cbin,ebin,i), "", nptbins, ptbins);
+                    v112e_m = new TH1D(Form("v112e_m%d_%d_%d_%d",anal,cbin,ebin,i), "", nptbins, ptbins);
+                    for (int pbin = 0; pbin<nptbins; pbin++) {
+                        v112e_p->SetBinContent(pbin+1, q112_p_err[i]->GetBinContent(pbin+1, ebin+1));
+                        v112e_m->SetBinContent(pbin+1, q112_m_err[i]->GetBinContent(pbin+1, ebin+1));
+                    }
                     v112e = (TH1D *) v112e_p->Clone(Form("v1e%d",i));
                     v112e->Scale(0.5);
 
-                    v123e_p = (TH1D *) q123_p_err[i]->ProjectionX(Form("v123e_p%d",i),ebin,(int)(ebin+0.001));
-                    v123e_m = (TH1D *) q123_p_err[i]->ProjectionX(Form("v123e_m%d",i),ebin,(int)(ebin+0.001));
+                    v123e_p = new TH1D(Form("v123e_p%d_%d_%d_%d",anal,cbin,ebin,i), "", nptbins, ptbins);
+                    v123e_m = new TH1D(Form("v123e_m%d_%d_%d_%d",anal,cbin,ebin,i), "", nptbins, ptbins);
+                    for (int pbin = 0; pbin<nptbins; pbin++) {
+                        v123e_p->SetBinContent(pbin+1, q123_p_err[i]->GetBinContent(pbin+1, ebin+1));
+                        v123e_m->SetBinContent(pbin+1, q123_m_err[i]->GetBinContent(pbin+1, ebin+1));
+                    }
                     v123e = (TH1D *) v123e_p->Clone(Form("v123e%d",i));
                     v123e->Scale(0.5);
                     for (int j = 0; j<v1e->GetNbinsX(); j++) {
@@ -601,20 +627,32 @@ void AnalyzeDiffV1()
                 TH1D * v123_m = 0;
 
                 xeta = (TH1D *) ptav->ProjectionY("xeta",pbin,(int)(pbin+0.001));
-                v1_p = (TH1D *) q1_p->ProjectionY("v1_p",pbin,(int)(pbin+0.001));
-                v1_m = (TH1D *) q1_m->ProjectionY("v1_m",pbin,(int)(pbin+0.001));
+                v1_p = new TH1D("v1_p", "", netabins, etabins);
+                v1_m = new TH1D("v1_m", "", netabins, etabins);
+                for (int ebin = 0; ebin<netabins; ebin++) {
+                    v1_p->SetBinContent(ebin+1, q1_p->GetBinContent(pbin+1, ebin+1));
+                    v1_m->SetBinContent(ebin+1, q1_m->GetBinContent(pbin+1, ebin+1));
+                }
                 v1 = (TH1D *) v1_p->Clone("v1");
                 v1->Add(v1_m);
                 v1->Scale(0.5);
 
-                v112_p = (TH1D *) q112_p->ProjectionY("v112_p",pbin,(int)(pbin+0.001));
-                v112_m = (TH1D *) q112_m->ProjectionY("v112_m",pbin,(int)(pbin+0.001));
+                v112_p = new TH1D("v112_p", "", netabins, etabins);
+                v112_m = new TH1D("v112_m", "", netabins, etabins);
+                for (int ebin = 0; ebin<netabins; ebin++) {
+                    v112_p->SetBinContent(ebin+1, q112_p->GetBinContent(pbin+1, ebin+1));
+                    v112_m->SetBinContent(ebin+1, q112_m->GetBinContent(pbin+1, ebin+1));
+                }
                 v112 = (TH1D *) v112_p->Clone("v112");
                 v112->Add(v112_m);
                 v112->Scale(0.5);
 
-                v123_p = (TH1D *) q123_p->ProjectionY("v123_p",pbin,(int)(pbin+0.001));
-                v123_m = (TH1D *) q123_m->ProjectionY("v123_m",pbin,(int)(pbin+0.001));
+                v123_p = new TH1D("v123_p", "", netabins, etabins);
+                v123_m = new TH1D("v123_m", "", netabins, etabins);
+                for (int ebin = 0; ebin<netabins; ebin++) {
+                    v123_p->SetBinContent(ebin+1, q123_p->GetBinContent(pbin+1, ebin+1));
+                    v123_m->SetBinContent(ebin+1, q123_m->GetBinContent(pbin+1, ebin+1));
+                }
                 v123 = (TH1D *) v123_p->Clone("v123");
                 v123->Add(v123_m);
                 v123->Scale(0.5);
@@ -651,18 +689,30 @@ void AnalyzeDiffV1()
                 TH1D * v123e_m;
                 TH1D * v123e;
                 for (int i = 0; i<10; i++) {
-                    v1e_p = (TH1D *) q1_p_err[i]->ProjectionY(Form("v1e_p%d",i),pbin,(int)(pbin+0.001));
-                    v1e_m = (TH1D *) q1_p_err[i]->ProjectionY(Form("v1e_m%d",i),pbin,(int)(pbin+0.001));
+                    v1e_p = new TH1D(Form("v1e_p_eta%d_%d_%d_%d",anal,cbin,pbin,i), "", netabins, etabins);
+                    v1e_m = new TH1D(Form("v1e_m_eta%d_%d_%d_%d",anal,cbin,pbin,i), "", netabins, etabins);
+                    for (int ebin = 0; ebin<netabins; ebin++) {
+                        v1e_p->SetBinContent(ebin+1, q1_p_err[i]->GetBinContent(pbin+1, ebin+1));
+                        v1e_m->SetBinContent(ebin+1, q1_m_err[i]->GetBinContent(pbin+1, ebin+1));
+                    }
                     v1e = (TH1D *) v1e_p->Clone(Form("v1e%d",i));
                     v1e->Scale(0.5);
 
-                    v112e_p = (TH1D *) q112_p_err[i]->ProjectionY(Form("v112e_p%d",i),pbin,(int)(pbin+0.001));
-                    v112e_m = (TH1D *) q112_p_err[i]->ProjectionY(Form("v112e_m%d",i),pbin,(int)(pbin+0.001));
+                    v112e_p = new TH1D(Form("v112e_p_eta%d_%d_%d_%d",anal,cbin,pbin,i), "", netabins, etabins);
+                    v112e_m = new TH1D(Form("v112e_m_eta%d_%d_%d_%d",anal,cbin,pbin,i), "", netabins, etabins);
+                    for (int ebin = 0; ebin<netabins; ebin++) {
+                        v112e_p->SetBinContent(ebin+1, q112_p_err[i]->GetBinContent(pbin+1, ebin+1));
+                        v112e_m->SetBinContent(ebin+1, q112_m_err[i]->GetBinContent(pbin+1, ebin+1));
+                    }
                     v112e = (TH1D *) v112e_p->Clone(Form("v112e%d",i));
                     v112e->Scale(0.5);
 
-                    v123e_p = (TH1D *) q123_p_err[i]->ProjectionY(Form("v123e_p%d",i),pbin,(int)(pbin+0.001));
-                    v123e_m = (TH1D *) q123_p_err[i]->ProjectionY(Form("v123e_m%d",i),pbin,(int)(pbin+0.001));
+                    v123e_p = new TH1D(Form("v123e_p_eta%d_%d_%d_%d",anal,cbin,pbin,i), "", netabins, etabins);
+                    v123e_m = new TH1D(Form("v123e_m_eta%d_%d_%d_%d",anal,cbin,pbin,i), "", netabins, etabins);
+                    for (int ebin = 0; ebin<netabins; ebin++) {
+                        v123e_p->SetBinContent(ebin+1, q123_p_err[i]->GetBinContent(pbin+1, ebin+1));
+                        v123e_m->SetBinContent(ebin+1, q123_m_err[i]->GetBinContent(pbin+1, ebin+1));
+                    }
                     v123e = (TH1D *) v123e_p->Clone(Form("v123e%d",i));
                     v123e->Scale(0.5);
                     for (int j = 0; j<v1e->GetNbinsX(); j++) {

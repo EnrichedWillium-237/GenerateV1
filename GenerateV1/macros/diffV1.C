@@ -10,7 +10,7 @@
 # include <fstream>
 # include <iostream>
 
-Bool_t close_plots = kFALSE;
+Bool_t close_plots = kTRUE;
 Bool_t gridlines = kFALSE;
 
 # include "style.h"
