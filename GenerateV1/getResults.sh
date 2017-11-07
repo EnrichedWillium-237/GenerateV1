@@ -1,5 +1,5 @@
 #!/bin/sh
-DIRECTORY="outputs/outputs_raw"
+DIRECTORY="outputs/raw_outputs"
 if [ ! -d "$DIRECTORY" ]; then
     mkdir $DIRECTORY
 fi
