@@ -21,9 +21,9 @@ using namespace hi;
 TRandom3 * ran;
 
 static const double MaxCent = 80;
-static const int MaxEvents = 1e7;
+static const int MaxEvents = 1e4;
 int MaxFiles = 3000;
-static const double VtxCut = 3.;
+static const double VtxCut = 15.;
 static const int ncentbins = 8;
 static const double centBins[] = {0, 10, 20, 30, 40, 50, 60, 70, 80};
 static const int nanals = 16;
