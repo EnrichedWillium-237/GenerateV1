@@ -106,7 +106,7 @@ void intV1_pT()
     int anal; // choice of analysis
 
 
-    // integrated v1(eta) using HF+/- for each centrality bin
+    // integrated v1(pT) using HF+/- for each centrality bin
     anal = 7;
     if (!fopen(Form("plots/intv1/intv1_pt/int%s",AnalNames[anal].data()),"r")) system(Form("mkdir plots/intv1/intv1_pt/int%s",AnalNames[anal].data()));
 
@@ -179,7 +179,7 @@ void intV1_pT()
 
 
 
-    // integrated v1^odd(eta) using HF for each centrality bin
+    // integrated v1^odd(pT) using HF for each centrality bin
 
     TCanvas * cv1HFodd_pt = new TCanvas("cv1HFodd_pt","cv1HFodd_pt",1100,630);
     TH1D * hv1HFodd_pt_tmp = new TH1D("hv1HFodd_pt", "", 40, 0, 12);
@@ -242,7 +242,7 @@ void intV1_pT()
 
 
 
-    // integrated v1^even(eta) using HF for each centrality bin
+    // integrated v1^even(pT) using HF for each centrality bin
 
     TCanvas * cv1HFeven_pt = new TCanvas("cv1HFeven_pt","cv1HFeven_pt",1100,630);
     TH1D * hv1HFeven_pt_tmp = new TH1D("hv1HFeven_pt", "", 40, 0, 12);
@@ -305,7 +305,7 @@ void intV1_pT()
 
 
 
-    // integrated v1(eta) using Track+/- for each centrality bin
+    // integrated v1(pT) using Track+/- for each centrality bin
     anal = 15;
     if (!fopen(Form("plots/intv1/intv1_pt/int%s",AnalNames[anal].data()),"r")) system(Form("mkdir plots/intv1/intv1_pt/int%s",AnalNames[anal].data()));
 
@@ -375,5 +375,68 @@ void intV1_pT()
 
     cv1Trkpm_pt->Print(Form("plots/intv1/intv1_pt/int%s/v1_pm_pt_%s.png",AnalNames[anal].data(),AnalNames[anal].data()),"png");
     if (close_plots) cv1Trkpm_pt->Close();
+
+
+
+    // integrated v1^even(pT) using the tracker (called v1odd in output file)
+
+    TCanvas * cv1Trkeven_pt = new TCanvas("cv1Trkeven_pt","cv1Trkeven_pt",1100,630);
+    TH1D * hv1Trkeven_pt_tmp = new TH1D("hv1Trkeven_pt", "", 40, 0, 12);
+    hv1Trkeven_pt_tmp->SetTitle("");
+    hv1Trkeven_pt_tmp->SetStats(0);
+    hv1Trkeven_pt_tmp->SetXTitle("p_{T} (GeV/c)");
+    hv1Trkeven_pt_tmp->SetYTitle("v_{1}^{even}");
+    hv1Trkeven_pt_tmp->GetYaxis()->SetRangeUser(-0.05, 0.26);
+    hv1Trkeven_pt_tmp->SetNdivisions(509);
+    cv1Trkeven_pt->Divide(4,2,0,0);
+    for (int cbin = 0; cbin<ncentbins; cbin++) {
+        TPad * padv1Trkeven_pt = (TPad *) cv1Trkeven_pt->cd(cbin+1);
+        if (gridlines) padv1Trkeven_pt->SetGrid();
+        if (cbin == 3 || cbin == 7) padv1Trkeven_pt->SetRightMargin(0.02);
+        TH1D * hv1Trkeven_pt = (TH1D *) hv1Trkeven_pt_tmp->Clone(Form("hv1Trkeven_pt_%c",cbin));
+        if (cbin == 0) {
+            hv1Trkeven_pt->GetYaxis()->SetTitleSize(0.07);
+            hv1Trkeven_pt->GetYaxis()->SetTitleOffset(1.33);
+            hv1Trkeven_pt->GetYaxis()->SetLabelSize(0.06);
+        }
+        if (cbin == 4) {
+            hv1Trkeven_pt->GetXaxis()->CenterTitle();
+            hv1Trkeven_pt->GetXaxis()->SetTitleSize(0.06);
+            hv1Trkeven_pt->GetXaxis()->SetTitleOffset(1.12);
+            hv1Trkeven_pt->GetXaxis()->SetLabelSize(0.06);
+            hv1Trkeven_pt->GetXaxis()->SetLabelOffset(0.018);
+            hv1Trkeven_pt->GetYaxis()->SetTitleSize(0.06);
+            hv1Trkeven_pt->GetYaxis()->SetTitleOffset(1.50);
+            hv1Trkeven_pt->GetYaxis()->SetLabelSize(0.05);
+            hv1Trkeven_pt->GetYaxis()->SetLabelOffset(0.010);
+        }
+        if (cbin >=5) {
+            hv1Trkeven_pt->GetXaxis()->CenterTitle();
+            hv1Trkeven_pt->GetXaxis()->SetTitleSize(0.07);
+            hv1Trkeven_pt->GetXaxis()->SetTitleOffset(1.00);
+            hv1Trkeven_pt->GetXaxis()->SetLabelSize(0.07);
+            hv1Trkeven_pt->GetXaxis()->SetLabelOffset(0.008);
+        }
+        hv1Trkeven_pt->Draw();
+        v1odd_pt[anal][cbin]->Draw("same");
+
+        TPaveText * txv1Trkeven_pt;
+        if (cbin == 0) txv1Trkeven_pt = new TPaveText(0.75, 0.86, 0.93, 0.95,"NDC");
+        else if (cbin >= 1 && cbin <= 3) txv1Trkeven_pt = new TPaveText(0.68, 0.86, 0.86, 0.95,"NDC");
+        else if (cbin == 4) txv1Trkeven_pt = new TPaveText(0.75, 0.86, 0.93, 0.95,"NDC");
+        else txv1Trkeven_pt = new TPaveText(0.68, 0.86, 0.86, 0.95,"NDC");
+        SetTPaveTxt(txv1Trkeven_pt, 18);
+        txv1Trkeven_pt->AddText(Form("%d-%d%%",centBins[cbin],centBins[cbin+1]));
+        txv1Trkeven_pt->Draw();
+    }
+    cv1Trkeven_pt->cd(1);
+    TPaveText * txv1Trkeven_pt_1 = new TPaveText(0.23, 0.78, 0.68, 0.94,"NDC");
+    SetTPaveTxt(txv1Trkeven_pt_1, 18);
+    txv1Trkeven_pt_1->AddText("#bf{CMS} #it{Preliminary}");
+    txv1Trkeven_pt_1->AddText("|#eta| < 2.4");
+    txv1Trkeven_pt_1->Draw();
+
+    cv1Trkeven_pt->Print(Form("plots/intv1/intv1_pt/int%s/v1_even_pt_%s.png",AnalNames[anal].data(),AnalNames[anal].data()),"png");
+    if (close_plots) cv1Trkeven_pt->Close();
 
 }

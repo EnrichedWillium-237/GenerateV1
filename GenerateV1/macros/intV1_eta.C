@@ -237,12 +237,6 @@ void intV1_eta()
     txv1HFodd_eta_1->AddText("0.3 < p_{T} < 3.0 (GeV/c)");
     txv1HFodd_eta_1->Draw();
 
-    cv1HFodd_eta->cd(2);
-    TPaveText * txv1HFodd_eta_2 = new TPaveText(0.07, 0.79, 0.65, 0.92,"NDC");
-    SetTPaveTxt(txv1HFodd_eta_2, 18);
-    txv1HFodd_eta_2->AddText("v_{1}^{odd} = #frac{v_{1}^{HF+} + v_{1}^{HF-}}{2}");
-    txv1HFodd_eta_2->Draw();
-
     cv1HFodd_eta->Print(Form("plots/intv1/intv1_eta/int%s/v1_odd_eta_%s.png",AnalNames[anal].data(),AnalNames[anal].data()),"png");
     if (close_plots) cv1HFodd_eta->Close();
 
@@ -256,7 +250,7 @@ void intV1_eta()
     hv1HFeven_eta_tmp->SetStats(0);
     hv1HFeven_eta_tmp->SetXTitle("#eta");
     hv1HFeven_eta_tmp->SetYTitle("v_{1}^{even}");
-    hv1HFeven_eta_tmp->GetYaxis()->SetRangeUser(-0.16, 0.07);
+    hv1HFeven_eta_tmp->GetYaxis()->SetRangeUser(-0.15, 0.0);
     hv1HFeven_eta_tmp->SetNdivisions(509);
     cv1HFeven_eta->Divide(4,2,0,0);
     for (int cbin = 0; cbin<ncentbins; cbin++) {
@@ -300,17 +294,11 @@ void intV1_eta()
         txv1HFeven_eta->Draw();
     }
     cv1HFeven_eta->cd(1);
-    TPaveText * txv1HFeven_eta_1 = new TPaveText(0.23, 0.73, 0.82, 0.95,"NDC");
+    TPaveText * txv1HFeven_eta_1 = new TPaveText(0.23, 0.14, 0.82, 0.36,"NDC");
     SetTPaveTxt(txv1HFeven_eta_1, 18);
     txv1HFeven_eta_1->AddText("#bf{CMS} #it{Preliminary}");
     txv1HFeven_eta_1->AddText("0.3 < p_{T} < 3.0 (GeV/c)");
     txv1HFeven_eta_1->Draw();
-
-    cv1HFeven_eta->cd(2);
-    TPaveText * txv1HFeven_eta_2 = new TPaveText(0.07, 0.79, 0.65, 0.92,"NDC");
-    SetTPaveTxt(txv1HFeven_eta_2, 18);
-    txv1HFeven_eta_2->AddText("v_{1}^{even} = #frac{v_{1}^{HF+} - v_{1}^{HF-}}{2}");
-    txv1HFeven_eta_2->Draw();
 
     cv1HFeven_eta->Print(Form("plots/intv1/intv1_eta/int%s/v1_even_eta_%s.png",AnalNames[anal].data(),AnalNames[anal].data()),"png");
     if (close_plots) cv1HFeven_eta->Close();
@@ -372,11 +360,10 @@ void intV1_eta()
         txv1Trkpm_eta->Draw();
     }
     cv1Trkpm_eta->cd(1);
-    TPaveText * txv1Trkpm_eta_1 = new TPaveText(0.23, 0.66, 0.82, 0.95,"NDC");
+    TPaveText * txv1Trkpm_eta_1 = new TPaveText(0.23, 0.73, 0.82, 0.95,"NDC");
     SetTPaveTxt(txv1Trkpm_eta_1, 18);
     txv1Trkpm_eta_1->AddText("#bf{CMS} #it{Preliminary}");
     txv1Trkpm_eta_1->AddText("0.3 < p_{T} < 3.0 (GeV/c)");
-    txv1Trkpm_eta_1->AddText("p_{T}-weighted Q-vectors");
     txv1Trkpm_eta_1->Draw();
 
     cv1Trkpm_eta->cd(2);
@@ -388,5 +375,68 @@ void intV1_eta()
 
     cv1Trkpm_eta->Print(Form("plots/intv1/intv1_eta/int%s/v1_pm_eta_%s.png",AnalNames[anal].data(),AnalNames[anal].data()),"png");
     if (close_plots) cv1Trkpm_eta->Close();
+
+
+
+    // integrated v1^even(eta) using the tracker (actually called v1odd in output file)
+
+    TCanvas * cv1Trkeven_eta = new TCanvas("cv1Trkeven_eta","cv1Trkeven_eta",1100,630);
+    TH1D * hv1Trkeven_eta_tmp = new TH1D("hv1Trkeven_eta", "", 40, -2.5, 2.5);
+    hv1Trkeven_eta_tmp->SetTitle("");
+    hv1Trkeven_eta_tmp->SetStats(0);
+    hv1Trkeven_eta_tmp->SetXTitle("#eta");
+    hv1Trkeven_eta_tmp->SetYTitle("v_{1}^{even}");
+    hv1Trkeven_eta_tmp->GetYaxis()->SetRangeUser(-0.06, 0.06);
+    hv1Trkeven_eta_tmp->SetNdivisions(509);
+    cv1Trkeven_eta->Divide(4,2,0,0);
+    for (int cbin = 0; cbin<ncentbins; cbin++) {
+        TPad * padv1Trkeven_eta = (TPad *) cv1Trkeven_eta->cd(cbin+1);
+        if (gridlines) padv1Trkeven_eta->SetGrid();
+        if (cbin == 3 || cbin == 7) padv1Trkeven_eta->SetRightMargin(0.02);
+        TH1D * hv1Trkeven_eta = (TH1D *) hv1Trkeven_eta_tmp->Clone(Form("hv1Trkeven_eta_%c",cbin));
+        if (cbin == 0) {
+            hv1Trkeven_eta->GetYaxis()->SetTitleSize(0.07);
+            hv1Trkeven_eta->GetYaxis()->SetTitleOffset(1.33);
+            hv1Trkeven_eta->GetYaxis()->SetLabelSize(0.06);
+        }
+        if (cbin == 4) {
+            hv1Trkeven_eta->GetXaxis()->CenterTitle();
+            hv1Trkeven_eta->GetXaxis()->SetTitleSize(0.06);
+            hv1Trkeven_eta->GetXaxis()->SetTitleOffset(1.12);
+            hv1Trkeven_eta->GetXaxis()->SetLabelSize(0.06);
+            hv1Trkeven_eta->GetXaxis()->SetLabelOffset(0.018);
+            hv1Trkeven_eta->GetYaxis()->SetTitleSize(0.06);
+            hv1Trkeven_eta->GetYaxis()->SetTitleOffset(1.50);
+            hv1Trkeven_eta->GetYaxis()->SetLabelSize(0.05);
+            hv1Trkeven_eta->GetYaxis()->SetLabelOffset(0.010);
+        }
+        if (cbin >=5) {
+            hv1Trkeven_eta->GetXaxis()->CenterTitle();
+            hv1Trkeven_eta->GetXaxis()->SetTitleSize(0.07);
+            hv1Trkeven_eta->GetXaxis()->SetTitleOffset(1.00);
+            hv1Trkeven_eta->GetXaxis()->SetLabelSize(0.07);
+            hv1Trkeven_eta->GetXaxis()->SetLabelOffset(0.008);
+        }
+        hv1Trkeven_eta->Draw();
+        v1odd_eta[anal][cbin]->Draw("same");
+
+        TPaveText * txv1Trkeven_eta;
+        if (cbin == 0) txv1Trkeven_eta = new TPaveText(0.25, 0.04, 0.46, 0.17,"NDC");
+        else if (cbin >= 1 && cbin <= 3) txv1Trkeven_eta = new TPaveText(0.06, 0.04, 0.26, 0.17,"NDC");
+        else if (cbin == 4) txv1Trkeven_eta = new TPaveText(0.25, 0.21, 0.46, 0.30,"NDC");
+        else txv1Trkeven_eta = new TPaveText(0.06, 0.21, 0.26, 0.30,"NDC");
+        SetTPaveTxt(txv1Trkeven_eta, 18);
+        txv1Trkeven_eta->AddText(Form("%d-%d%%",centBins[cbin],centBins[cbin+1]));
+        txv1Trkeven_eta->Draw();
+    }
+    cv1Trkeven_eta->cd(1);
+    TPaveText * txv1Trkeven_eta_1 = new TPaveText(0.23, 0.73, 0.82, 0.95,"NDC");
+    SetTPaveTxt(txv1Trkeven_eta_1, 18);
+    txv1Trkeven_eta_1->AddText("#bf{CMS} #it{Preliminary}");
+    txv1Trkeven_eta_1->AddText("0.3 < p_{T} < 3.0 (GeV/c)");
+    txv1Trkeven_eta_1->Draw();
+
+    cv1Trkeven_eta->Print(Form("plots/intv1/intv1_eta/int%s/v1_odd_eta_%s.png",AnalNames[anal].data(),AnalNames[anal].data()),"png");
+    if (close_plots) cv1Trkeven_eta->Close();
 
 }
