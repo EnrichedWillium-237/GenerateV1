@@ -33,21 +33,6 @@ string AnalNames[] = {
 
 using namespace std;
 
-TH1D * v1p_pt[nanals][ncentbins][netabins];
-TH1D * v1m_pt[nanals][ncentbins][netabins];
-TH1D * v1odd_pt[nanals][ncentbins][netabins];
-TH1D * v1even_pt[nanals][ncentbins][netabins];
-
-TH1D * v112p_pt[nanals][ncentbins][netabins];
-TH1D * v112m_pt[nanals][ncentbins][netabins];
-TH1D * v112odd_pt[nanals][ncentbins][netabins];
-TH1D * v112even_pt[nanals][ncentbins][netabins];
-
-TH1D * v123p_pt[nanals][ncentbins][netabins];
-TH1D * v123m_pt[nanals][ncentbins][netabins];
-TH1D * v123odd_pt[nanals][ncentbins][netabins];
-TH1D * v123even_pt[nanals][ncentbins][netabins];
-
 TH1D * v1p_eta[nanals][ncentbins][nptbins];
 TH1D * v1m_eta[nanals][ncentbins][nptbins];
 TH1D * v1odd_eta[nanals][ncentbins][nptbins];
@@ -67,7 +52,7 @@ TH1D * runParms[nanals];
 
 TFile * tfin;
 
-void diffV1_pT()
+void diffV1_eta()
 {
 
     TH1::SetDefaultSumw2();
@@ -77,28 +62,7 @@ void diffV1_pT()
     //-- retrieve histograms from final output file
     for (int i = 0; i<nanals; i++) {
         for (int cbin = 0; cbin<ncentbins; cbin++) {
-            for (int ebin = 0; ebin<netabins; ebin++) {
-                string tag0 = Form("cent_%d-%d/eta_%0.1f-%0.1f",centBins[cbin],centBins[cbin+1],etabins[ebin],etabins[ebin+1]);
-                string tag1 = Form("%s_c%d_e%d",AnalNames[i].data(),cbin,ebin);
-
-                v1p_pt[i][cbin][ebin] = (TH1D *) tfin->Get(Form("%s/v1_pt/%s/v1p_pt_%s",AnalNames[i].data(),tag0.data(),tag1.data()));
-                v1m_pt[i][cbin][ebin] = (TH1D *) tfin->Get(Form("%s/v1_pt/%s/v1m_pt_%s",AnalNames[i].data(),tag0.data(),tag1.data()));
-                v1odd_pt[i][cbin][ebin] = (TH1D *) tfin->Get(Form("%s/v1_pt/%s/v1odd_pt_%s",AnalNames[i].data(),tag0.data(),tag1.data()));
-                v1even_pt[i][cbin][ebin] = (TH1D *) tfin->Get(Form("%s/v1_pt/%s/v1even_pt_%s",AnalNames[i].data(),tag0.data(),tag1.data()));
-                /*
-                v112p_pt[i][cbin][ebin] = (TH1D *) tfin->Get(Form("%s/v1_pt/%s/v112p_pt_%s",AnalNames[i].data(),tag0.data(),tag1.data()));
-                v112m_pt[i][cbin][ebin] = (TH1D *) tfin->Get(Form("%s/v1_pt/%s/v112m_pt_%s",AnalNames[i].data(),tag0.data(),tag1.data()));
-                v112odd_pt[i][cbin][ebin] = (TH1D *) tfin->Get(Form("%s/v1_pt/%s/v112odd_pt_%s",AnalNames[i].data(),tag0.data(),tag1.data()));
-                v112even_pt[i][cbin][ebin] = (TH1D *) tfin->Get(Form("%s/v1_pt/%s/v112even_pt_%s",AnalNames[i].data(),tag0.data(),tag1.data()));
-
-                v123p_pt[i][cbin][ebin] = (TH1D *) tfin->Get(Form("%s/v1_pt/%s/v123p_pt_%s",AnalNames[i].data(),tag0.data(),tag1.data()));
-                v123m_pt[i][cbin][ebin] = (TH1D *) tfin->Get(Form("%s/v1_pt/%s/v123m_pt_%s",AnalNames[i].data(),tag0.data(),tag1.data()));
-                v123odd_pt[i][cbin][ebin] = (TH1D *) tfin->Get(Form("%s/v1_pt/%s/v123odd_pt_%s",AnalNames[i].data(),tag0.data(),tag1.data()));
-                v123even_pt[i][cbin][ebin] = (TH1D *) tfin->Get(Form("%s/v1_pt/%s/v123even_pt_%s",AnalNames[i].data(),tag0.data(),tag1.data()));
-                */
-            }
-
-            for (int pbin = 0; pbin<netabins; pbin++) {
+            for (int pbin = 0; pbin<nptbins; pbin++) {
                 string tag0 = Form("cent_%d-%d/pt_%0.1f-%0.1f",centBins[cbin],centBins[cbin+1],ptbins[pbin],ptbins[pbin+1]);
                 string tag1 = Form("%s_c%d_p%d",AnalNames[i].data(),cbin,pbin);
 
@@ -120,32 +84,31 @@ void diffV1_pT()
             }
         }
     }
-    //tfin->Close();
 
     //-- plotting options
 
     for (int i = 0; i<nanals; i++) {
         for (int cbin = 0; cbin<ncentbins; cbin++) {
-            for (int ebin = 0; ebin<netabins; ebin++) {
-                v1p_pt[i][cbin][ebin]->SetMarkerColor(kRed);
-                v1p_pt[i][cbin][ebin]->SetLineColor(kRed);
-                v1p_pt[i][cbin][ebin]->SetMarkerStyle(21);
-                v1p_pt[i][cbin][ebin]->SetMarkerSize(1.1);
+            for (int pbin = 0; pbin<nptbins; pbin++) {
+                v1p_eta[i][cbin][pbin]->SetMarkerColor(kRed);
+                v1p_eta[i][cbin][pbin]->SetLineColor(kRed);
+                v1p_eta[i][cbin][pbin]->SetMarkerStyle(21);
+                v1p_eta[i][cbin][pbin]->SetMarkerSize(1.1);
 
-                v1m_pt[i][cbin][ebin]->SetMarkerColor(kBlue);
-                v1m_pt[i][cbin][ebin]->SetLineColor(kBlue);
-                v1m_pt[i][cbin][ebin]->SetMarkerStyle(21);
-                v1m_pt[i][cbin][ebin]->SetMarkerSize(1.1);
+                v1m_eta[i][cbin][pbin]->SetMarkerColor(kBlue);
+                v1m_eta[i][cbin][pbin]->SetLineColor(kBlue);
+                v1m_eta[i][cbin][pbin]->SetMarkerStyle(21);
+                v1m_eta[i][cbin][pbin]->SetMarkerSize(1.1);
 
-                v1odd_pt[i][cbin][ebin]->SetMarkerColor(kRed);
-                v1odd_pt[i][cbin][ebin]->SetLineColor(kRed);
-                v1odd_pt[i][cbin][ebin]->SetMarkerStyle(21);
-                v1odd_pt[i][cbin][ebin]->SetMarkerSize(1.1);
+                v1odd_eta[i][cbin][pbin]->SetMarkerColor(kRed);
+                v1odd_eta[i][cbin][pbin]->SetLineColor(kRed);
+                v1odd_eta[i][cbin][pbin]->SetMarkerStyle(21);
+                v1odd_eta[i][cbin][pbin]->SetMarkerSize(1.1);
 
-                v1even_pt[i][cbin][ebin]->SetMarkerColor(kBlue);
-                v1even_pt[i][cbin][ebin]->SetLineColor(kBlue);
-                v1even_pt[i][cbin][ebin]->SetMarkerStyle(21);
-                v1even_pt[i][cbin][ebin]->SetMarkerSize(1.1);
+                v1even_eta[i][cbin][pbin]->SetMarkerColor(kBlue);
+                v1even_eta[i][cbin][pbin]->SetLineColor(kBlue);
+                v1even_eta[i][cbin][pbin]->SetMarkerStyle(21);
+                v1even_eta[i][cbin][pbin]->SetMarkerSize(1.1);
             }
         }
     }
@@ -154,393 +117,393 @@ void diffV1_pT()
     //-- make plots
     if (!fopen("plots","r")) system("mkdir plots");
     if (!fopen("plots/diffv1","r")) system("mkdir plots/diffv1");
-    if (!fopen("plots/diffv1/diffv1_pT","r")) system("mkdir plots/diffv1/diffv1_pT");
     if (!fopen("plots/diffv1/diffv1_eta","r")) system("mkdir plots/diffv1/diffv1_eta");
 
     int centMarkerStyle[] = {21, 24, 20, 25, 33, 27, 34, 28};
     float centMarkerSize[] = {1.1, 1.2, 1.2, 1.1, 1.7, 1.7, 1.5};
 
+    int anal; // choice of analysis
 
-    // differential v1(pT) using HF+/- for each centrality bin
-    int anal = 7;
 
-    TCanvas * cv1HFpm_pT[ncentbins];
-    TH1D * hv1HFpm_pT_tmp = new TH1D("hv1HFpm_pT_tmp", "", 40, 0, 12);
-    hv1HFpm_pT_tmp->SetTitle("");
-    hv1HFpm_pT_tmp->SetStats(0);
-    hv1HFpm_pT_tmp->SetXTitle("p_{T} (GeV/c)");
-    hv1HFpm_pT_tmp->SetYTitle("v_{1}");
-    hv1HFpm_pT_tmp->GetYaxis()->SetRangeUser(-0.14,0.14);
-    hv1HFpm_pT_tmp->SetNdivisions(509);
+    // differential v1(eta) using HF+/- for each centrality bin
+    anal = 7;
+    if (!fopen(Form("plots/diffv1/diffv1_eta/diff%s",AnalNames[anal].data()),"r")) system(Form("mkdir plots/diffv1/diffv1_eta/diff%s",AnalNames[anal].data()));
+
+    TCanvas * cv1HFpm_eta[ncentbins];
+    TH1D * hv1HFpm_eta_tmp = new TH1D("hv1HFpm_eta_tmp", "", 40, -2.5, 2.5);
+    hv1HFpm_eta_tmp->SetTitle("");
+    hv1HFpm_eta_tmp->SetStats(0);
+    hv1HFpm_eta_tmp->SetXTitle("#eta");
+    hv1HFpm_eta_tmp->SetYTitle("v_{1}");
+    hv1HFpm_eta_tmp->GetYaxis()->SetRangeUser(-0.3, 0.3);
+    hv1HFpm_eta_tmp->SetNdivisions(509);
     for (int cbin = 0; cbin<ncentbins; cbin++) {
 
-        cv1HFpm_pT[cbin] = new TCanvas(Form("cv1HFpm_pT_cent%d-%d",centBins[cbin],centBins[cbin+1]),"cv1HFpm_pT",1100,850);
-        cv1HFpm_pT[cbin]->Divide(4,3,0,0);
+        cv1HFpm_eta[cbin] = new TCanvas(Form("cv1HFpm_eta_cent%d-%d",centBins[cbin],centBins[cbin+1]),"cv1HFpm_eta",1100,850);
+        cv1HFpm_eta[cbin]->Divide(4,3,0,0);
 
-        for (int ebin = 0; ebin<netabins; ebin++) {
-            TPad * padv1HFpm_pT = (TPad *) cv1HFpm_pT[cbin]->cd(ebin+1);
-            if (gridlines) padv1HFpm_pT->SetGrid();
-            if (ebin == 3 || ebin == 7 || ebin == 11) padv1HFpm_pT->SetRightMargin(0.02);
-            TH1D * hv1HFpm_pT = (TH1D *) hv1HFpm_pT_tmp->Clone(Form("hv1HFpm_pT_%c_%d",cbin,ebin));
-            hv1HFpm_pT->GetYaxis()->SetRangeUser(-0.14-0.1*cbin,0.14+0.1*cbin);
-            if (ebin == 0 || ebin == 4) {
-                hv1HFpm_pT->GetYaxis()->CenterTitle();
-                hv1HFpm_pT->GetYaxis()->SetTitleSize(0.07);
-                hv1HFpm_pT->GetYaxis()->SetTitleOffset(1.34);
-                hv1HFpm_pT->GetYaxis()->SetLabelSize(0.06);
-            } else if (ebin == 8) {
-                hv1HFpm_pT->GetXaxis()->SetTitleSize(0.06);
-                hv1HFpm_pT->GetXaxis()->SetTitleOffset(1.14);
-                hv1HFpm_pT->GetYaxis()->CenterTitle();
-                hv1HFpm_pT->GetYaxis()->SetTitleSize(0.06);
-                hv1HFpm_pT->GetYaxis()->SetTitleOffset(1.48);
-                hv1HFpm_pT->GetYaxis()->SetLabelSize(0.05);
-            } else if (ebin>=9) {
-                hv1HFpm_pT->GetXaxis()->SetTitleSize(0.07);
-                hv1HFpm_pT->GetXaxis()->SetTitleOffset(1.00);
-                hv1HFpm_pT->GetXaxis()->SetLabelSize(0.06);
-                hv1HFpm_pT->GetXaxis()->SetLabelOffset(0.005);
+        for (int pbin = 0; pbin<netabins; pbin++) {
+            TPad * padv1HFpm_eta = (TPad *) cv1HFpm_eta[cbin]->cd(pbin+1);
+            if (gridlines) padv1HFpm_eta->SetGrid();
+            if (pbin == 3 || pbin == 7 || pbin == 11) padv1HFpm_eta->SetRightMargin(0.02);
+            TH1D * hv1HFpm_eta = (TH1D *) hv1HFpm_eta_tmp->Clone(Form("hv1HFpm_eta_%c_%d",cbin,pbin));
+            // hv1HFpm_eta->GetYaxis()->SetRangeUser(-0.14-0.1*cbin,0.14+0.1*cbin);
+            if (pbin == 0 || pbin == 4) {
+                hv1HFpm_eta->GetYaxis()->CenterTitle();
+                hv1HFpm_eta->GetYaxis()->SetTitleSize(0.07);
+                hv1HFpm_eta->GetYaxis()->SetTitleOffset(1.34);
+                hv1HFpm_eta->GetYaxis()->SetLabelSize(0.06);
+            } else if (pbin == 8) {
+                hv1HFpm_eta->GetXaxis()->SetTitleSize(0.06);
+                hv1HFpm_eta->GetXaxis()->SetTitleOffset(1.14);
+                hv1HFpm_eta->GetYaxis()->CenterTitle();
+                hv1HFpm_eta->GetYaxis()->SetTitleSize(0.06);
+                hv1HFpm_eta->GetYaxis()->SetTitleOffset(1.48);
+                hv1HFpm_eta->GetYaxis()->SetLabelSize(0.05);
+            } else if (pbin>=9) {
+                hv1HFpm_eta->GetXaxis()->SetTitleSize(0.07);
+                hv1HFpm_eta->GetXaxis()->SetTitleOffset(1.00);
+                hv1HFpm_eta->GetXaxis()->SetLabelSize(0.06);
+                hv1HFpm_eta->GetXaxis()->SetLabelOffset(0.005);
             }
-            hv1HFpm_pT->Draw();
-            v1p_pt[anal][cbin][ebin]->Draw("same");
-            v1m_pt[anal][cbin][ebin]->Draw("same");
+            hv1HFpm_eta->Draw();
+            v1p_eta[anal][cbin][pbin]->Draw("same");
+            v1m_eta[anal][cbin][pbin]->Draw("same");
 
-            TPaveText * txv1HFpm_pT;
-            if (ebin == 0 || ebin == 4) txv1HFpm_pT = new TPaveText(0.23, 0.05, 0.62, 0.15,"NDC");
-            else if (ebin == 8) txv1HFpm_pT = new TPaveText(0.23, 0.19, 0.62, 0.29,"NDC");
-            else if (ebin>=9) txv1HFpm_pT = new TPaveText(0.05, 0.19, 0.50, 0.29,"NDC");
-            else txv1HFpm_pT = new TPaveText(0.05, 0.05, 0.50, 0.15,"NDC");
-            SetTPaveTxt(txv1HFpm_pT, 18);
-            txv1HFpm_pT->AddText(Form("%0.1f < #eta < %0.1f",etabins[ebin],etabins[ebin+1]));
-            txv1HFpm_pT->Draw();
+            TPaveText * txv1HFpm_eta;
+            if (pbin == 0 || pbin == 4) txv1HFpm_eta = new TPaveText(0.23, 0.05, 0.62, 0.15,"NDC");
+            else if (pbin == 8) txv1HFpm_eta = new TPaveText(0.23, 0.19, 0.62, 0.29,"NDC");
+            else if (pbin>=9) txv1HFpm_eta = new TPaveText(0.05, 0.19, 0.50, 0.29,"NDC");
+            else txv1HFpm_eta = new TPaveText(0.05, 0.05, 0.50, 0.15,"NDC");
+            SetTPaveTxt(txv1HFpm_eta, 18);
+            txv1HFpm_eta->AddText(Form("%0.2f<p_{T}<%0.2f (GeV/c)",ptbins[pbin],ptbins[pbin+1]));
+            txv1HFpm_eta->Draw();
         }
-        cv1HFpm_pT[cbin]->cd(1);
-        TPaveText * txv1HFpm_pT_cent = new TPaveText(0.24, 0.84, 0.38, 0.95,"NDC");
-        SetTPaveTxt(txv1HFpm_pT_cent, 18);
-        txv1HFpm_pT_cent->AddText(Form("%d-%d%%",centBins[cbin],centBins[cbin+1]));
-        txv1HFpm_pT_cent->Draw();
+        cv1HFpm_eta[cbin]->cd(1);
+        TPaveText * txv1HFpm_eta_cent = new TPaveText(0.24, 0.84, 0.38, 0.95,"NDC");
+        SetTPaveTxt(txv1HFpm_eta_cent, 18);
+        txv1HFpm_eta_cent->AddText(Form("%d-%d%%",centBins[cbin],centBins[cbin+1]));
+        txv1HFpm_eta_cent->Draw();
 
-        cv1HFpm_pT[cbin]->cd(2);
-        TLegend * legv1HFpm_pT = new TLegend(0.07, 0.74, 0.28, 0.94);
-        SetLegend(legv1HFpm_pT, 18);
-        legv1HFpm_pT->AddEntry(v1p_pt[anal][cbin][0],"HF+","p");
-        legv1HFpm_pT->AddEntry(v1m_pt[anal][cbin][0],"HF-","p");
-        legv1HFpm_pT->Draw();
+        cv1HFpm_eta[cbin]->cd(2);
+        TLegend * legv1HFpm_eta = new TLegend(0.07, 0.74, 0.28, 0.94);
+        SetLegend(legv1HFpm_eta, 18);
+        legv1HFpm_eta->AddEntry(v1p_eta[anal][cbin][0],"HF+","p");
+        legv1HFpm_eta->AddEntry(v1m_eta[anal][cbin][0],"HF-","p");
+        legv1HFpm_eta->Draw();
 
-        cv1HFpm_pT[cbin]->Print(Form("plots/diffv1/diffv1_pT/v1_pm_pT_%s_cent%d-%d.png",AnalNames[anal].data(),centBins[cbin],centBins[cbin+1]),"png");
-        if (close_plots) cv1HFpm_pT[cbin]->Close();
+        cv1HFpm_eta[cbin]->Print(Form("plots/diffv1/diffv1_eta/diff%s/v1_pm_eta_%s_cent%d-%d.png",AnalNames[anal].data(),AnalNames[anal].data(),centBins[cbin],centBins[cbin+1]),"png");
+        if (close_plots) cv1HFpm_eta[cbin]->Close();
     }
 
 
 
-    // differential v1(pT) using HF+/- with all centralities on the same plot
+    // differential v1(eta) using HF+/- with all centralities on the same plot
 
-    TCanvas * cv1HFpm_pTCent;
-    TH1D * hv1HFpm_pTCent_tmp = new TH1D("hv1HFpm_pTCent_tmp", "", 40, 0, 12);
-    hv1HFpm_pTCent_tmp->SetTitle("");
-    hv1HFpm_pTCent_tmp->SetStats(0);
-    hv1HFpm_pTCent_tmp->SetXTitle("p_{T} (GeV/c)");
-    hv1HFpm_pTCent_tmp->SetYTitle("v_{1}");
-    hv1HFpm_pTCent_tmp->GetYaxis()->SetRangeUser(-0.26,0.26);
-    hv1HFpm_pTCent_tmp->SetNdivisions(509);
+    TCanvas * cv1HFpm_etaCent;
+    TH1D * hv1HFpm_etaCent_tmp = new TH1D("hv1HFpm_etaCent_tmp", "", 40, -2.5, 2.5);
+    hv1HFpm_etaCent_tmp->SetTitle("");
+    hv1HFpm_etaCent_tmp->SetStats(0);
+    hv1HFpm_etaCent_tmp->SetXTitle("#eta");
+    hv1HFpm_etaCent_tmp->SetYTitle("v_{1}");
+    hv1HFpm_etaCent_tmp->GetYaxis()->SetRangeUser(-0.26,0.26);
+    hv1HFpm_etaCent_tmp->SetNdivisions(509);
 
-    cv1HFpm_pTCent = new TCanvas("cv1HFpm_pTCent","cv1HFpm_pTCent",1100,850);
-    cv1HFpm_pTCent->Divide(4,3,0,0);
+    cv1HFpm_etaCent = new TCanvas("cv1HFpm_etaCent","cv1HFpm_etaCent",1100,850);
+    cv1HFpm_etaCent->Divide(4,3,0,0);
 
-    TLegend * legv1HFpm_pTCent_0 = new TLegend(0.23, 0.65, 0.45, 0.94);
-    SetLegend(legv1HFpm_pTCent_0, 16);
+    TLegend * legv1HFpm_etaCent_0 = new TLegend(0.23, 0.65, 0.45, 0.94);
+    SetLegend(legv1HFpm_etaCent_0, 16);
 
-    for (int ebin = 0; ebin<netabins; ebin++) {
-        TPad * padv1HFpm_pTCent = (TPad *) cv1HFpm_pTCent->cd(ebin+1);
-        if (gridlines) padv1HFpm_pTCent->SetGrid();
-        if (ebin == 3 || ebin == 7 || ebin == 11) padv1HFpm_pTCent->SetRightMargin(0.02);
-        TH1D * hv1HFpm_pTCent = (TH1D *) hv1HFpm_pTCent_tmp->Clone(Form("hv1HFpm_pTCent_%d",ebin));
-        if (ebin == 0 || ebin == 4) {
-            hv1HFpm_pTCent->GetYaxis()->CenterTitle();
-            hv1HFpm_pTCent->GetYaxis()->SetTitleSize(0.07);
-            hv1HFpm_pTCent->GetYaxis()->SetTitleOffset(1.34);
-            hv1HFpm_pTCent->GetYaxis()->SetLabelSize(0.06);
-        } else if (ebin == 8) {
-            hv1HFpm_pTCent->GetXaxis()->SetTitleSize(0.06);
-            hv1HFpm_pTCent->GetXaxis()->SetTitleOffset(1.14);
-            hv1HFpm_pTCent->GetYaxis()->CenterTitle();
-            hv1HFpm_pTCent->GetYaxis()->SetTitleSize(0.06);
-            hv1HFpm_pTCent->GetYaxis()->SetTitleOffset(1.48);
-            hv1HFpm_pTCent->GetYaxis()->SetLabelSize(0.05);
-        } else if (ebin>=9) {
-            hv1HFpm_pTCent->GetXaxis()->SetTitleSize(0.07);
-            hv1HFpm_pTCent->GetXaxis()->SetTitleOffset(1.00);
-            hv1HFpm_pTCent->GetXaxis()->SetLabelSize(0.06);
-            hv1HFpm_pTCent->GetXaxis()->SetLabelOffset(0.005);
+    for (int pbin = 0; pbin<netabins; pbin++) {
+        TPad * padv1HFpm_etaCent = (TPad *) cv1HFpm_etaCent->cd(pbin+1);
+        if (gridlines) padv1HFpm_etaCent->SetGrid();
+        if (pbin == 3 || pbin == 7 || pbin == 11) padv1HFpm_etaCent->SetRightMargin(0.02);
+        TH1D * hv1HFpm_etaCent = (TH1D *) hv1HFpm_etaCent_tmp->Clone(Form("hv1HFpm_etaCent_%d",pbin));
+        if (pbin == 0 || pbin == 4) {
+            hv1HFpm_etaCent->GetYaxis()->CenterTitle();
+            hv1HFpm_etaCent->GetYaxis()->SetTitleSize(0.07);
+            hv1HFpm_etaCent->GetYaxis()->SetTitleOffset(1.34);
+            hv1HFpm_etaCent->GetYaxis()->SetLabelSize(0.06);
+        } else if (pbin == 8) {
+            hv1HFpm_etaCent->GetXaxis()->SetTitleSize(0.06);
+            hv1HFpm_etaCent->GetXaxis()->SetTitleOffset(1.14);
+            hv1HFpm_etaCent->GetYaxis()->CenterTitle();
+            hv1HFpm_etaCent->GetYaxis()->SetTitleSize(0.06);
+            hv1HFpm_etaCent->GetYaxis()->SetTitleOffset(1.48);
+            hv1HFpm_etaCent->GetYaxis()->SetLabelSize(0.05);
+        } else if (pbin>=9) {
+            hv1HFpm_etaCent->GetXaxis()->SetTitleSize(0.07);
+            hv1HFpm_etaCent->GetXaxis()->SetTitleOffset(1.00);
+            hv1HFpm_etaCent->GetXaxis()->SetLabelSize(0.06);
+            hv1HFpm_etaCent->GetXaxis()->SetLabelOffset(0.005);
         }
-        hv1HFpm_pTCent->Draw();
-        TH1D * v1p_pt_tmp[ncentbins];
-        TH1D * v1m_pt_tmp[ncentbins];
+        hv1HFpm_etaCent->Draw();
+        TH1D * v1p_eta_tmp[ncentbins];
+        TH1D * v1m_eta_tmp[ncentbins];
         for (int cbin = 0; cbin<5; cbin++) {
-            v1p_pt_tmp[cbin] = (TH1D *) v1p_pt[anal][cbin][ebin]->Clone(Form("v1p_pt_tmp%d",cbin));
-            v1m_pt_tmp[cbin] = (TH1D *) v1m_pt[anal][cbin][ebin]->Clone(Form("v1m_pt_tmp%d",cbin));
-            v1p_pt_tmp[cbin]->SetMarkerStyle(centMarkerStyle[cbin]);
-            v1p_pt_tmp[cbin]->SetMarkerSize(centMarkerSize[cbin]);
-            v1m_pt_tmp[cbin]->SetMarkerStyle(centMarkerStyle[cbin]);
-            v1m_pt_tmp[cbin]->SetMarkerSize(centMarkerSize[cbin]);
-            v1p_pt_tmp[cbin]->Draw("same");
-            v1m_pt_tmp[cbin]->Draw("same");
-            if (ebin == 0) {
-                legv1HFpm_pTCent_0->AddEntry(v1m_pt_tmp[cbin],Form("%d-%d%%",centBins[cbin],centBins[cbin+1]),"p");
+            v1p_eta_tmp[cbin] = (TH1D *) v1p_eta[anal][cbin][pbin]->Clone(Form("v1p_eta_tmp%d",cbin));
+            v1m_eta_tmp[cbin] = (TH1D *) v1m_eta[anal][cbin][pbin]->Clone(Form("v1m_eta_tmp%d",cbin));
+            v1p_eta_tmp[cbin]->SetMarkerStyle(centMarkerStyle[cbin]);
+            v1p_eta_tmp[cbin]->SetMarkerSize(centMarkerSize[cbin]);
+            v1m_eta_tmp[cbin]->SetMarkerStyle(centMarkerStyle[cbin]);
+            v1m_eta_tmp[cbin]->SetMarkerSize(centMarkerSize[cbin]);
+            v1p_eta_tmp[cbin]->Draw("same");
+            v1m_eta_tmp[cbin]->Draw("same");
+            if (pbin == 0) {
+                legv1HFpm_etaCent_0->AddEntry(v1m_eta_tmp[cbin],Form("%d-%d%%",centBins[cbin],centBins[cbin+1]),"p");
             }
         }
 
-        TPaveText * txv1HFpm_pTCent;
-        if (ebin == 0 || ebin == 4) txv1HFpm_pTCent = new TPaveText(0.23, 0.05, 0.62, 0.15,"NDC");
-        else if (ebin == 8) txv1HFpm_pTCent = new TPaveText(0.23, 0.19, 0.62, 0.29,"NDC");
-        else if (ebin>=9) txv1HFpm_pTCent = new TPaveText(0.05, 0.19, 0.50, 0.29,"NDC");
-        else txv1HFpm_pTCent = new TPaveText(0.05, 0.05, 0.50, 0.15,"NDC");
-        SetTPaveTxt(txv1HFpm_pTCent, 18);
-        txv1HFpm_pTCent->AddText(Form("%0.1f < #eta < %0.1f",etabins[ebin],etabins[ebin+1]));
-        txv1HFpm_pTCent->Draw();
+        TPaveText * txv1HFpm_etaCent;
+        if (pbin == 0 || pbin == 4) txv1HFpm_etaCent = new TPaveText(0.23, 0.05, 0.62, 0.15,"NDC");
+        else if (pbin == 8) txv1HFpm_etaCent = new TPaveText(0.23, 0.19, 0.62, 0.29,"NDC");
+        else if (pbin>=9) txv1HFpm_etaCent = new TPaveText(0.05, 0.19, 0.50, 0.29,"NDC");
+        else txv1HFpm_etaCent = new TPaveText(0.05, 0.05, 0.50, 0.15,"NDC");
+        SetTPaveTxt(txv1HFpm_etaCent, 18);
+        txv1HFpm_etaCent->AddText(Form("%0.2f<p_{T}<%0.2f (GeV/c)",ptbins[pbin],ptbins[pbin+1]));
+        txv1HFpm_etaCent->Draw();
     }
 
-    cv1HFpm_pTCent->cd(1);
-    legv1HFpm_pTCent_0->Draw();
+    cv1HFpm_etaCent->cd(1);
+    legv1HFpm_etaCent_0->Draw();
 
-    cv1HFpm_pTCent->cd(2);
-    TLegend * legv1HFpm_pTCent_1 = new TLegend(0.07, 0.74, 0.28, 0.94);
-    SetLegend(legv1HFpm_pTCent_1, 18);
-    legv1HFpm_pTCent_1->AddEntry(v1p_pt[anal][0][0],"HF+","p");
-    legv1HFpm_pTCent_1->AddEntry(v1m_pt[anal][0][0],"HF-","p");
-    legv1HFpm_pTCent_1->Draw();
+    cv1HFpm_etaCent->cd(2);
+    TLegend * legv1HFpm_etaCent_1 = new TLegend(0.07, 0.74, 0.28, 0.94);
+    SetLegend(legv1HFpm_etaCent_1, 18);
+    legv1HFpm_etaCent_1->AddEntry(v1p_eta[anal][0][0],"HF+","p");
+    legv1HFpm_etaCent_1->AddEntry(v1m_eta[anal][0][0],"HF-","p");
+    legv1HFpm_etaCent_1->Draw();
 
-    cv1HFpm_pTCent->Print(Form("plots/diffv1/diffv1_pT/v1_pm_pT_CentScan_%s.png",AnalNames[anal].data()),"png");
-    if (close_plots) cv1HFpm_pTCent->Close();
+    cv1HFpm_etaCent->Print(Form("plots/diffv1/diffv1_eta/diff%s/v1_pm_eta_CentScan_%s.png",AnalNames[anal].data(),AnalNames[anal].data()),"png");
+    if (close_plots) cv1HFpm_etaCent->Close();
 
 
 
-    // differential v1(pT) using HF odd/even for each centrality bin
+    // differential v1(eta) using HF odd/even for each centrality bin
     anal = 7;
 
-    TCanvas * cv1HFoddeven_pT[ncentbins];
-    TH1D * hv1HFoddeven_pT_tmp = new TH1D("hv1HFoddeven_pT_tmp", "", 40, 0, 12);
-    hv1HFoddeven_pT_tmp->SetTitle("");
-    hv1HFoddeven_pT_tmp->SetStats(0);
-    hv1HFoddeven_pT_tmp->SetXTitle("p_{T} (GeV/c)");
-    hv1HFoddeven_pT_tmp->SetYTitle("v_{1}");
-    hv1HFoddeven_pT_tmp->GetYaxis()->SetRangeUser(-0.14,0.14);
-    hv1HFoddeven_pT_tmp->SetNdivisions(509);
+    TCanvas * cv1HFoddeven_eta[ncentbins];
+    TH1D * hv1HFoddeven_eta_tmp = new TH1D("hv1HFoddeven_eta_tmp", "", 40, -2.5, 2.5);
+    hv1HFoddeven_eta_tmp->SetTitle("");
+    hv1HFoddeven_eta_tmp->SetStats(0);
+    hv1HFoddeven_eta_tmp->SetXTitle("#eta");
+    hv1HFoddeven_eta_tmp->SetYTitle("v_{1}");
+    hv1HFoddeven_eta_tmp->GetYaxis()->SetRangeUser(-0.21, 0.21);
+    hv1HFoddeven_eta_tmp->SetNdivisions(509);
     for (int cbin = 0; cbin<ncentbins; cbin++) {
 
-        cv1HFoddeven_pT[cbin] = new TCanvas(Form("cv1HFoddeven_pT_cent%d-%d",centBins[cbin],centBins[cbin+1]),"cv1HFoddeven_pT",1100,850);
-        cv1HFoddeven_pT[cbin]->Divide(4,3,0,0);
+        cv1HFoddeven_eta[cbin] = new TCanvas(Form("cv1HFoddeven_eta_cent%d-%d",centBins[cbin],centBins[cbin+1]),"cv1HFoddeven_eta",1100,850);
+        cv1HFoddeven_eta[cbin]->Divide(4,3,0,0);
 
-        for (int ebin = 0; ebin<netabins; ebin++) {
-            TPad * padv1HFoddeven_pT = (TPad *) cv1HFoddeven_pT[cbin]->cd(ebin+1);
-            if (gridlines) padv1HFoddeven_pT->SetGrid();
-            if (ebin == 3 || ebin == 7 || ebin == 11) padv1HFoddeven_pT->SetRightMargin(0.02);
-            TH1D * hv1HFoddeven_pT = (TH1D *) hv1HFoddeven_pT_tmp->Clone(Form("hv1HFoddeven_pT_%c_%d",cbin,ebin));
-            hv1HFoddeven_pT->GetYaxis()->SetRangeUser(-0.14-0.06*cbin,0.14+0.06*cbin);
-            if (ebin == 0 || ebin == 4) {
-                hv1HFoddeven_pT->GetYaxis()->CenterTitle();
-                hv1HFoddeven_pT->GetYaxis()->SetTitleSize(0.07);
-                hv1HFoddeven_pT->GetYaxis()->SetTitleOffset(1.34);
-                hv1HFoddeven_pT->GetYaxis()->SetLabelSize(0.06);
-            } else if (ebin == 8) {
-                hv1HFoddeven_pT->GetXaxis()->SetTitleSize(0.06);
-                hv1HFoddeven_pT->GetXaxis()->SetTitleOffset(1.14);
-                hv1HFoddeven_pT->GetYaxis()->CenterTitle();
-                hv1HFoddeven_pT->GetYaxis()->SetTitleSize(0.06);
-                hv1HFoddeven_pT->GetYaxis()->SetTitleOffset(1.48);
-                hv1HFoddeven_pT->GetYaxis()->SetLabelSize(0.05);
-            } else if (ebin>=9) {
-                hv1HFoddeven_pT->GetXaxis()->SetTitleSize(0.07);
-                hv1HFoddeven_pT->GetXaxis()->SetTitleOffset(1.00);
-                hv1HFoddeven_pT->GetXaxis()->SetLabelSize(0.06);
-                hv1HFoddeven_pT->GetXaxis()->SetLabelOffset(0.005);
+        for (int pbin = 0; pbin<netabins; pbin++) {
+            TPad * padv1HFoddeven_eta = (TPad *) cv1HFoddeven_eta[cbin]->cd(pbin+1);
+            if (gridlines) padv1HFoddeven_eta->SetGrid();
+            if (pbin == 3 || pbin == 7 || pbin == 11) padv1HFoddeven_eta->SetRightMargin(0.02);
+            TH1D * hv1HFoddeven_eta = (TH1D *) hv1HFoddeven_eta_tmp->Clone(Form("hv1HFoddeven_eta_%c_%d",cbin,pbin));
+            // hv1HFoddeven_eta->GetYaxis()->SetRangeUser(-0.14-0.06*cbin,0.14+0.06*cbin);
+            if (pbin == 0 || pbin == 4) {
+                hv1HFoddeven_eta->GetYaxis()->CenterTitle();
+                hv1HFoddeven_eta->GetYaxis()->SetTitleSize(0.07);
+                hv1HFoddeven_eta->GetYaxis()->SetTitleOffset(1.34);
+                hv1HFoddeven_eta->GetYaxis()->SetLabelSize(0.06);
+            } else if (pbin == 8) {
+                hv1HFoddeven_eta->GetXaxis()->SetTitleSize(0.06);
+                hv1HFoddeven_eta->GetXaxis()->SetTitleOffset(1.14);
+                hv1HFoddeven_eta->GetYaxis()->CenterTitle();
+                hv1HFoddeven_eta->GetYaxis()->SetTitleSize(0.06);
+                hv1HFoddeven_eta->GetYaxis()->SetTitleOffset(1.48);
+                hv1HFoddeven_eta->GetYaxis()->SetLabelSize(0.05);
+            } else if (pbin>=9) {
+                hv1HFoddeven_eta->GetXaxis()->SetTitleSize(0.07);
+                hv1HFoddeven_eta->GetXaxis()->SetTitleOffset(1.00);
+                hv1HFoddeven_eta->GetXaxis()->SetLabelSize(0.06);
+                hv1HFoddeven_eta->GetXaxis()->SetLabelOffset(0.005);
             }
-            hv1HFoddeven_pT->Draw();
-            v1odd_pt[anal][cbin][ebin]->Draw("same");
-            v1even_pt[anal][cbin][ebin]->Draw("same");
+            hv1HFoddeven_eta->Draw();
+            v1odd_eta[anal][cbin][pbin]->Draw("same");
+            v1even_eta[anal][cbin][pbin]->Draw("same");
 
-            TPaveText * txv1HFoddeven_pT;
-            if (ebin == 0 || ebin == 4) txv1HFoddeven_pT = new TPaveText(0.23, 0.05, 0.62, 0.15,"NDC");
-            else if (ebin == 8) txv1HFoddeven_pT = new TPaveText(0.23, 0.19, 0.62, 0.29,"NDC");
-            else if (ebin>=9) txv1HFoddeven_pT = new TPaveText(0.05, 0.19, 0.50, 0.29,"NDC");
-            else txv1HFoddeven_pT = new TPaveText(0.05, 0.05, 0.50, 0.15,"NDC");
-            SetTPaveTxt(txv1HFoddeven_pT, 18);
-            txv1HFoddeven_pT->AddText(Form("%0.1f < #eta < %0.1f",etabins[ebin],etabins[ebin+1]));
-            txv1HFoddeven_pT->Draw();
+            TPaveText * txv1HFoddeven_eta;
+            if (pbin == 0 || pbin == 4) txv1HFoddeven_eta = new TPaveText(0.23, 0.05, 0.62, 0.15,"NDC");
+            else if (pbin == 8) txv1HFoddeven_eta = new TPaveText(0.23, 0.19, 0.62, 0.29,"NDC");
+            else if (pbin>=9) txv1HFoddeven_eta = new TPaveText(0.05, 0.19, 0.50, 0.29,"NDC");
+            else txv1HFoddeven_eta = new TPaveText(0.05, 0.05, 0.50, 0.15,"NDC");
+            SetTPaveTxt(txv1HFoddeven_eta, 18);
+            txv1HFoddeven_eta->AddText(Form("%0.2f<p_{T}<%0.2f (GeV/c)",ptbins[pbin],ptbins[pbin+1]));
+            txv1HFoddeven_eta->Draw();
         }
-        cv1HFoddeven_pT[cbin]->cd(1);
-        TPaveText * txv1HFoddeven_pT_cent = new TPaveText(0.24, 0.84, 0.38, 0.95,"NDC");
-        SetTPaveTxt(txv1HFoddeven_pT_cent, 18);
-        txv1HFoddeven_pT_cent->AddText(Form("%d-%d%%",centBins[cbin],centBins[cbin+1]));
-        txv1HFoddeven_pT_cent->Draw();
+        cv1HFoddeven_eta[cbin]->cd(1);
+        TPaveText * txv1HFoddeven_eta_cent = new TPaveText(0.24, 0.84, 0.38, 0.95,"NDC");
+        SetTPaveTxt(txv1HFoddeven_eta_cent, 18);
+        txv1HFoddeven_eta_cent->AddText(Form("%d-%d%%",centBins[cbin],centBins[cbin+1]));
+        txv1HFoddeven_eta_cent->Draw();
 
-        cv1HFoddeven_pT[cbin]->cd(2);
-        TLegend * legv1HFoddeven_pT = new TLegend(0.07, 0.74, 0.28, 0.94);
-        SetLegend(legv1HFoddeven_pT, 18);
-        legv1HFoddeven_pT->AddEntry(v1odd_pt[anal][cbin][0],"v_{1}^{odd}","p");
-        legv1HFoddeven_pT->AddEntry(v1even_pt[anal][cbin][0],"v_{1}^{even}","p");
-        legv1HFoddeven_pT->Draw();
+        cv1HFoddeven_eta[cbin]->cd(2);
+        TLegend * legv1HFoddeven_eta = new TLegend(0.07, 0.74, 0.28, 0.94);
+        SetLegend(legv1HFoddeven_eta, 18);
+        legv1HFoddeven_eta->AddEntry(v1odd_eta[anal][cbin][0],"v_{1}^{odd}","p");
+        legv1HFoddeven_eta->AddEntry(v1even_eta[anal][cbin][0],"v_{1}^{even}","p");
+        legv1HFoddeven_eta->Draw();
 
-        cv1HFoddeven_pT[cbin]->Print(Form("plots/diffv1/diffv1_pT/v1_oddeven_pT_%s_cent%d-%d.png",AnalNames[anal].data(),centBins[cbin],centBins[cbin+1]),"png");
-        if (close_plots) cv1HFoddeven_pT[cbin]->Close();
+        cv1HFoddeven_eta[cbin]->Print(Form("plots/diffv1/diffv1_eta/diff%s/v1_oddeven_eta_%s_cent%d-%d.png",AnalNames[anal].data(),AnalNames[anal].data(),centBins[cbin],centBins[cbin+1]),"png");
+        if (close_plots) cv1HFoddeven_eta[cbin]->Close();
     }
 
 
 
-    // differential v1(pT) using HF odd/even with all centralities on the same plot
+    // differential v1(eta) using HF odd/even with all centralities on the same plot
 
-    TCanvas * cv1HFoddeven_pTCent;
-    TH1D * hv1HFoddeven_pTCent_tmp = new TH1D("hv1HFoddeven_pTCent_tmp", "", 40, 0, 12);
-    hv1HFoddeven_pTCent_tmp->SetTitle("");
-    hv1HFoddeven_pTCent_tmp->SetStats(0);
-    hv1HFoddeven_pTCent_tmp->SetXTitle("p_{T} (GeV/c)");
-    hv1HFoddeven_pTCent_tmp->SetYTitle("v_{1}");
-    hv1HFoddeven_pTCent_tmp->GetYaxis()->SetRangeUser(-0.2,0.2);
-    hv1HFoddeven_pTCent_tmp->SetNdivisions(509);
+    TCanvas * cv1HFoddeven_etaCent;
+    TH1D * hv1HFoddeven_etaCent_tmp = new TH1D("hv1HFoddeven_etaCent_tmp", "", 40, -2.5, 2.5);
+    hv1HFoddeven_etaCent_tmp->SetTitle("");
+    hv1HFoddeven_etaCent_tmp->SetStats(0);
+    hv1HFoddeven_etaCent_tmp->SetXTitle("#eta");
+    hv1HFoddeven_etaCent_tmp->SetYTitle("v_{1}");
+    hv1HFoddeven_etaCent_tmp->GetYaxis()->SetRangeUser(-0.16, 0.16);
+    hv1HFoddeven_etaCent_tmp->SetNdivisions(509);
 
-    cv1HFoddeven_pTCent = new TCanvas("cv1HFoddeven_pTCent","cv1HFoddeven_pTCent",1100,850);
-    cv1HFoddeven_pTCent->Divide(4,3,0,0);
+    cv1HFoddeven_etaCent = new TCanvas("cv1HFoddeven_etaCent","cv1HFoddeven_etaCent",1100,850);
+    cv1HFoddeven_etaCent->Divide(4,3,0,0);
 
-    TLegend * legv1HFoddeven_pTCent_0 = new TLegend(0.23, 0.65, 0.45, 0.94);
-    SetLegend(legv1HFoddeven_pTCent_0, 16);
+    TLegend * legv1HFoddeven_etaCent_0 = new TLegend(0.23, 0.65, 0.45, 0.94);
+    SetLegend(legv1HFoddeven_etaCent_0, 16);
 
-    for (int ebin = 0; ebin<netabins; ebin++) {
-        TPad * padv1HFoddeven_pTCent = (TPad *) cv1HFoddeven_pTCent->cd(ebin+1);
-        if (gridlines) padv1HFoddeven_pTCent->SetGrid();
-        if (ebin == 3 || ebin == 7 || ebin == 11) padv1HFoddeven_pTCent->SetRightMargin(0.02);
-        TH1D * hv1HFoddeven_pTCent = (TH1D *) hv1HFoddeven_pTCent_tmp->Clone(Form("hv1HFoddeven_pTCent_%d",ebin));
-        if (ebin == 0 || ebin == 4) {
-            hv1HFoddeven_pTCent->GetYaxis()->CenterTitle();
-            hv1HFoddeven_pTCent->GetYaxis()->SetTitleSize(0.07);
-            hv1HFoddeven_pTCent->GetYaxis()->SetTitleOffset(1.34);
-            hv1HFoddeven_pTCent->GetYaxis()->SetLabelSize(0.06);
-        } else if (ebin == 8) {
-            hv1HFoddeven_pTCent->GetXaxis()->SetTitleSize(0.06);
-            hv1HFoddeven_pTCent->GetXaxis()->SetTitleOffset(1.14);
-            hv1HFoddeven_pTCent->GetYaxis()->CenterTitle();
-            hv1HFoddeven_pTCent->GetYaxis()->SetTitleSize(0.06);
-            hv1HFoddeven_pTCent->GetYaxis()->SetTitleOffset(1.48);
-            hv1HFoddeven_pTCent->GetYaxis()->SetLabelSize(0.05);
-        } else if (ebin>=9) {
-            hv1HFoddeven_pTCent->GetXaxis()->SetTitleSize(0.07);
-            hv1HFoddeven_pTCent->GetXaxis()->SetTitleOffset(1.00);
-            hv1HFoddeven_pTCent->GetXaxis()->SetLabelSize(0.06);
-            hv1HFoddeven_pTCent->GetXaxis()->SetLabelOffset(0.005);
+    for (int pbin = 0; pbin<netabins; pbin++) {
+        TPad * padv1HFoddeven_etaCent = (TPad *) cv1HFoddeven_etaCent->cd(pbin+1);
+        if (gridlines) padv1HFoddeven_etaCent->SetGrid();
+        if (pbin == 3 || pbin == 7 || pbin == 11) padv1HFoddeven_etaCent->SetRightMargin(0.02);
+        TH1D * hv1HFoddeven_etaCent = (TH1D *) hv1HFoddeven_etaCent_tmp->Clone(Form("hv1HFoddeven_etaCent_%d",pbin));
+        if (pbin == 0 || pbin == 4) {
+            hv1HFoddeven_etaCent->GetYaxis()->CenterTitle();
+            hv1HFoddeven_etaCent->GetYaxis()->SetTitleSize(0.07);
+            hv1HFoddeven_etaCent->GetYaxis()->SetTitleOffset(1.34);
+            hv1HFoddeven_etaCent->GetYaxis()->SetLabelSize(0.06);
+        } else if (pbin == 8) {
+            hv1HFoddeven_etaCent->GetXaxis()->SetTitleSize(0.06);
+            hv1HFoddeven_etaCent->GetXaxis()->SetTitleOffset(1.14);
+            hv1HFoddeven_etaCent->GetYaxis()->CenterTitle();
+            hv1HFoddeven_etaCent->GetYaxis()->SetTitleSize(0.06);
+            hv1HFoddeven_etaCent->GetYaxis()->SetTitleOffset(1.48);
+            hv1HFoddeven_etaCent->GetYaxis()->SetLabelSize(0.05);
+        } else if (pbin>=9) {
+            hv1HFoddeven_etaCent->GetXaxis()->SetTitleSize(0.07);
+            hv1HFoddeven_etaCent->GetXaxis()->SetTitleOffset(1.00);
+            hv1HFoddeven_etaCent->GetXaxis()->SetLabelSize(0.06);
+            hv1HFoddeven_etaCent->GetXaxis()->SetLabelOffset(0.005);
         }
-        hv1HFoddeven_pTCent->Draw();
-        TH1D * v1odd_pt_tmp[ncentbins];
-        TH1D * v1even_pt_tmp[ncentbins];
+        hv1HFoddeven_etaCent->Draw();
+        TH1D * v1odd_eta_tmp[ncentbins];
+        TH1D * v1even_eta_tmp[ncentbins];
         for (int cbin = 0; cbin<5; cbin++) {
-            v1odd_pt_tmp[cbin] = (TH1D *) v1odd_pt[anal][cbin][ebin]->Clone(Form("v1odd_pt_tmp%d",cbin));
-            v1even_pt_tmp[cbin] = (TH1D *) v1even_pt[anal][cbin][ebin]->Clone(Form("v1even_pt_tmp%d",cbin));
-            v1odd_pt_tmp[cbin]->SetMarkerStyle(centMarkerStyle[cbin]);
-            v1odd_pt_tmp[cbin]->SetMarkerSize(centMarkerSize[cbin]);
-            v1even_pt_tmp[cbin]->SetMarkerStyle(centMarkerStyle[cbin]);
-            v1even_pt_tmp[cbin]->SetMarkerSize(centMarkerSize[cbin]);
-            v1odd_pt_tmp[cbin]->Draw("same");
-            v1even_pt_tmp[cbin]->Draw("same");
-            if (ebin == 0) {
-                legv1HFoddeven_pTCent_0->AddEntry(v1even_pt_tmp[cbin],Form("%d-%d%%",centBins[cbin],centBins[cbin+1]),"p");
+            v1odd_eta_tmp[cbin] = (TH1D *) v1odd_eta[anal][cbin][pbin]->Clone(Form("v1odd_eta_tmp%d",cbin));
+            v1even_eta_tmp[cbin] = (TH1D *) v1even_eta[anal][cbin][pbin]->Clone(Form("v1even_eta_tmp%d",cbin));
+            v1odd_eta_tmp[cbin]->SetMarkerStyle(centMarkerStyle[cbin]);
+            v1odd_eta_tmp[cbin]->SetMarkerSize(centMarkerSize[cbin]);
+            v1even_eta_tmp[cbin]->SetMarkerStyle(centMarkerStyle[cbin]);
+            v1even_eta_tmp[cbin]->SetMarkerSize(centMarkerSize[cbin]);
+            v1odd_eta_tmp[cbin]->Draw("same");
+            v1even_eta_tmp[cbin]->Draw("same");
+            if (pbin == 0) {
+                legv1HFoddeven_etaCent_0->AddEntry(v1even_eta_tmp[cbin],Form("%d-%d%%",centBins[cbin],centBins[cbin+1]),"p");
             }
         }
 
-        TPaveText * txv1HFoddeven_pTCent;
-        if (ebin == 0 || ebin == 4) txv1HFoddeven_pTCent = new TPaveText(0.23, 0.05, 0.62, 0.15,"NDC");
-        else if (ebin == 8) txv1HFoddeven_pTCent = new TPaveText(0.23, 0.19, 0.62, 0.29,"NDC");
-        else if (ebin>=9) txv1HFoddeven_pTCent = new TPaveText(0.05, 0.19, 0.50, 0.29,"NDC");
-        else txv1HFoddeven_pTCent = new TPaveText(0.05, 0.05, 0.50, 0.15,"NDC");
-        SetTPaveTxt(txv1HFoddeven_pTCent, 18);
-        txv1HFoddeven_pTCent->AddText(Form("%0.1f < #eta < %0.1f",etabins[ebin],etabins[ebin+1]));
-        txv1HFoddeven_pTCent->Draw();
+        TPaveText * txv1HFoddeven_etaCent;
+        if (pbin == 0 || pbin == 4) txv1HFoddeven_etaCent = new TPaveText(0.23, 0.05, 0.62, 0.15,"NDC");
+        else if (pbin == 8) txv1HFoddeven_etaCent = new TPaveText(0.23, 0.19, 0.62, 0.29,"NDC");
+        else if (pbin>=9) txv1HFoddeven_etaCent = new TPaveText(0.05, 0.19, 0.50, 0.29,"NDC");
+        else txv1HFoddeven_etaCent = new TPaveText(0.05, 0.05, 0.50, 0.15,"NDC");
+        SetTPaveTxt(txv1HFoddeven_etaCent, 18);
+        txv1HFoddeven_etaCent->AddText(Form("%0.2f<p_{T}<%0.2f (GeV/c)",ptbins[pbin],ptbins[pbin+1]));
+        txv1HFoddeven_etaCent->Draw();
     }
 
-    cv1HFoddeven_pTCent->cd(1);
-    legv1HFoddeven_pTCent_0->Draw();
+    cv1HFoddeven_etaCent->cd(1);
+    legv1HFoddeven_etaCent_0->Draw();
 
-    cv1HFoddeven_pTCent->cd(2);
-    TLegend * legv1HFoddeven_pTCent_1 = new TLegend(0.07, 0.74, 0.28, 0.94);
-    SetLegend(legv1HFoddeven_pTCent_1, 18);
-    legv1HFoddeven_pTCent_1->AddEntry(v1odd_pt[anal][0][0],"v_{1}^{odd}","p");
-    legv1HFoddeven_pTCent_1->AddEntry(v1even_pt[anal][0][0],"v_{1}^{even}","p");
-    legv1HFoddeven_pTCent_1->Draw();
+    cv1HFoddeven_etaCent->cd(2);
+    TLegend * legv1HFoddeven_etaCent_1 = new TLegend(0.07, 0.74, 0.28, 0.94);
+    SetLegend(legv1HFoddeven_etaCent_1, 18);
+    legv1HFoddeven_etaCent_1->AddEntry(v1odd_eta[anal][0][0],"v_{1}^{odd}","p");
+    legv1HFoddeven_etaCent_1->AddEntry(v1even_eta[anal][0][0],"v_{1}^{even}","p");
+    legv1HFoddeven_etaCent_1->Draw();
 
-    cv1HFoddeven_pTCent->Print(Form("plots/diffv1/diffv1_pT/v1_oddeven_pT_CentScan_%s.png",AnalNames[anal].data()),"png");
-    if (close_plots) cv1HFoddeven_pTCent->Close();
+    cv1HFoddeven_etaCent->Print(Form("plots/diffv1/diffv1_eta/diff%s/v1_oddeven_eta_CentScan_%s.png",AnalNames[anal].data(),AnalNames[anal].data()),"png");
+    if (close_plots) cv1HFoddeven_etaCent->Close();
 
 
 
-    // differential v1(pT) using tracker+/- for each centrality bin
+    // differential v1(eta) using tracker+/- for each centrality bin
     anal = 15;
+    if (!fopen(Form("plots/diffv1/diffv1_eta/diff%s",AnalNames[anal].data()),"r")) system(Form("mkdir plots/diffv1/diffv1_eta/diff%s",AnalNames[anal].data()));
 
-    TCanvas * cv1Trackpm_pT[ncentbins];
-    TH1D * hv1Trackpm_pT_tmp = new TH1D("hv1Trackpm_pT_tmp", "", 40, 0, 12);
-    hv1Trackpm_pT_tmp->SetTitle("");
-    hv1Trackpm_pT_tmp->SetStats(0);
-    hv1Trackpm_pT_tmp->SetXTitle("p_{T} (GeV/c)");
-    hv1Trackpm_pT_tmp->SetYTitle("v_{1}");
-    hv1Trackpm_pT_tmp->GetYaxis()->SetRangeUser(-0.05, 0.15);
-    hv1Trackpm_pT_tmp->SetNdivisions(509);
+    TCanvas * cv1Trackpm_eta[ncentbins];
+    TH1D * hv1Trackpm_eta_tmp = new TH1D("hv1Trackpm_eta_tmp", "", 40, -2.5, 2.5);
+    hv1Trackpm_eta_tmp->SetTitle("");
+    hv1Trackpm_eta_tmp->SetStats(0);
+    hv1Trackpm_eta_tmp->SetXTitle("#eta");
+    hv1Trackpm_eta_tmp->SetYTitle("v_{1}");
+    hv1Trackpm_eta_tmp->GetYaxis()->SetRangeUser(-0.1, 0.2);
+    hv1Trackpm_eta_tmp->SetNdivisions(509);
     for (int cbin = 0; cbin<ncentbins; cbin++) {
 
-        cv1Trackpm_pT[cbin] = new TCanvas(Form("cv1Trackpm_pT_cent%d-%d",centBins[cbin],centBins[cbin+1]),"cv1Trackpm_pT",1000,800);
-        cv1Trackpm_pT[cbin]->Divide(4,3,0,0);
+        cv1Trackpm_eta[cbin] = new TCanvas(Form("cv1Trackpm_eta_cent%d-%d",centBins[cbin],centBins[cbin+1]),"cv1Trackpm_eta",1000,800);
+        cv1Trackpm_eta[cbin]->Divide(4,3,0,0);
 
-        for (int ebin = 0; ebin<netabins; ebin++) {
-            TPad * padv1Trackpm_pT = (TPad *) cv1Trackpm_pT[cbin]->cd(ebin+1);
-            if (gridlines) padv1Trackpm_pT->SetGrid();
-            if (ebin == 3 || ebin == 7 || ebin == 11) padv1Trackpm_pT->SetRightMargin(0.02);
-            TH1D * hv1Trackpm_pT = (TH1D *) hv1Trackpm_pT_tmp->Clone(Form("hv1Trackpm_pT_%c_%d",cbin,ebin));
-            hv1Trackpm_pT->GetYaxis()->SetRangeUser(-0.05-0.03, 0.15+0.03*cbin);
-            if (ebin == 0 || ebin == 4) {
-                hv1Trackpm_pT->GetYaxis()->CenterTitle();
-                hv1Trackpm_pT->GetYaxis()->SetTitleSize(0.07);
-                hv1Trackpm_pT->GetYaxis()->SetTitleOffset(1.34);
-                hv1Trackpm_pT->GetYaxis()->SetLabelSize(0.06);
-            } else if (ebin == 8) {
-                hv1Trackpm_pT->GetXaxis()->SetTitleSize(0.06);
-                hv1Trackpm_pT->GetXaxis()->SetTitleOffset(1.14);
-                hv1Trackpm_pT->GetYaxis()->CenterTitle();
-                hv1Trackpm_pT->GetYaxis()->SetTitleSize(0.06);
-                hv1Trackpm_pT->GetYaxis()->SetTitleOffset(1.48);
-                hv1Trackpm_pT->GetYaxis()->SetLabelSize(0.05);
-            } else if (ebin>=9) {
-                hv1Trackpm_pT->GetXaxis()->SetTitleSize(0.07);
-                hv1Trackpm_pT->GetXaxis()->SetTitleOffset(1.00);
-                hv1Trackpm_pT->GetXaxis()->SetLabelSize(0.06);
-                hv1Trackpm_pT->GetXaxis()->SetLabelOffset(0.005);
+        for (int pbin = 0; pbin<netabins; pbin++) {
+            TPad * padv1Trackpm_eta = (TPad *) cv1Trackpm_eta[cbin]->cd(pbin+1);
+            if (gridlines) padv1Trackpm_eta->SetGrid();
+            if (pbin == 3 || pbin == 7 || pbin == 11) padv1Trackpm_eta->SetRightMargin(0.02);
+            TH1D * hv1Trackpm_eta = (TH1D *) hv1Trackpm_eta_tmp->Clone(Form("hv1Trackpm_eta_%c_%d",cbin,pbin));
+            // hv1Trackpm_eta->GetYaxis()->SetRangeUser(-0.05-0.03, 0.15+0.03*cbin);
+            if (pbin == 0 || pbin == 4) {
+                hv1Trackpm_eta->GetYaxis()->CenterTitle();
+                hv1Trackpm_eta->GetYaxis()->SetTitleSize(0.07);
+                hv1Trackpm_eta->GetYaxis()->SetTitleOffset(1.34);
+                hv1Trackpm_eta->GetYaxis()->SetLabelSize(0.06);
+            } else if (pbin == 8) {
+                hv1Trackpm_eta->GetXaxis()->SetTitleSize(0.06);
+                hv1Trackpm_eta->GetXaxis()->SetTitleOffset(1.14);
+                hv1Trackpm_eta->GetYaxis()->CenterTitle();
+                hv1Trackpm_eta->GetYaxis()->SetTitleSize(0.06);
+                hv1Trackpm_eta->GetYaxis()->SetTitleOffset(1.48);
+                hv1Trackpm_eta->GetYaxis()->SetLabelSize(0.05);
+            } else if (pbin>=9) {
+                hv1Trackpm_eta->GetXaxis()->SetTitleSize(0.07);
+                hv1Trackpm_eta->GetXaxis()->SetTitleOffset(1.00);
+                hv1Trackpm_eta->GetXaxis()->SetLabelSize(0.06);
+                hv1Trackpm_eta->GetXaxis()->SetLabelOffset(0.005);
             }
-            hv1Trackpm_pT->Draw();
-            v1p_pt[anal][cbin][ebin]->Draw("same");
-            v1m_pt[anal][cbin][ebin]->Draw("same");
+            hv1Trackpm_eta->Draw();
+            v1p_eta[anal][cbin][pbin]->Draw("same");
+            v1m_eta[anal][cbin][pbin]->Draw("same");
 
-            TPaveText * txv1Trackpm_pT;
-            if (ebin == 0 || ebin == 4) txv1Trackpm_pT = new TPaveText(0.23, 0.05, 0.62, 0.15,"NDC");
-            else if (ebin == 8) txv1Trackpm_pT = new TPaveText(0.23, 0.19, 0.62, 0.29,"NDC");
-            else if (ebin>=9) txv1Trackpm_pT = new TPaveText(0.05, 0.19, 0.50, 0.29,"NDC");
-            else txv1Trackpm_pT = new TPaveText(0.05, 0.05, 0.50, 0.15,"NDC");
-            SetTPaveTxt(txv1Trackpm_pT, 18);
-            txv1Trackpm_pT->AddText(Form("%0.1f < #eta < %0.1f",etabins[ebin],etabins[ebin+1]));
-            txv1Trackpm_pT->Draw();
+            TPaveText * txv1Trackpm_eta;
+            if (pbin == 0 || pbin == 4) txv1Trackpm_eta = new TPaveText(0.23, 0.05, 0.62, 0.15,"NDC");
+            else if (pbin == 8) txv1Trackpm_eta = new TPaveText(0.23, 0.19, 0.62, 0.29,"NDC");
+            else if (pbin>=9) txv1Trackpm_eta = new TPaveText(0.05, 0.19, 0.50, 0.29,"NDC");
+            else txv1Trackpm_eta = new TPaveText(0.05, 0.05, 0.50, 0.15,"NDC");
+            SetTPaveTxt(txv1Trackpm_eta, 18);
+            txv1Trackpm_eta->AddText(Form("%0.2f<p_{T}<%0.2f (GeV/c)",ptbins[pbin],ptbins[pbin+1]));
+            txv1Trackpm_eta->Draw();
         }
-        cv1Trackpm_pT[cbin]->cd(1);
-        TPaveText * txv1Trackpm_pT_cent = new TPaveText(0.24, 0.84, 0.38, 0.95,"NDC");
-        SetTPaveTxt(txv1Trackpm_pT_cent, 18);
-        txv1Trackpm_pT_cent->AddText(Form("%d-%d%%",centBins[cbin],centBins[cbin+1]));
-        txv1Trackpm_pT_cent->Draw();
+        cv1Trackpm_eta[cbin]->cd(1);
+        TPaveText * txv1Trackpm_eta_cent = new TPaveText(0.24, 0.84, 0.38, 0.95,"NDC");
+        SetTPaveTxt(txv1Trackpm_eta_cent, 18);
+        txv1Trackpm_eta_cent->AddText(Form("%d-%d%%",centBins[cbin],centBins[cbin+1]));
+        txv1Trackpm_eta_cent->Draw();
 
-        cv1Trackpm_pT[cbin]->cd(2);
-        TLegend * legv1Trackpm_pT = new TLegend(0.07, 0.74, 0.28, 0.94);
-        SetLegend(legv1Trackpm_pT, 18);
-        legv1Trackpm_pT->AddEntry(v1p_pt[anal][cbin][0],"Track+","p");
-        legv1Trackpm_pT->AddEntry(v1m_pt[anal][cbin][0],"Track-","p");
-        legv1Trackpm_pT->Draw();
+        cv1Trackpm_eta[cbin]->cd(2);
+        TLegend * legv1Trackpm_eta = new TLegend(0.07, 0.74, 0.28, 0.94);
+        SetLegend(legv1Trackpm_eta, 18);
+        legv1Trackpm_eta->AddEntry(v1p_eta[anal][cbin][0],"Track+","p");
+        legv1Trackpm_eta->AddEntry(v1m_eta[anal][cbin][0],"Track-","p");
+        legv1Trackpm_eta->Draw();
 
-        cv1Trackpm_pT[cbin]->Print(Form("plots/diffv1/diffv1_pT/v1_pm_pT_%s_cent%d-%d.png",AnalNames[anal].data(),centBins[cbin],centBins[cbin+1]),"png");
-        if (close_plots) cv1Trackpm_pT[cbin]->Close();
+        cv1Trackpm_eta[cbin]->Print(Form("plots/diffv1/diffv1_eta/diff%s/v1_pm_eta_%s_cent%d-%d.png",AnalNames[anal].data(),AnalNames[anal].data(),centBins[cbin],centBins[cbin+1]),"png");
+        if (close_plots) cv1Trackpm_eta[cbin]->Close();
     }
-
-
-
 
 
 }

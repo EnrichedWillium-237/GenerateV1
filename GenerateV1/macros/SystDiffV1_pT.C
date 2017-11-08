@@ -53,16 +53,11 @@ TH1D * ratiov1pm_pT[nanals][ncentbins][netabins];
 TH1D * ratiov1odd_pT[nanals][ncentbins][netabins/2];
 TH1D * ratiov1even_pT[nanals][ncentbins][netabins/2];
 
-// absolute differences
-TH1D * absDiffv1pm_pT[nanals][ncentbins][netabins/2];
-TH1D * absDiffv1odd_pT[nanals][ncentbins][netabins/2];
-TH1D * absDiffv1even_pT[nanals][ncentbins][netabins/2];
-
 TH1D * runParms[nanals];
 
 TFile * tfin;
 
-void diffV1_pT_Syst()
+void SystDiffV1_pT()
 {
 
     TH1::SetDefaultSumw2();
@@ -85,16 +80,6 @@ void diffV1_pT_Syst()
             for (int ebin = 0; ebin<netabins; ebin++) {
                 ratiov1pm_pT[i][cbin][ebin] = (TH1D *) v1p_pt[i][cbin][ebin]->Clone(Form("ratiov1pm_pT_%s_%d_%d",AnalNames[i].data(),cbin,ebin));
                 ratiov1pm_pT[i][cbin][ebin]->Divide(v1m_pt[i][cbin][netabins-ebin-1]);
-
-                absDiffv1HFpm_pT[i][cbin][ebin] = new TH1D(Form("absDiffv1HFpm_pT",AnalNames[i].data(),cbin,ebin), "", nptbins, ptbins);
-                for (int j = 0; j<nptbins; j++) {
-                    double v1pos = v1p_pt[i][cbin][ebin]->GetBinContent(j+1);
-                    double v1neg = v1m_pt[i][cbin][ebin]->GetBinContent(j+1);
-                    double v1pos_err = v1p_pt[i][cbin][ebin]->GetBinError(j+1);
-                    double v1neg_err = v1m_pt[i][cbin][ebin]->GetBinError(j+1);
-                    double v1diff = fabs(v1pos - v1neg)/2.;
-
-                }
             }
             for (int ebin = 0; ebin<netabins/2; ebin++) {
                 ratiov1odd_pT[i][cbin][ebin] = (TH1D *) v1odd_pt[i][cbin][netabins/2+ebin]->Clone(Form("ratiov1odd_pT_%s_%d_%d",AnalNames[i].data(),cbin,ebin));
@@ -102,9 +87,6 @@ void diffV1_pT_Syst()
 
                 ratiov1even_pT[i][cbin][ebin] = (TH1D *) v1even_pt[i][cbin][netabins/2+ebin]->Clone(Form("ratiov1even_pT_%s_%d_%d",AnalNames[i].data(),cbin,ebin));
                 ratiov1even_pT[i][cbin][ebin]->Divide(v1even_pt[i][cbin][netabins/2-ebin-1]);
-
-                // absDiffv1HFodd_pT[i][c][ebin];
-                // absDiffv1HFeven_pT[i][c][ebin];
             }
         }
     }
@@ -142,9 +124,11 @@ void diffV1_pT_Syst()
     int centMarkerStyle[] = {21, 24, 20, 25, 33, 27, 34, 28};
     float centMarkerSize[] = {1.1, 1.2, 1.2, 1.1, 1.7, 1.7, 1.5};
 
+    int anal; // choice of analysis
 
     // differential v1(pT) using HF+/- for each centrality bin
-    int anal = 7;
+    anal = 7;
+    if (!fopen(Form("plots/diffv1/diffv1_pT/diff%s",AnalNames[anal].data()),"r")) system(Form("mkdir plots/diffv1/diffv1_pT/diff%s",AnalNames[anal].data()));
 
     TCanvas * cratiov1HFpm_pT[ncentbins];
     TH2D * hratiov1HFpm_pT_tmp = new TH2D("hratiov1HFpm_pT_tmp", "", 40, 0, 12, 40, -10, 10);
@@ -212,14 +196,13 @@ void diffV1_pT_Syst()
         txratiov1HFpm_pT_1->AddText("#frac{|v_{1}^{HF+}(#eta)|}{|v_{1}^{HF-}(-#eta)|}");
         txratiov1HFpm_pT_1->Draw();
 
-        cratiov1HFpm_pT[cbin]->Print(Form("plots/diffv1/diffv1_pT/ratio_v1_pm_pT_%s_cent%d-%d.png",AnalNames[anal].data(),centBins[cbin],centBins[cbin+1]),"png");
+        cratiov1HFpm_pT[cbin]->Print(Form("plots/diffv1/diffv1_pT/diff%s/ratio_v1_pm_pT_%s_cent%d-%d.png",AnalNames[anal].data(),AnalNames[anal].data(),centBins[cbin],centBins[cbin+1]),"png");
         if (close_plots) cratiov1HFpm_pT[cbin]->Close();
     }
 
 
 
     // differential v1^odd(pT) for each centrality bin
-    anal = 7;
 
     TCanvas * cratiov1HFodd_pT[ncentbins];
     TH2D * hratiov1HFodd_pT_tmp = new TH2D("hratiov1HFodd_pT_tmp", "", 40, 0, 12, 40, -10, 10);
@@ -284,14 +267,13 @@ void diffV1_pT_Syst()
         txratiov1HFodd_pT_1->AddText("#frac{|v_{1}^{odd}(+#eta)|}{|v_{1}^{odd}(-#eta)|}");
         txratiov1HFodd_pT_1->Draw();
 
-        cratiov1HFodd_pT[cbin]->Print(Form("plots/diffv1/diffv1_pT/ratio_v1_odd_pT_%s_cent%d-%d.png",AnalNames[anal].data(),centBins[cbin],centBins[cbin+1]),"png");
+        cratiov1HFodd_pT[cbin]->Print(Form("plots/diffv1/diffv1_pT/diff%s/ratio_v1_odd_pT_%s_cent%d-%d.png",AnalNames[anal].data(),AnalNames[anal].data(),centBins[cbin],centBins[cbin+1]),"png");
         if (close_plots) cratiov1HFodd_pT[cbin]->Close();
     }
 
 
 
     // differential v1^even(pT) for each centrality bin
-    anal = 7;
 
     TCanvas * cratiov1HFeven_pT[ncentbins];
     TH2D * hratiov1HFeven_pT_tmp = new TH2D("hratiov1HFeven_pT_tmp", "", 40, 0, 12, 40, -10, 10);
@@ -355,7 +337,7 @@ void diffV1_pT_Syst()
         txratiov1HFeven_pT_1->AddText("#frac{|v_{1}^{even}(+#eta)|}{|v_{1}^{even}(-#eta)|}");
         txratiov1HFeven_pT_1->Draw();
 
-        cratiov1HFeven_pT[cbin]->Print(Form("plots/diffv1/diffv1_pT/ratio_v1_even_pT_%s_cent%d-%d.png",AnalNames[anal].data(),centBins[cbin],centBins[cbin+1]),"png");
+        cratiov1HFeven_pT[cbin]->Print(Form("plots/diffv1/diffv1_pT/diff%s/ratio_v1_even_pT_%s_cent%d-%d.png",AnalNames[anal].data(),AnalNames[anal].data(),centBins[cbin],centBins[cbin+1]),"png");
         if (close_plots) cratiov1HFeven_pT[cbin]->Close();
     }
 
@@ -363,6 +345,7 @@ void diffV1_pT_Syst()
 
     // differential v1^even(pT) for each centrality bin
     anal = 15;
+    if (!fopen(Form("plots/diffv1/diffv1_pT/diff%s",AnalNames[anal].data()),"r")) system(Form("mkdir plots/diffv1/diffv1_pT/diff%s",AnalNames[anal].data()));
 
     TCanvas * cratiov1Trackeven_pT[ncentbins];
     TH2D * hratiov1Trackeven_pT_tmp = new TH2D("hratiov1Trackeven_pT_tmp", "", 40, 0, 12, 40, -10, 10);
@@ -426,7 +409,7 @@ void diffV1_pT_Syst()
         txratiov1Trackeven_pT_1->AddText("#frac{v_{1}^{even}(+#eta)}{v_{1}^{even}(-#eta)}");
         txratiov1Trackeven_pT_1->Draw();
 
-        cratiov1Trackeven_pT[cbin]->Print(Form("plots/diffv1/diffv1_pT/ratio_v1_even_pT_%s_cent%d-%d.png",AnalNames[anal].data(),centBins[cbin],centBins[cbin+1]),"png");
+        cratiov1Trackeven_pT[cbin]->Print(Form("plots/diffv1/diffv1_pT/diff%s/ratio_v1_even_pT_%s_cent%d-%d.png",AnalNames[anal].data(),AnalNames[anal].data(),centBins[cbin],centBins[cbin+1]),"png");
         if (close_plots) cratiov1Trackeven_pT[cbin]->Close();
     }
 

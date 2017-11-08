@@ -48,21 +48,6 @@ TH1D * v123m_pt[nanals][ncentbins][netabins];
 TH1D * v123odd_pt[nanals][ncentbins][netabins];
 TH1D * v123even_pt[nanals][ncentbins][netabins];
 
-TH1D * v1p_eta[nanals][ncentbins][nptbins];
-TH1D * v1m_eta[nanals][ncentbins][nptbins];
-TH1D * v1odd_eta[nanals][ncentbins][nptbins];
-TH1D * v1even_eta[nanals][ncentbins][nptbins];
-
-TH1D * v112p_eta[nanals][ncentbins][nptbins];
-TH1D * v112m_eta[nanals][ncentbins][nptbins];
-TH1D * v112odd_eta[nanals][ncentbins][nptbins];
-TH1D * v112even_eta[nanals][ncentbins][nptbins];
-
-TH1D * v123p_eta[nanals][ncentbins][nptbins];
-TH1D * v123m_eta[nanals][ncentbins][nptbins];
-TH1D * v123odd_eta[nanals][ncentbins][nptbins];
-TH1D * v123even_eta[nanals][ncentbins][nptbins];
-
 TH1D * runParms[nanals];
 
 TFile * tfin;
@@ -95,27 +80,6 @@ void diffV1_pT()
                 v123m_pt[i][cbin][ebin] = (TH1D *) tfin->Get(Form("%s/v1_pt/%s/v123m_pt_%s",AnalNames[i].data(),tag0.data(),tag1.data()));
                 v123odd_pt[i][cbin][ebin] = (TH1D *) tfin->Get(Form("%s/v1_pt/%s/v123odd_pt_%s",AnalNames[i].data(),tag0.data(),tag1.data()));
                 v123even_pt[i][cbin][ebin] = (TH1D *) tfin->Get(Form("%s/v1_pt/%s/v123even_pt_%s",AnalNames[i].data(),tag0.data(),tag1.data()));
-                */
-            }
-
-            for (int pbin = 0; pbin<netabins; pbin++) {
-                string tag0 = Form("cent_%d-%d/pt_%0.1f-%0.1f",centBins[cbin],centBins[cbin+1],ptbins[pbin],ptbins[pbin+1]);
-                string tag1 = Form("%s_c%d_p%d",AnalNames[i].data(),cbin,pbin);
-
-                v1p_eta[i][cbin][pbin] = (TH1D *) tfin->Get(Form("%s/v1_eta/%s/v1p_eta_%s",AnalNames[i].data(),tag0.data(),tag1.data()));
-                v1m_eta[i][cbin][pbin] = (TH1D *) tfin->Get(Form("%s/v1_eta/%s/v1m_eta_%s",AnalNames[i].data(),tag0.data(),tag1.data()));
-                v1odd_eta[i][cbin][pbin] = (TH1D *) tfin->Get(Form("%s/v1_eta/%s/v1odd_eta_%s",AnalNames[i].data(),tag0.data(),tag1.data()));
-                v1even_eta[i][cbin][pbin] = (TH1D *) tfin->Get(Form("%s/v1_eta/%s/v1even_eta_%s",AnalNames[i].data(),tag0.data(),tag1.data()));
-                /*
-                v112p_eta[i][cbin][pbin] = (TH1D *) tfin->Get(Form("%s/v1_eta/%s/v112p_eta_%s",AnalNames[i].data(),tag0.data(),tag1.data()));
-                v112m_eta[i][cbin][pbin] = (TH1D *) tfin->Get(Form("%s/v1_eta/%s/v112m_eta_%s",AnalNames[i].data(),tag0.data(),tag1.data()));
-                v112odd_eta[i][cbin][pbin] = (TH1D *) tfin->Get(Form("%s/v1_eta/%s/v112odd_eta_%s",AnalNames[i].data(),tag0.data(),tag1.data()));
-                v112even_eta[i][cbin][pbin] = (TH1D *) tfin->Get(Form("%s/v1_eta/%s/v112even_eta_%s",AnalNames[i].data(),tag0.data(),tag1.data()));
-
-                v123p_eta[i][cbin][pbin] = (TH1D *) tfin->Get(Form("%s/v1_eta/%s/v123p_eta_%s",AnalNames[i].data(),tag0.data(),tag1.data()));
-                v123m_eta[i][cbin][pbin] = (TH1D *) tfin->Get(Form("%s/v1_eta/%s/v123m_eta_%s",AnalNames[i].data(),tag0.data(),tag1.data()));
-                v123odd_eta[i][cbin][pbin] = (TH1D *) tfin->Get(Form("%s/v1_eta/%s/v123odd_eta_%s",AnalNames[i].data(),tag0.data(),tag1.data()));
-                v123even_eta[i][cbin][pbin] = (TH1D *) tfin->Get(Form("%s/v1_eta/%s/v123even_eta_%s",AnalNames[i].data(),tag0.data(),tag1.data()));
                 */
             }
         }
@@ -155,14 +119,16 @@ void diffV1_pT()
     if (!fopen("plots","r")) system("mkdir plots");
     if (!fopen("plots/diffv1","r")) system("mkdir plots/diffv1");
     if (!fopen("plots/diffv1/diffv1_pT","r")) system("mkdir plots/diffv1/diffv1_pT");
-    if (!fopen("plots/diffv1/diffv1_eta","r")) system("mkdir plots/diffv1/diffv1_eta");
 
     int centMarkerStyle[] = {21, 24, 20, 25, 33, 27, 34, 28};
     float centMarkerSize[] = {1.1, 1.2, 1.2, 1.1, 1.7, 1.7, 1.5};
 
+    int anal; // choice of analysis
+
 
     // differential v1(pT) using HF+/- for each centrality bin
-    int anal = 7;
+    anal = 7;
+    if (!fopen(Form("plots/diffv1/diffv1_pT/diff%s",AnalNames[anal].data()),"r")) system(Form("mkdir plots/diffv1/diffv1_pT/diff%s",AnalNames[anal].data()));
 
     TCanvas * cv1HFpm_pT[ncentbins];
     TH1D * hv1HFpm_pT_tmp = new TH1D("hv1HFpm_pT_tmp", "", 40, 0, 12);
@@ -227,7 +193,7 @@ void diffV1_pT()
         legv1HFpm_pT->AddEntry(v1m_pt[anal][cbin][0],"HF-","p");
         legv1HFpm_pT->Draw();
 
-        cv1HFpm_pT[cbin]->Print(Form("plots/diffv1/diffv1_pT/v1_pm_pT_%s_cent%d-%d.png",AnalNames[anal].data(),centBins[cbin],centBins[cbin+1]),"png");
+        cv1HFpm_pT[cbin]->Print(Form("plots/diffv1/diffv1_pT/diff%s/v1_pm_pT_%s_cent%d-%d.png",AnalNames[anal].data(),AnalNames[anal].data(),centBins[cbin],centBins[cbin+1]),"png");
         if (close_plots) cv1HFpm_pT[cbin]->Close();
     }
 
@@ -310,7 +276,7 @@ void diffV1_pT()
     legv1HFpm_pTCent_1->AddEntry(v1m_pt[anal][0][0],"HF-","p");
     legv1HFpm_pTCent_1->Draw();
 
-    cv1HFpm_pTCent->Print(Form("plots/diffv1/diffv1_pT/v1_pm_pT_CentScan_%s.png",AnalNames[anal].data()),"png");
+    cv1HFpm_pTCent->Print(Form("plots/diffv1/diffv1_pT/diff%s/v1_pm_pT_CentScan_%s.png",AnalNames[anal].data(),AnalNames[anal].data()),"png");
     if (close_plots) cv1HFpm_pTCent->Close();
 
 
@@ -381,7 +347,7 @@ void diffV1_pT()
         legv1HFoddeven_pT->AddEntry(v1even_pt[anal][cbin][0],"v_{1}^{even}","p");
         legv1HFoddeven_pT->Draw();
 
-        cv1HFoddeven_pT[cbin]->Print(Form("plots/diffv1/diffv1_pT/v1_oddeven_pT_%s_cent%d-%d.png",AnalNames[anal].data(),centBins[cbin],centBins[cbin+1]),"png");
+        cv1HFoddeven_pT[cbin]->Print(Form("plots/diffv1/diffv1_pT/diff%s/v1_oddeven_pT_%s_cent%d-%d.png",AnalNames[anal].data(),AnalNames[anal].data(),centBins[cbin],centBins[cbin+1]),"png");
         if (close_plots) cv1HFoddeven_pT[cbin]->Close();
     }
 
@@ -464,13 +430,14 @@ void diffV1_pT()
     legv1HFoddeven_pTCent_1->AddEntry(v1even_pt[anal][0][0],"v_{1}^{even}","p");
     legv1HFoddeven_pTCent_1->Draw();
 
-    cv1HFoddeven_pTCent->Print(Form("plots/diffv1/diffv1_pT/v1_oddeven_pT_CentScan_%s.png",AnalNames[anal].data()),"png");
+    cv1HFoddeven_pTCent->Print(Form("plots/diffv1/diffv1_pT/diff%s/v1_oddeven_pT_CentScan_%s.png",AnalNames[anal].data(),AnalNames[anal].data()),"png");
     if (close_plots) cv1HFoddeven_pTCent->Close();
 
 
 
     // differential v1(pT) using tracker+/- for each centrality bin
     anal = 15;
+    if (!fopen(Form("plots/diffv1/diffv1_pT/diff%s",AnalNames[anal].data()),"r")) system(Form("mkdir plots/diffv1/diffv1_pT/diff%s",AnalNames[anal].data()));
 
     TCanvas * cv1Trackpm_pT[ncentbins];
     TH1D * hv1Trackpm_pT_tmp = new TH1D("hv1Trackpm_pT_tmp", "", 40, 0, 12);
@@ -535,7 +502,7 @@ void diffV1_pT()
         legv1Trackpm_pT->AddEntry(v1m_pt[anal][cbin][0],"Track-","p");
         legv1Trackpm_pT->Draw();
 
-        cv1Trackpm_pT[cbin]->Print(Form("plots/diffv1/diffv1_pT/v1_pm_pT_%s_cent%d-%d.png",AnalNames[anal].data(),centBins[cbin],centBins[cbin+1]),"png");
+        cv1Trackpm_pT[cbin]->Print(Form("plots/diffv1/diffv1_pT/diff%s/v1_pm_pT_%s_cent%d-%d.png",AnalNames[anal].data(),AnalNames[anal].data(),centBins[cbin],centBins[cbin+1]),"png");
         if (close_plots) cv1Trackpm_pT[cbin]->Close();
     }
 
