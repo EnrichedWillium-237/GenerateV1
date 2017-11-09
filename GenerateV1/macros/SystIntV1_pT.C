@@ -49,8 +49,7 @@ TH1D * v123m_pt[nanals][ncentbins];
 TH1D * v123odd_pt[nanals][ncentbins];
 TH1D * v123even_pt[nanals][ncentbins];
 
-TH1D * ratiov1_pt[nanals][ncentbins];
-TH1D * ratiov1even_pt[nanals][ncentbins];
+TH1D * absDiffv1_pt[nanals][ncentbins];
 
 TH1D * runParms[nanals];
 
@@ -79,8 +78,7 @@ void SystIntV1_pT()
             v123odd_pt[i][cbin] = (TH1D *) tfin->Get(Form("%s/v1_pt/%d-%d/v123odd_pt_%s_%d",AnalNames[i].data(),centBins[cbin],centBins[cbin+1],AnalNames[i].data(),cbin));
             v123even_pt[i][cbin] = (TH1D *) tfin->Get(Form("%s/v1_pt/%d-%d/v123even_pt_%s_%d",AnalNames[i].data(),centBins[cbin],centBins[cbin+1],AnalNames[i].data(),cbin));
 
-            ratiov1_pt[i][cbin] = new TH1D(Form("ratiov1_pt_%s_%d",AnalNames[i].data(),cbin), "", nptbins, ptbins);
-            ratiov1even_pt[i][cbin] = new TH1D(Form("ratiov1even_pt_%s_%d",AnalNames[i].data(),cbin), "", nptbins, ptbins);
+            absDiffv1_pt[i][cbin] = new TH1D(Form("absDiffv1_pt_%s_%d",AnalNames[i].data(),cbin), "", nptbins, ptbins);
         }
     }
 
@@ -88,17 +86,16 @@ void SystIntV1_pT()
     for (int i = 0; i<nanals; i++) {
         for (int cbin = 0; cbin<ncentbins; cbin++) {
             for (int j = 0; j<nptbins; j++) {
-                double v1pos = v1p_pt[i][cbin]->GetBinContent(j+1);
-                double v1neg = v1m_pt[i][cbin]->GetBinContent(j+1);
-                double v1pos_err = v1p_pt[i][cbin]->GetBinError(j+1);
-                double v1neg_err = v1m_pt[i][cbin]->GetBinError(j+1);
+                double v1_pos = v1p_pt[i][cbin]->GetBinContent(j+1);
+                double v1_neg = v1m_pt[i][cbin]->GetBinContent(j+1);
+                double v1_pos_err = v1p_pt[i][cbin]->GetBinError(j+1);
+                double v1_neg_err = v1m_pt[i][cbin]->GetBinError(j+1);
 
-                double v1rat = v1pos/v1neg;
-                double v1rat_err = v1rat*sqrt( pow(v1pos_err/v1pos,2) + pow(v1neg_err/v1neg,2) );
-                ratiov1_pt[i][cbin]->SetBinContent(j+1, v1rat);
-                ratiov1_pt[i][cbin]->SetBinError(j+1, v1rat_err);
+                double adv1 = fabs(v1_pos) - fabs(v1_neg);
+                double adv1_err = sqrt( pow(v1_pos_err,2) + pow(v1_neg_err,2) );
+                absDiffv1_pt[i][cbin]->SetBinContent(j+1, adv1);
+                absDiffv1_pt[i][cbin]->SetBinError(j+1, adv1_err);
             }
-            if (i<=7) ratiov1_pt[i][cbin]->Scale(-1);
         }
     }
 
@@ -106,10 +103,10 @@ void SystIntV1_pT()
 
     for (int i = 0; i<nanals; i++) {
         for (int cbin = 0; cbin<ncentbins; cbin++) {
-            ratiov1_pt[i][cbin]->SetMarkerColor(kBlack);
-            ratiov1_pt[i][cbin]->SetLineColor(kBlack);
-            ratiov1_pt[i][cbin]->SetMarkerStyle(21);
-            ratiov1_pt[i][cbin]->SetMarkerSize(1.1);
+            absDiffv1_pt[i][cbin]->SetMarkerColor(kBlack);
+            absDiffv1_pt[i][cbin]->SetLineColor(kBlack);
+            absDiffv1_pt[i][cbin]->SetMarkerStyle(21);
+            absDiffv1_pt[i][cbin]->SetMarkerSize(1.1);
         }
     }
 
@@ -129,83 +126,84 @@ void SystIntV1_pT()
     anal = 7;
     if (!fopen(Form("plots/intv1/intv1_pt/int%s",AnalNames[anal].data()),"r")) system(Form("mkdir plots/intv1/intv1_pt/int%s",AnalNames[anal].data()));
 
-    TCanvas * cv1HFoddRatio_pt = new TCanvas("cv1HFoddRatio_pt","cv1HFoddRatio_pt",1100,620);
-    TH2D * hv1HFoddRatio_pt_tmp = new TH2D("hv1HFoddRatio_pt_tmp", "", 100, 0, 12, 100, 0.5, 1.5);
-    hv1HFoddRatio_pt_tmp->SetTitle("");
-    hv1HFoddRatio_pt_tmp->SetStats(0);
-    hv1HFoddRatio_pt_tmp->SetXTitle("p_{T} (GeV/c)");
-    hv1HFoddRatio_pt_tmp->SetYTitle("|v_{1}(+#eta) / v_{1}(-#eta)|");
-    hv1HFoddRatio_pt_tmp->GetXaxis()->SetRangeUser(0, 12);
-    hv1HFoddRatio_pt_tmp->GetYaxis()->SetRangeUser(-1, 3);
-    hv1HFoddRatio_pt_tmp->SetNdivisions(509);
-    hv1HFoddRatio_pt_tmp->GetXaxis()->CenterTitle();
-    hv1HFoddRatio_pt_tmp->GetYaxis()->CenterTitle();
-    cv1HFoddRatio_pt->Divide(4,2,0,0);
+    TCanvas * cv1HFoddAbsDiff_pt = new TCanvas("cv1HFoddAbsDiff_pt","cv1HFoddAbsDiff_pt",1100,620);
+    TH1D * hv1HFoddAbsDiff_pt_tmp = new TH1D("hv1HFoddAbsDiff_pt_tmp", "", 100, 0, 12);
+    hv1HFoddAbsDiff_pt_tmp->SetTitle("");
+    hv1HFoddAbsDiff_pt_tmp->SetStats(0);
+    hv1HFoddAbsDiff_pt_tmp->SetXTitle("p_{T} (GeV/c)");
+    hv1HFoddAbsDiff_pt_tmp->SetYTitle("|v_{1}(+#eta)| - |v_{1}(-#eta)|");
+    hv1HFoddAbsDiff_pt_tmp->GetXaxis()->SetRangeUser(0, 12);
+    hv1HFoddAbsDiff_pt_tmp->GetYaxis()->SetRangeUser(-0.05, 0.05);
+    hv1HFoddAbsDiff_pt_tmp->SetNdivisions(509);
+    hv1HFoddAbsDiff_pt_tmp->GetXaxis()->CenterTitle();
+    hv1HFoddAbsDiff_pt_tmp->GetYaxis()->CenterTitle();
+    cv1HFoddAbsDiff_pt->Divide(4,2,0,0);
     for (int cbin = 0; cbin<ncentbins; cbin++) {
-        TPad * padv1HFoddRatio_pt = (TPad *) cv1HFoddRatio_pt->cd(cbin+1);
-        if (gridlines) padv1HFoddRatio_pt->SetGrid();
-        if (cbin == 3 || cbin == 7) padv1HFoddRatio_pt->SetRightMargin(0.02);
-        if (cbin <= 3) padv1HFoddRatio_pt->SetTopMargin(0.08);
-        TH1D * hv1HFoddRatio_pt = (TH1D *) hv1HFoddRatio_pt_tmp->Clone(Form("hv1HFoddRatio_pt_%c",cbin));
+        TPad * padv1HFoddAbsDiff_pt = (TPad *) cv1HFoddAbsDiff_pt->cd(cbin+1);
+        if (gridlines) padv1HFoddAbsDiff_pt->SetGrid();
+        if (cbin == 3 || cbin == 7) padv1HFoddAbsDiff_pt->SetRightMargin(0.02);
+        if (cbin <= 3) padv1HFoddAbsDiff_pt->SetTopMargin(0.08);
+        TH1D * hv1HFoddAbsDiff_pt = (TH1D *) hv1HFoddAbsDiff_pt_tmp->Clone(Form("hv1HFoddAbsDiff_pt_%c",cbin));
         if (cbin == 0) {
-            hv1HFoddRatio_pt->GetYaxis()->SetTitleSize(0.07);
-            hv1HFoddRatio_pt->GetYaxis()->SetTitleOffset(1.33);
-            hv1HFoddRatio_pt->GetYaxis()->SetLabelSize(0.06);
+            hv1HFoddAbsDiff_pt->GetYaxis()->SetTitleSize(0.07);
+            hv1HFoddAbsDiff_pt->GetYaxis()->SetTitleOffset(1.33);
+            hv1HFoddAbsDiff_pt->GetYaxis()->SetLabelSize(0.06);
         }
         if (cbin == 4) {
-            hv1HFoddRatio_pt->GetXaxis()->SetTitleSize(0.06);
-            hv1HFoddRatio_pt->GetXaxis()->SetTitleOffset(1.12);
-            hv1HFoddRatio_pt->GetXaxis()->SetLabelSize(0.06);
-            hv1HFoddRatio_pt->GetXaxis()->SetLabelOffset(0.018);
-            hv1HFoddRatio_pt->GetYaxis()->SetTitleSize(0.06);
-            hv1HFoddRatio_pt->GetYaxis()->SetTitleOffset(1.50);
-            hv1HFoddRatio_pt->GetYaxis()->SetLabelSize(0.05);
-            hv1HFoddRatio_pt->GetYaxis()->SetLabelOffset(0.010);
+            hv1HFoddAbsDiff_pt->GetXaxis()->SetTitleSize(0.06);
+            hv1HFoddAbsDiff_pt->GetXaxis()->SetTitleOffset(1.12);
+            hv1HFoddAbsDiff_pt->GetXaxis()->SetLabelSize(0.06);
+            hv1HFoddAbsDiff_pt->GetXaxis()->SetLabelOffset(0.018);
+            hv1HFoddAbsDiff_pt->GetYaxis()->SetTitleSize(0.06);
+            hv1HFoddAbsDiff_pt->GetYaxis()->SetTitleOffset(1.50);
+            hv1HFoddAbsDiff_pt->GetYaxis()->SetLabelSize(0.05);
+            hv1HFoddAbsDiff_pt->GetYaxis()->SetLabelOffset(0.010);
         }
         if (cbin >=5) {
-            hv1HFoddRatio_pt->GetXaxis()->SetTitleSize(0.07);
-            hv1HFoddRatio_pt->GetXaxis()->SetTitleOffset(1.00);
-            hv1HFoddRatio_pt->GetXaxis()->SetLabelSize(0.07);
-            hv1HFoddRatio_pt->GetXaxis()->SetLabelOffset(0.008);
+            hv1HFoddAbsDiff_pt->GetXaxis()->SetTitleSize(0.07);
+            hv1HFoddAbsDiff_pt->GetXaxis()->SetTitleOffset(1.00);
+            hv1HFoddAbsDiff_pt->GetXaxis()->SetLabelSize(0.07);
+            hv1HFoddAbsDiff_pt->GetXaxis()->SetLabelOffset(0.008);
         }
-        hv1HFoddRatio_pt->Draw();
+        hv1HFoddAbsDiff_pt->Draw();
         lnetaRatio->Draw();
-        ratiov1_pt[anal][cbin]->Draw("same");
+        absDiffv1_pt[anal][cbin]->Draw("same");
 
         TF1 * fit1 = new TF1("fit1", "pol0", 0, 12);
         fit1->SetLineColor(kBlue);
-        ratiov1_pt[anal][cbin]->Fit(fit1,"QR");
+        absDiffv1_pt[anal][cbin]->Fit(fit1,"QR");
         double par0 = fit1->GetParameter(0);
         double par0E = fit1->GetParError(0);
         double par0Chi2 = fit1->GetChisquare();
 
-        TPaveText * txtxv1HFoddRatio_pt_fit;
-        if (cbin == 0) txtxv1HFoddRatio_pt_fit = new TPaveText(0.24, 0.07, 0.74, 0.27,"NDC");
-        else if (cbin >= 1 && cbin <= 3) txtxv1HFoddRatio_pt_fit = new TPaveText(0.08, 0.07, 0.56, 0.27,"NDC");
-        else if (cbin == 4) txtxv1HFoddRatio_pt_fit = new TPaveText(0.24, 0.21, 0.74, 0.39,"NDC");
-        else txtxv1HFoddRatio_pt_fit = new TPaveText(0.08, 0.21, 0.56, 0.39,"NDC");
-        SetTPaveTxt(txtxv1HFoddRatio_pt_fit, 16);
-        txtxv1HFoddRatio_pt_fit->AddText(Form("mean: %0.4f #pm %0.4f",par0,par0E));
-        txtxv1HFoddRatio_pt_fit->AddText(Form("#chi^{2}: %0.4f",par0Chi2));
-        txtxv1HFoddRatio_pt_fit->Draw();
+        TPaveText * txtxv1HFoddAbsDiff_pt_fit;
+        if (cbin == 0) txtxv1HFoddAbsDiff_pt_fit = new TPaveText(0.24, 0.07, 0.74, 0.27,"NDC");
+        else if (cbin >= 1 && cbin <= 3) txtxv1HFoddAbsDiff_pt_fit = new TPaveText(0.08, 0.07, 0.56, 0.27,"NDC");
+        else if (cbin == 4) txtxv1HFoddAbsDiff_pt_fit = new TPaveText(0.24, 0.21, 0.74, 0.39,"NDC");
+        else txtxv1HFoddAbsDiff_pt_fit = new TPaveText(0.08, 0.21, 0.56, 0.39,"NDC");
+        SetTPaveTxt(txtxv1HFoddAbsDiff_pt_fit, 16);
+        txtxv1HFoddAbsDiff_pt_fit->AddText(Form("mean: %0.4f #pm %0.4f",par0,par0E));
+        txtxv1HFoddAbsDiff_pt_fit->AddText(Form("#chi^{2}: %0.4f",par0Chi2));
+        txtxv1HFoddAbsDiff_pt_fit->Draw();
 
-        TPaveText * txv1HFoddRatio_pt;
-        if (cbin == 0) txv1HFoddRatio_pt = new TPaveText(0.75, 0.78, 0.93, 0.87,"NDC");
-        else if (cbin >= 1 && cbin <= 3) txv1HFoddRatio_pt = new TPaveText(0.68, 0.78, 0.86, 0.87,"NDC");
-        else if (cbin == 4) txv1HFoddRatio_pt = new TPaveText(0.75, 0.86, 0.93, 0.95,"NDC");
-        else txv1HFoddRatio_pt = new TPaveText(0.68, 0.86, 0.86, 0.95,"NDC");
-        SetTPaveTxt(txv1HFoddRatio_pt, 18);
-        txv1HFoddRatio_pt->AddText(Form("%d-%d%%",centBins[cbin],centBins[cbin+1]));
-        txv1HFoddRatio_pt->Draw();
+        TPaveText * txv1HFoddAbsDiff_pt;
+        if (cbin == 0) txv1HFoddAbsDiff_pt = new TPaveText(0.75, 0.78, 0.93, 0.87,"NDC");
+        else if (cbin >= 1 && cbin <= 3) txv1HFoddAbsDiff_pt = new TPaveText(0.68, 0.78, 0.86, 0.87,"NDC");
+        else if (cbin == 4) txv1HFoddAbsDiff_pt = new TPaveText(0.75, 0.86, 0.93, 0.95,"NDC");
+        else txv1HFoddAbsDiff_pt = new TPaveText(0.68, 0.86, 0.86, 0.95,"NDC");
+        SetTPaveTxt(txv1HFoddAbsDiff_pt, 18);
+        txv1HFoddAbsDiff_pt->AddText(Form("%d-%d%%",centBins[cbin],centBins[cbin+1]));
+        txv1HFoddAbsDiff_pt->Draw();
     }
-    cv1HFoddRatio_pt->cd(1);
-    TPaveText * txv1HFoddRatio_pt_1 = new TPaveText(0.18, 0.93, 0.58, 1.0,"NDC");
-    SetTPaveTxt(txv1HFoddRatio_pt_1, 18);
-    txv1HFoddRatio_pt_1->AddText("#bf{CMS} #it{Preliminary}");
-    txv1HFoddRatio_pt_1->Draw();
+    cv1HFoddAbsDiff_pt->cd(1);
+    TPaveText * txv1HFoddAbsDiff_pt_1 = new TPaveText(0.18, 0.93, 0.58, 1.0,"NDC");
+    SetTPaveTxt(txv1HFoddAbsDiff_pt_1, 18);
+    txv1HFoddAbsDiff_pt_1->AddText("#bf{CMS} #it{Preliminary}");
+    txv1HFoddAbsDiff_pt_1->Draw();
 
-    cv1HFoddRatio_pt->Print(Form("plots/intv1/intv1_pt/int%s/v1HFoddRatio_pt_%s.png",AnalNames[anal].data(),AnalNames[anal].data()),"png");
-    if (close_plots) cv1HFoddRatio_pt->Close();
+    cv1HFoddAbsDiff_pt->Print(Form("plots/intv1/intv1_pt/int%s/v1HFoddAbsDiff_pt_%s.png",AnalNames[anal].data(),AnalNames[anal].data()),"png");
+    if (close_plots) cv1HFoddAbsDiff_pt->Close();
+
 
 
     // v1odd(+eta)/v1odd(-eta) for the Tracker mom-cons
@@ -217,9 +215,9 @@ void SystIntV1_pT()
     hv1TrkevenRatio_pt_tmp->SetTitle("");
     hv1TrkevenRatio_pt_tmp->SetStats(0);
     hv1TrkevenRatio_pt_tmp->SetXTitle("p_{T} (GeV/c)");
-    hv1TrkevenRatio_pt_tmp->SetYTitle("v_{1}(+#eta) / v_{1}(-#eta)");
+    hv1TrkevenRatio_pt_tmp->SetYTitle("|v_{1}(+#eta)| - |v_{1}(-#eta)|");
     hv1TrkevenRatio_pt_tmp->GetXaxis()->SetRangeUser(0, 12);
-    hv1TrkevenRatio_pt_tmp->GetYaxis()->SetRangeUser(-1, 3);
+    hv1TrkevenRatio_pt_tmp->GetYaxis()->SetRangeUser(-0.1, 0.1);
     hv1TrkevenRatio_pt_tmp->SetNdivisions(509);
     hv1TrkevenRatio_pt_tmp->GetXaxis()->CenterTitle();
     hv1TrkevenRatio_pt_tmp->GetYaxis()->CenterTitle();
@@ -253,11 +251,11 @@ void SystIntV1_pT()
         }
         hv1TrkevenRatio_pt->Draw();
         lnetaRatio->Draw();
-        ratiov1_pt[anal][cbin]->Draw("same");
+        absDiffv1_pt[anal][cbin]->Draw("same");
 
         TF1 * fit1 = new TF1("fit1", "pol0", 0, 12);
         fit1->SetLineColor(kBlue);
-        ratiov1_pt[anal][cbin]->Fit(fit1,"QR");
+        absDiffv1_pt[anal][cbin]->Fit(fit1,"QR");
         double par0 = fit1->GetParameter(0);
         double par0E = fit1->GetParError(0);
         double par0Chi2 = fit1->GetChisquare();

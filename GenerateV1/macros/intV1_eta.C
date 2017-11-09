@@ -86,6 +86,35 @@ void intV1_eta()
         }
     }
 
+    // calculate ratios
+    for (int i = 0; i<nanals; i++) {
+        for (int cbin = 0; cbin<ncentbins; cbin++) {
+            for (int j = 0; j<6; j++) {
+                double v1odd_pos = v1odd_eta[i][cbin]->GetBinContent(12-j);
+                double v1odd_neg = v1odd_eta[i][cbin]->GetBinContent(j+1);
+                double v1odd_pos_err = v1odd_eta[i][cbin]->GetBinError(12-j);
+                double v1odd_neg_err = v1odd_eta[i][cbin]->GetBinError(j+1);
+
+                double v1odd_rat = v1odd_pos/v1odd_neg;
+                double v1odd_rat_err = v1odd_rat*sqrt( pow(v1odd_pos_err/v1odd_pos,2) + pow(v1odd_neg_err/v1odd_neg,2) );
+                ratiov1odd_eta[i][cbin]->SetBinContent(j+1, v1odd_rat);
+                ratiov1odd_eta[i][cbin]->SetBinError(j+1, v1odd_rat_err);
+
+                double v1even_pos = v1even_eta[i][cbin]->GetBinContent(12-j);
+                double v1even_neg = v1even_eta[i][cbin]->GetBinContent(j+1);
+                double v1even_pos_err = v1even_eta[i][cbin]->GetBinError(12-j);
+                double v1even_neg_err = v1even_eta[i][cbin]->GetBinError(j+1);
+
+                double v1even_rat = v1even_pos/v1even_neg;
+                double v1even_rat_err = v1even_rat*sqrt( pow(v1even_pos_err/v1even_pos,2) + pow(v1even_neg_err/v1even_neg,2) );
+                ratiov1even_eta[i][cbin]->SetBinContent(j+1, v1even_rat);
+                ratiov1even_eta[i][cbin]->SetBinError(j+1, v1even_rat_err);
+
+            }
+            if (i<=7) ratiov1odd_eta[i][cbin]->Scale(-1);
+        }
+    }
+
     //-- plotting options
 
     for (int i = 0; i<nanals; i++) {
@@ -109,6 +138,16 @@ void intV1_eta()
             v1even_eta[i][cbin]->SetLineColor(kBlue);
             v1even_eta[i][cbin]->SetMarkerStyle(21);
             v1even_eta[i][cbin]->SetMarkerSize(1.1);
+
+            ratiov1odd_eta[i][cbin]->SetMarkerColor(kBlack);
+            ratiov1odd_eta[i][cbin]->SetLineColor(kBlack);
+            ratiov1odd_eta[i][cbin]->SetMarkerStyle(21);
+            ratiov1odd_eta[i][cbin]->SetMarkerSize(1.1);
+
+            ratiov1even_eta[i][cbin]->SetMarkerColor(kBlack);
+            ratiov1even_eta[i][cbin]->SetLineColor(kBlack);
+            ratiov1even_eta[i][cbin]->SetMarkerStyle(21);
+            ratiov1even_eta[i][cbin]->SetMarkerSize(1.1);
         }
     }
 
@@ -119,6 +158,8 @@ void intV1_eta()
     if (!fopen("plots/intv1/intv1_eta","r")) system("mkdir plots/intv1/intv1_eta");
 
     int anal; // choice of analysis
+    TLine * lnetaRatio = new TLine(0.0, 1.0, 2.5, 1.0);
+    lnetaRatio->SetLineWidth(1);
 
 
     // integrated v1(eta) using HF+/- for each centrality bin
@@ -453,5 +494,258 @@ void intV1_eta()
 
     cv1Trkeven_eta->Print(Form("plots/intv1/intv1_eta/int%s/v1_odd_eta_%s.png",AnalNames[anal].data(),AnalNames[anal].data()),"png");
     if (close_plots) cv1Trkeven_eta->Close();
+
+
+
+    // v1odd(+eta)/v1odd(-eta) for the HF
+    anal = 7;
+    if (!fopen(Form("plots/intv1/intv1_eta/int%s",AnalNames[anal].data()),"r")) system(Form("mkdir plots/intv1/intv1_eta/int%s",AnalNames[anal].data()));
+
+    TCanvas * cv1HFoddRatio_eta = new TCanvas("cv1HFoddRatio_eta","cv1HFoddRatio_eta",1100,620);
+    TH2D * hv1HFoddRatio_eta_tmp = new TH2D("hv1HFoddRatio_eta_tmp", "", 100, 0, 2.5, 100, -1, 2);
+    hv1HFoddRatio_eta_tmp->SetTitle("");
+    hv1HFoddRatio_eta_tmp->SetStats(0);
+    hv1HFoddRatio_eta_tmp->SetXTitle("#eta");
+    hv1HFoddRatio_eta_tmp->SetYTitle("|v_{1}(+#eta) / v_{1}(-#eta)|");
+    hv1HFoddRatio_eta_tmp->GetXaxis()->SetRangeUser(0, 2.4);
+    hv1HFoddRatio_eta_tmp->GetYaxis()->SetRangeUser(0.4, 1.6);
+    hv1HFoddRatio_eta_tmp->SetNdivisions(509);
+    hv1HFoddRatio_eta_tmp->GetXaxis()->CenterTitle();
+    hv1HFoddRatio_eta_tmp->GetYaxis()->CenterTitle();
+    cv1HFoddRatio_eta->Divide(4,2,0,0);
+    for (int cbin = 0; cbin<ncentbins; cbin++) {
+        TPad * padv1HFoddRatio_eta = (TPad *) cv1HFoddRatio_eta->cd(cbin+1);
+        if (gridlines) padv1HFoddRatio_eta->SetGrid();
+        if (cbin == 3 || cbin == 7) padv1HFoddRatio_eta->SetRightMargin(0.02);
+        if (cbin <= 3) padv1HFoddRatio_eta->SetTopMargin(0.08);
+        TH1D * hv1HFoddRatio_eta = (TH1D *) hv1HFoddRatio_eta_tmp->Clone(Form("hv1HFoddRatio_eta_%c",cbin));
+        if (cbin == 0) {
+            hv1HFoddRatio_eta->GetYaxis()->SetTitleSize(0.07);
+            hv1HFoddRatio_eta->GetYaxis()->SetTitleOffset(1.33);
+            hv1HFoddRatio_eta->GetYaxis()->SetLabelSize(0.06);
+        }
+        if (cbin == 4) {
+            hv1HFoddRatio_eta->GetXaxis()->SetTitleSize(0.06);
+            hv1HFoddRatio_eta->GetXaxis()->SetTitleOffset(1.12);
+            hv1HFoddRatio_eta->GetXaxis()->SetLabelSize(0.06);
+            hv1HFoddRatio_eta->GetXaxis()->SetLabelOffset(0.018);
+            hv1HFoddRatio_eta->GetYaxis()->SetTitleSize(0.06);
+            hv1HFoddRatio_eta->GetYaxis()->SetTitleOffset(1.50);
+            hv1HFoddRatio_eta->GetYaxis()->SetLabelSize(0.05);
+            hv1HFoddRatio_eta->GetYaxis()->SetLabelOffset(0.010);
+        }
+        if (cbin >=5) {
+            hv1HFoddRatio_eta->GetXaxis()->SetTitleSize(0.07);
+            hv1HFoddRatio_eta->GetXaxis()->SetTitleOffset(1.00);
+            hv1HFoddRatio_eta->GetXaxis()->SetLabelSize(0.07);
+            hv1HFoddRatio_eta->GetXaxis()->SetLabelOffset(0.008);
+        }
+        hv1HFoddRatio_eta->Draw();
+        lnetaRatio->Draw();
+        ratiov1odd_eta[anal][cbin]->Draw("same");
+
+        TF1 * fit1 = new TF1("fit1", "pol0", 0, 2.4);
+        fit1->SetLineColor(kBlue);
+        ratiov1odd_eta[anal][cbin]->Fit(fit1,"QR");
+        double par0 = fit1->GetParameter(0);
+        double par0E = fit1->GetParError(0);
+        double par0Chi2 = fit1->GetChisquare();
+
+        TPaveText * txv1HFoddRatio_eta_fit;
+        if (cbin == 0) txv1HFoddRatio_eta_fit = new TPaveText(0.24, 0.07, 0.74, 0.27,"NDC");
+        else if (cbin >= 1 && cbin <= 3) txv1HFoddRatio_eta_fit = new TPaveText(0.08, 0.07, 0.56, 0.27,"NDC");
+        else if (cbin == 4) txv1HFoddRatio_eta_fit = new TPaveText(0.24, 0.21, 0.74, 0.39,"NDC");
+        else txv1HFoddRatio_eta_fit = new TPaveText(0.08, 0.21, 0.56, 0.39,"NDC");
+        SetTPaveTxt(txv1HFoddRatio_eta_fit, 16);
+        txv1HFoddRatio_eta_fit->AddText(Form("mean: %0.4f #pm %0.4f",par0,par0E));
+        txv1HFoddRatio_eta_fit->AddText(Form("#chi^{2}: %0.4f",par0Chi2));
+        txv1HFoddRatio_eta_fit->Draw();
+
+        TPaveText * txv1HFoddRatio_eta;
+        if (cbin == 0) txv1HFoddRatio_eta = new TPaveText(0.75, 0.78, 0.93, 0.87,"NDC");
+        else if (cbin >= 1 && cbin <= 3) txv1HFoddRatio_eta = new TPaveText(0.68, 0.78, 0.86, 0.87,"NDC");
+        else if (cbin == 4) txv1HFoddRatio_eta = new TPaveText(0.75, 0.86, 0.93, 0.95,"NDC");
+        else txv1HFoddRatio_eta = new TPaveText(0.68, 0.86, 0.86, 0.95,"NDC");
+        SetTPaveTxt(txv1HFoddRatio_eta, 18);
+        txv1HFoddRatio_eta->AddText(Form("%d-%d%%",centBins[cbin],centBins[cbin+1]));
+        txv1HFoddRatio_eta->Draw();
+    }
+    cv1HFoddRatio_eta->cd(1);
+    TPaveText * txv1HFoddRatio_eta_1 = new TPaveText(0.18, 0.93, 0.58, 1.0,"NDC");
+    SetTPaveTxt(txv1HFoddRatio_eta_1, 18);
+    txv1HFoddRatio_eta_1->AddText("#bf{CMS} #it{Preliminary}");
+    txv1HFoddRatio_eta_1->Draw();
+
+    cv1HFoddRatio_eta->Print(Form("plots/intv1/intv1_eta/int%s/v1HFoddRatio_eta_%s.png",AnalNames[anal].data(),AnalNames[anal].data()),"png");
+    if (close_plots) cv1HFoddRatio_eta->Close();
+
+
+
+    // v1even(+eta)/v1even(-eta) for the HF
+    anal = 7;
+    if (!fopen(Form("plots/intv1/intv1_eta/int%s",AnalNames[anal].data()),"r")) system(Form("mkdir plots/intv1/intv1_eta/int%s",AnalNames[anal].data()));
+
+    TCanvas * cv1HFevenRatio_eta = new TCanvas("cv1HFevenRatio_eta","cv1HFevenRatio_eta",1100,620);
+    TH2D * hv1HFevenRatio_eta_tmp = new TH2D("hv1HFevenRatio_eta_tmp", "", 100, 0, 2.5, 100, -2, 3);
+    hv1HFevenRatio_eta_tmp->SetTitle("");
+    hv1HFevenRatio_eta_tmp->SetStats(0);
+    hv1HFevenRatio_eta_tmp->SetXTitle("#eta");
+    hv1HFevenRatio_eta_tmp->SetYTitle("v_{1}(+#eta) / v_{1}(-#eta)");
+    hv1HFevenRatio_eta_tmp->GetXaxis()->SetRangeUser(0, 2.4);
+    hv1HFevenRatio_eta_tmp->GetYaxis()->SetRangeUser(0.95, 1.05);
+    hv1HFevenRatio_eta_tmp->SetNdivisions(509);
+    hv1HFevenRatio_eta_tmp->GetXaxis()->CenterTitle();
+    hv1HFevenRatio_eta_tmp->GetYaxis()->CenterTitle();
+    cv1HFevenRatio_eta->Divide(4,2,0,0);
+    for (int cbin = 0; cbin<ncentbins; cbin++) {
+        TPad * padv1HFevenRatio_eta = (TPad *) cv1HFevenRatio_eta->cd(cbin+1);
+        if (gridlines) padv1HFevenRatio_eta->SetGrid();
+        if (cbin == 3 || cbin == 7) padv1HFevenRatio_eta->SetRightMargin(0.02);
+        if (cbin <= 3) padv1HFevenRatio_eta->SetTopMargin(0.08);
+        TH1D * hv1HFevenRatio_eta = (TH1D *) hv1HFevenRatio_eta_tmp->Clone(Form("hv1HFevenRatio_eta_%c",cbin));
+        if (cbin == 0) {
+            hv1HFevenRatio_eta->GetYaxis()->SetTitleSize(0.07);
+            hv1HFevenRatio_eta->GetYaxis()->SetTitleOffset(1.33);
+            hv1HFevenRatio_eta->GetYaxis()->SetLabelSize(0.06);
+        }
+        if (cbin == 4) {
+            hv1HFevenRatio_eta->GetXaxis()->SetTitleSize(0.06);
+            hv1HFevenRatio_eta->GetXaxis()->SetTitleOffset(1.12);
+            hv1HFevenRatio_eta->GetXaxis()->SetLabelSize(0.06);
+            hv1HFevenRatio_eta->GetXaxis()->SetLabelOffset(0.018);
+            hv1HFevenRatio_eta->GetYaxis()->SetTitleSize(0.06);
+            hv1HFevenRatio_eta->GetYaxis()->SetTitleOffset(1.50);
+            hv1HFevenRatio_eta->GetYaxis()->SetLabelSize(0.05);
+            hv1HFevenRatio_eta->GetYaxis()->SetLabelOffset(0.010);
+        }
+        if (cbin >=5) {
+            hv1HFevenRatio_eta->GetXaxis()->SetTitleSize(0.07);
+            hv1HFevenRatio_eta->GetXaxis()->SetTitleOffset(1.00);
+            hv1HFevenRatio_eta->GetXaxis()->SetLabelSize(0.07);
+            hv1HFevenRatio_eta->GetXaxis()->SetLabelOffset(0.008);
+        }
+        hv1HFevenRatio_eta->Draw();
+        lnetaRatio->Draw();
+        ratiov1even_eta[anal][cbin]->Draw("same");
+
+        TF1 * fit1 = new TF1("fit1", "pol0", 0, 2.4);
+        fit1->SetLineColor(kBlue);
+        ratiov1even_eta[anal][cbin]->Fit(fit1,"QR");
+        double par0 = fit1->GetParameter(0);
+        double par0E = fit1->GetParError(0);
+        double par0Chi2 = fit1->GetChisquare();
+
+        TPaveText * txv1HFevenRatio_eta_fit;
+        if (cbin == 0) txv1HFevenRatio_eta_fit = new TPaveText(0.24, 0.07, 0.74, 0.27,"NDC");
+        else if (cbin >= 1 && cbin <= 3) txv1HFevenRatio_eta_fit = new TPaveText(0.08, 0.07, 0.56, 0.27,"NDC");
+        else if (cbin == 4) txv1HFevenRatio_eta_fit = new TPaveText(0.24, 0.21, 0.74, 0.39,"NDC");
+        else txv1HFevenRatio_eta_fit = new TPaveText(0.08, 0.21, 0.56, 0.39,"NDC");
+        SetTPaveTxt(txv1HFevenRatio_eta_fit, 16);
+        txv1HFevenRatio_eta_fit->AddText(Form("mean: %0.4f #pm %0.4f",par0,par0E));
+        txv1HFevenRatio_eta_fit->AddText(Form("#chi^{2}: %0.4f",par0Chi2));
+        txv1HFevenRatio_eta_fit->Draw();
+
+        TPaveText * txv1HFevenRatio_eta;
+        if (cbin == 0) txv1HFevenRatio_eta = new TPaveText(0.75, 0.78, 0.93, 0.87,"NDC");
+        else if (cbin >= 1 && cbin <= 3) txv1HFevenRatio_eta = new TPaveText(0.68, 0.78, 0.86, 0.87,"NDC");
+        else if (cbin == 4) txv1HFevenRatio_eta = new TPaveText(0.75, 0.86, 0.93, 0.95,"NDC");
+        else txv1HFevenRatio_eta = new TPaveText(0.68, 0.86, 0.86, 0.95,"NDC");
+        SetTPaveTxt(txv1HFevenRatio_eta, 18);
+        txv1HFevenRatio_eta->AddText(Form("%d-%d%%",centBins[cbin],centBins[cbin+1]));
+        txv1HFevenRatio_eta->Draw();
+    }
+    cv1HFevenRatio_eta->cd(1);
+    TPaveText * txv1HFevenRatio_eta_1 = new TPaveText(0.18, 0.93, 0.58, 1.0,"NDC");
+    SetTPaveTxt(txv1HFevenRatio_eta_1, 18);
+    txv1HFevenRatio_eta_1->AddText("#bf{CMS} #it{Preliminary}");
+    txv1HFevenRatio_eta_1->Draw();
+
+    cv1HFevenRatio_eta->Print(Form("plots/intv1/intv1_eta/int%s/v1HFevenRatio_eta_%s.png",AnalNames[anal].data(),AnalNames[anal].data()),"png");
+    if (close_plots) cv1HFevenRatio_eta->Close();
+
+
+
+    //-- plot both v1odd(eta) and it's ratios
+    // 0 - 40% centrality
+    TCanvas * cv1HFodd_and_rat_eta = new TCanvas("cv1HFodd_and_rat_eta","cv1HFodd_and_rat_eta",1100,630);
+    TH1D * hv1HFodd_and_rat_eta_tmp = new TH1D("hv1HFodd_and_rat_eta", "", 40, -2.5, 2.5);
+    hv1HFodd_and_rat_eta_tmp->SetTitle("");
+    hv1HFodd_and_rat_eta_tmp->SetStats(0);
+    hv1HFodd_and_rat_eta_tmp->SetXTitle("#eta");
+    hv1HFodd_and_rat_eta_tmp->SetYTitle("v_{1}^{odd}");
+    hv1HFodd_and_rat_eta_tmp->GetYaxis()->SetRangeUser(-0.06, 0.06);
+    hv1HFodd_and_rat_eta_tmp->SetNdivisions(509);
+    cv1HFodd_and_rat_eta->Divide(4,2,0,0);
+    for (int cbin = 0; cbin<ncentbins; cbin++) {
+        TPad * padv1HFodd_and_rat_eta = (TPad *) cv1HFodd_and_rat_eta->cd(cbin+1);
+        if (gridlines) padv1HFodd_and_rat_eta->SetGrid();
+        if (cbin == 3 || cbin == 7) padv1HFodd_and_rat_eta->SetRightMargin(0.02);
+        TH1D * hv1HFodd_and_rat_eta = (TH1D *) hv1HFodd_and_rat_eta_tmp->Clone(Form("hv1HFodd_and_rat_eta_%c",cbin));
+        if (cbin == 0) {
+            hv1HFodd_and_rat_eta->GetYaxis()->SetTitleSize(0.07);
+            hv1HFodd_and_rat_eta->GetYaxis()->SetTitleOffset(1.33);
+            hv1HFodd_and_rat_eta->GetYaxis()->SetLabelSize(0.06);
+        }
+        if (cbin == 3) hv1HFodd_and_rat_eta->SetYTitle("|v_{1}(+#eta) / v_{1}(-#eta)|");
+        if (cbin >= 4) hv1HFodd_and_rat_eta->GetYaxis()->SetRangeUser(0.4, 1.6);
+        if (cbin == 4) {
+            hv1HFodd_and_rat_eta->GetXaxis()->CenterTitle();
+            hv1HFodd_and_rat_eta->GetXaxis()->SetTitleSize(0.06);
+            hv1HFodd_and_rat_eta->GetXaxis()->SetTitleOffset(1.12);
+            hv1HFodd_and_rat_eta->GetXaxis()->SetLabelSize(0.06);
+            hv1HFodd_and_rat_eta->GetXaxis()->SetLabelOffset(0.018);
+            hv1HFodd_and_rat_eta->GetYaxis()->SetTitleSize(0.06);
+            hv1HFodd_and_rat_eta->GetYaxis()->SetTitleOffset(1.50);
+            hv1HFodd_and_rat_eta->GetYaxis()->SetLabelSize(0.05);
+            hv1HFodd_and_rat_eta->GetYaxis()->SetLabelOffset(0.010);
+        }
+        if (cbin >=5) {
+            hv1HFodd_and_rat_eta->GetXaxis()->CenterTitle();
+            hv1HFodd_and_rat_eta->GetXaxis()->SetTitleSize(0.07);
+            hv1HFodd_and_rat_eta->GetXaxis()->SetTitleOffset(1.00);
+            hv1HFodd_and_rat_eta->GetXaxis()->SetLabelSize(0.07);
+            hv1HFodd_and_rat_eta->GetXaxis()->SetLabelOffset(0.008);
+        }
+        hv1HFodd_and_rat_eta->Draw();
+
+        TPaveText * txv1HFodd_and_rat_eta;
+        if (cbin <= 3) {
+            v1odd_eta[anal][cbin]->Draw("same");
+            if (cbin == 0) txv1HFodd_and_rat_eta = new TPaveText(0.25, 0.04, 0.46, 0.17,"NDC");
+            else if (cbin >= 1 && cbin <= 3) txv1HFodd_and_rat_eta = new TPaveText(0.06, 0.04, 0.26, 0.17,"NDC");
+            SetTPaveTxt(txv1HFodd_and_rat_eta, 18);
+            txv1HFodd_and_rat_eta->AddText(Form("%d-%d%%",centBins[cbin],centBins[cbin+1]));
+            txv1HFodd_and_rat_eta->Draw();
+        } else {
+            lnetaRatio->Draw();
+            ratiov1odd_eta[anal][cbin]->Draw("same");
+
+            TF1 * fit1 = new TF1("fit1", "pol0", 0, 2.4);
+            fit1->SetLineColor(kBlue);
+            ratiov1odd_eta[anal][cbin]->Fit(fit1,"QR");
+            double par0 = fit1->GetParameter(0);
+            double par0E = fit1->GetParError(0);
+            double par0Chi2 = fit1->GetChisquare();
+
+            TPaveText * tx1HFodd_and_rat_eta_fit;
+            if (cbin == 4) tx1HFodd_and_rat_eta_fit = new TPaveText(0.24, 0.21, 0.74, 0.39,"NDC");
+            else tx1HFodd_and_rat_eta_fit = new TPaveText(0.08, 0.21, 0.56, 0.39,"NDC");
+            SetTPaveTxt(tx1HFodd_and_rat_eta_fit, 16);
+            tx1HFodd_and_rat_eta_fit->AddText(Form("mean: %0.4f #pm %0.4f",par0,par0E));
+            tx1HFodd_and_rat_eta_fit->AddText(Form("#chi^{2}: %0.4f",par0Chi2));
+            tx1HFodd_and_rat_eta_fit->Draw();
+        }
+
+    }
+    cv1HFodd_and_rat_eta->cd(1);
+    TPaveText * txv1HFodd_and_rat_eta_1 = new TPaveText(0.23, 0.73, 0.82, 0.95,"NDC");
+    SetTPaveTxt(txv1HFodd_and_rat_eta_1, 18);
+    txv1HFodd_and_rat_eta_1->AddText("#bf{CMS} #it{Preliminary}");
+    txv1HFodd_and_rat_eta_1->AddText("0.3 < p_{T} < 3.0 (GeV/c)");
+    txv1HFodd_and_rat_eta_1->Draw();
+
+    cv1HFodd_and_rat_eta->Print(Form("plots/intv1/intv1_eta/int%s/v1odd_with_ratio_eta_%s.png",AnalNames[anal].data(),AnalNames[anal].data()),"png");
+    if (close_plots) cv1HFodd_and_rat_eta->Close();
+
 
 }
