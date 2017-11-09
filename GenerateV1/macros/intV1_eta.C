@@ -705,9 +705,9 @@ void intV1_eta()
         if (cbin == 3 || cbin == 7) padv1HFodd_and_absdiff_eta_0to40->SetRightMargin(0.02);
         if (cbin <= 3) {
             padv1HFodd_and_absdiff_eta_0to40->SetTopMargin(0.08);
-            padv1HFodd_and_absdiff_eta_0to40->SetBottomMargin(0.12);
+            padv1HFodd_and_absdiff_eta_0to40->SetBottomMargin(0.14);
         }
-        if (cbin >= 4) padv1HFodd_and_absdiff_eta_0to40->SetTopMargin(0.14);
+        if (cbin >= 4) padv1HFodd_and_absdiff_eta_0to40->SetTopMargin(0.15);
         TH1D * hv1HFodd_and_absdiff_eta_0to40 = (TH1D *) hv1HFodd_and_absdiff_eta_0to40_tmp->Clone(Form("hv1HFodd_and_absdiff_eta_0to40_%c",cbin));
         if (cbin == 0) {
             hv1HFodd_and_absdiff_eta_0to40->GetXaxis()->CenterTitle();
@@ -799,7 +799,7 @@ void intV1_eta()
     legv1HFoddAbsDiff_eta_0to40->AddEntry(fitleg," pol0 fit","l");
     legv1HFoddAbsDiff_eta_0to40->Draw();
 
-    cv1HFodd_and_absdiff_eta_0to40->Print(Form("plots/intv1/intv1_eta/int%s/v1odd_with_ratio_eta_%s.png",AnalNames[anal].data(),AnalNames[anal].data()),"png");
+    cv1HFodd_and_absdiff_eta_0to40->Print(Form("plots/intv1/intv1_eta/int%s/v1odd_with_absdiff_eta_0to40cent_%s.png",AnalNames[anal].data(),AnalNames[anal].data()),"png");
     if (close_plots) cv1HFodd_and_absdiff_eta_0to40->Close();
 
 
@@ -820,9 +820,9 @@ void intV1_eta()
         if (cbin == 3 || cbin == 7) padv1HFodd_and_absdiff_eta_40to80->SetRightMargin(0.02);
         if (cbin <= 3) {
             padv1HFodd_and_absdiff_eta_40to80->SetTopMargin(0.08);
-            padv1HFodd_and_absdiff_eta_40to80->SetBottomMargin(0.12);
+            padv1HFodd_and_absdiff_eta_40to80->SetBottomMargin(0.14);
         }
-        if (cbin >= 4) padv1HFodd_and_absdiff_eta_40to80->SetTopMargin(0.14);
+        if (cbin >= 4) padv1HFodd_and_absdiff_eta_40to80->SetTopMargin(0.15);
         TH1D * hv1HFodd_and_absdiff_eta_40to80 = (TH1D *) hv1HFodd_and_absdiff_eta_40to80_tmp->Clone(Form("hv1HFodd_and_absdiff_eta_40to80_%c",cbin));
         if (cbin == 0) {
             hv1HFodd_and_absdiff_eta_40to80->GetXaxis()->CenterTitle();
@@ -914,7 +914,7 @@ void intV1_eta()
     legv1HFoddAbsDiff_eta_40to80->AddEntry(fitleg," pol0 fit","l");
     legv1HFoddAbsDiff_eta_40to80->Draw();
 
-    cv1HFodd_and_absdiff_eta_40to80->Print(Form("plots/intv1/intv1_eta/int%s/v1odd_with_ratio_eta_%s.png",AnalNames[anal].data(),AnalNames[anal].data()),"png");
+    cv1HFodd_and_absdiff_eta_40to80->Print(Form("plots/intv1/intv1_eta/int%s/v1odd_with_absdiff_eta_40to80cent_%s.png",AnalNames[anal].data(),AnalNames[anal].data()),"png");
     if (close_plots) cv1HFodd_and_absdiff_eta_40to80->Close();
 
 
