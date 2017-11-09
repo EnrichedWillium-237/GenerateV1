@@ -192,7 +192,23 @@ void SystIntV1_eta()
         hv1HFoddRatio_eta->Draw();
         lnetaRatio->Draw();
         ratiov1odd_eta[anal][cbin]->Draw("same");
-        ratiov1odd_eta[anal][cbin]->Fit("pol0","Q",0,2.4);
+        TF1 * fit1 = new TF1("fit1", "pol0", 0, 2.4);
+        fit1->SetLineColor(kBlue);
+        ratiov1odd_eta[anal][cbin]->Fit(fit1,"QR");
+        // ratiov1odd_eta[anal][cbin]->Fit("pol0","Q",0,2.4);
+        double par0 = ratiov1odd_eta[anal][cbin]->GetFunction("pol0")->GetParameter(0);
+        double par0E = ratiov1odd_eta[anal][cbin]->GetFunction("pol0")->GetParError(0);
+        double par0Chi2 = ratiov1odd_eta[anal][cbin]->GetFunction("pol0")->GetChisquare();
+
+        TPaveText * txtxv1HFoddRatio_eta_fit;
+        if (cbin == 0) txtxv1HFoddRatio_eta_fit = new TPaveText(0.24, 0.07, 0.74, 0.27,"NDC");
+        else if (cbin >= 1 && cbin <= 3) txtxv1HFoddRatio_eta_fit = new TPaveText(0.08, 0.07, 0.56, 0.27,"NDC");
+        else if (cbin == 4) txtxv1HFoddRatio_eta_fit = new TPaveText(0.24, 0.21, 0.74, 0.39,"NDC");
+        else txtxv1HFoddRatio_eta_fit = new TPaveText(0.08, 0.21, 0.56, 0.39,"NDC");
+        SetTPaveTxt(txtxv1HFoddRatio_eta_fit, 16);
+        txtxv1HFoddRatio_eta_fit->AddText(Form("mean: %0.4f #pm %0.4f",par0,par0E));
+        txtxv1HFoddRatio_eta_fit->AddText(Form("#chi^{2}: %0.4f",par0Chi2));
+        txtxv1HFoddRatio_eta_fit->Draw();
 
         TPaveText * txv1HFoddRatio_eta;
         if (cbin == 0) txv1HFoddRatio_eta = new TPaveText(0.75, 0.78, 0.93, 0.87,"NDC");
