@@ -232,7 +232,7 @@ void SystIntV1_eta()
     if (!fopen(Form("plots/intv1/intv1_eta/int%s",AnalNames[anal].data()),"r")) system(Form("mkdir plots/intv1/intv1_eta/int%s",AnalNames[anal].data()));
 
     TCanvas * cv1HFevenRatio_eta = new TCanvas("cv1HFevenRatio_eta","cv1HFevenRatio_eta",1100,620);
-    TH1D * hv1HFevenRatio_eta_tmp = new TH1D("hv1HFevenRatio_eta_tmp", "", 40, 0, 2.5);
+    TH2D * hv1HFevenRatio_eta_tmp = new TH2D("hv1HFevenRatio_eta_tmp", "", 100, 0, 2.5, 100, -2, 3);
     hv1HFevenRatio_eta_tmp->SetTitle("");
     hv1HFevenRatio_eta_tmp->SetStats(0);
     hv1HFevenRatio_eta_tmp->SetXTitle("#eta");

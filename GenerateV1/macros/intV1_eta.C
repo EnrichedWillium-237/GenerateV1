@@ -1,8 +1,9 @@
 # include "TFile.h"
 # include "TGraphErrors.h"
 # include "TCanvas.h"
-# include "TH1D.h"
-# include "TH2D.h"
+# include "TF1.h"
+# include "TH1.h"
+# include "TH2.h"
 # include "TLegend.h"
 # include "TMath.h"
 # include "TPaveText.h"
@@ -15,6 +16,14 @@ Bool_t gridlines = kFALSE;
 
 # include "style.h"
 
+static const int nptbins = 18;
+static const double ptbins[] = {0.30,  0.40,  0.50,  0.60,  0.80,  1.00,  1.25,  1.50,  2.00,  2.50,  3.00,
+                     3.50,  4.00,  5.00,  6.00,  7.00,  8.00,  10.00,  12.00};
+static const int netabins = 12;
+static const double etabins[] = {-2.4, -2.0, -1.6, -1.2, -0.8, -0.4,  0.0,
+                     0.4,  0.8,  1.2,  1.6,  2.0,  2.4};
+static const int nratbins = 6;
+static const double ratbins[] = {0.0,  0.4,  0.8,  1.2,  1.6,  2.0,  2.4};
 static const int ncentbins = 8;
 static const int centBins[] = {0, 10, 20, 30, 40, 50, 60, 70, 80};
 static const int nanals = 16;
@@ -42,6 +51,9 @@ TH1D * v123m_eta[nanals][ncentbins];
 TH1D * v123odd_eta[nanals][ncentbins];
 TH1D * v123even_eta[nanals][ncentbins];
 
+TH1D * ratiov1odd_eta[nanals][ncentbins];
+TH1D * ratiov1even_eta[nanals][ncentbins];
+
 TH1D * runParms[nanals];
 
 void intV1_eta()
@@ -68,6 +80,9 @@ void intV1_eta()
             v123m_eta[i][cbin] = (TH1D *) tfin->Get(Form("%s/v1_eta/%d-%d/v123m_eta_%s_%d",AnalNames[i].data(),centBins[cbin],centBins[cbin+1],AnalNames[i].data(),cbin));
             v123odd_eta[i][cbin] = (TH1D *) tfin->Get(Form("%s/v1_eta/%d-%d/v123odd_eta_%s_%d",AnalNames[i].data(),centBins[cbin],centBins[cbin+1],AnalNames[i].data(),cbin));
             v123even_eta[i][cbin] = (TH1D *) tfin->Get(Form("%s/v1_eta/%d-%d/v123even_eta_%s_%d",AnalNames[i].data(),centBins[cbin],centBins[cbin+1],AnalNames[i].data(),cbin));
+
+            ratiov1odd_eta[i][cbin] = new TH1D(Form("ratiov1odd_eta_%s_%d",AnalNames[i].data(),cbin), "", nratbins, ratbins);
+            ratiov1even_eta[i][cbin] = new TH1D(Form("ratiov1even_eta_%s_%d",AnalNames[i].data(),cbin), "", nratbins, ratbins);
         }
     }
 
