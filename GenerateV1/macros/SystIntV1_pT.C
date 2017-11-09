@@ -159,7 +159,7 @@ void SystIntV1_pT()
             hv1HFoddAbsDiff_pt->GetYaxis()->SetLabelSize(0.05);
             hv1HFoddAbsDiff_pt->GetYaxis()->SetLabelOffset(0.010);
         }
-        if (cbin >=5) {
+        if (cbin >= 5) {
             hv1HFoddAbsDiff_pt->GetXaxis()->SetTitleSize(0.07);
             hv1HFoddAbsDiff_pt->GetXaxis()->SetTitleOffset(1.00);
             hv1HFoddAbsDiff_pt->GetXaxis()->SetLabelSize(0.07);

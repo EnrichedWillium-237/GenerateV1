@@ -22,8 +22,8 @@ static const double ptbins[] = {0.30,  0.40,  0.50,  0.60,  0.80,  1.00,  1.25, 
 static const int netabins = 12;
 static const double etabins[] = {-2.4, -2.0, -1.6, -1.2, -0.8, -0.4,  0.0,
                      0.4,  0.8,  1.2,  1.6,  2.0,  2.4};
-static const int nratbins = 6;
-static const double ratbins[] = {0.0,  0.4,  0.8,  1.2,  1.6,  2.0,  2.4};
+static const int nadbins = 6;
+static const double adbins[] = {0.0,  0.4,  0.8,  1.2,  1.6,  2.0,  2.4};
 static const int ncentbins = 8;
 static const int centBins[] = {0, 10, 20, 30, 40, 50, 60, 70, 80};
 static const int nanals = 16;
@@ -81,8 +81,8 @@ void SystIntV1_eta()
             v123odd_eta[i][cbin] = (TH1D *) tfin->Get(Form("%s/v1_eta/%d-%d/v123odd_eta_%s_%d",AnalNames[i].data(),centBins[cbin],centBins[cbin+1],AnalNames[i].data(),cbin));
             v123even_eta[i][cbin] = (TH1D *) tfin->Get(Form("%s/v1_eta/%d-%d/v123even_eta_%s_%d",AnalNames[i].data(),centBins[cbin],centBins[cbin+1],AnalNames[i].data(),cbin));
 
-            absDiffv1odd_eta[i][cbin] = new TH1D(Form("absDiffv1odd_eta_%s_%d",AnalNames[i].data(),cbin), "", nratbins, ratbins);
-            absDiffv1even_eta[i][cbin] = new TH1D(Form("absDiffv1even_eta_%s_%d",AnalNames[i].data(),cbin), "", nratbins, ratbins);
+            absDiffv1odd_eta[i][cbin] = new TH1D(Form("absDiffv1odd_eta_%s_%d",AnalNames[i].data(),cbin), "", nadbins, adbins);
+            absDiffv1even_eta[i][cbin] = new TH1D(Form("absDiffv1even_eta_%s_%d",AnalNames[i].data(),cbin), "", nadbins, adbins);
         }
     }
 
@@ -109,7 +109,6 @@ void SystIntV1_eta()
                 double adeven_err = sqrt( pow(v1even_pos_err,2) + pow(v1even_neg_err,2) );
                 absDiffv1even_eta[i][cbin]->SetBinContent(j+1, adeven);
                 absDiffv1even_eta[i][cbin]->SetBinError(j+1, adeven_err);
-
             }
         }
     }
@@ -138,11 +137,8 @@ void SystIntV1_eta()
 
     int anal; // choice of analysis
 
-    TLine * lnetaRatio = new TLine(0.0, 1.0, 2.5, 1.0);
-    lnetaRatio->SetLineWidth(1);
 
-
-    // v1odd(+eta)/v1odd(-eta) for the HF
+    // |v1odd(+eta)| - |v1odd(-eta)| odd for the HF
     anal = 7;
     if (!fopen(Form("plots/intv1/intv1_eta/int%s",AnalNames[anal].data()),"r")) system(Form("mkdir plots/intv1/intv1_eta/int%s",AnalNames[anal].data()));
 
@@ -186,7 +182,6 @@ void SystIntV1_eta()
             hv1HFoddAbsDiff_eta->GetXaxis()->SetLabelOffset(0.008);
         }
         hv1HFoddAbsDiff_eta->Draw();
-        lnetaRatio->Draw();
         absDiffv1odd_eta[anal][cbin]->Draw("same");
 
         TF1 * fit1 = new TF1("fit1", "pol0", 0, 2.4);
@@ -226,7 +221,7 @@ void SystIntV1_eta()
 
 
 
-    // v1even(+eta)/v1even(-eta) for the HF
+    // |v1odd(+eta)| - |v1odd(-eta)| even for the HF
     anal = 7;
     if (!fopen(Form("plots/intv1/intv1_eta/int%s",AnalNames[anal].data()),"r")) system(Form("mkdir plots/intv1/intv1_eta/int%s",AnalNames[anal].data()));
 
@@ -270,7 +265,6 @@ void SystIntV1_eta()
             hv1HFevenAbsDiff_eta->GetXaxis()->SetLabelOffset(0.008);
         }
         hv1HFevenAbsDiff_eta->Draw();
-        lnetaRatio->Draw();
         absDiffv1even_eta[anal][cbin]->Draw("same");
 
         TF1 * fit1 = new TF1("fit1", "pol0", 0, 2.4);
