@@ -148,6 +148,8 @@ void intV1_eta()
             absDiffv1even_eta[i][cbin]->SetMarkerSize(1.1);
         }
     }
+    TF1 * fitleg = new TF1("fitleg","pol0",0,1); // dummy TF1 for legends
+    fitleg->SetLineColor(kBlue);
 
 
     //-- make plots
@@ -356,7 +358,7 @@ void intV1_eta()
         txv1HFeven_eta->Draw();
     }
     cv1HFeven_eta->cd(1);
-    TPaveText * txv1HFeven_eta_1 = new TPaveText(0.22, 0.65, 0.81, 0.86,"NDC");
+    TPaveText * txv1HFeven_eta_1 = new TPaveText(0.23, 0.16, 0.82, 0.37,"NDC");
     SetTPaveTxt(txv1HFeven_eta_1, 18);
     txv1HFeven_eta_1->AddText("PbPb #sqrt{s_{NN}} = 5.02 TeV");
     txv1HFeven_eta_1->AddText("0.3 < p_{T} < 3.0 (GeV/c)");
@@ -367,7 +369,7 @@ void intV1_eta()
     txv1HFeven_eta_2->AddText("#bf{CMS} #it{Preliminary}");
     txv1HFeven_eta_2->Draw();
 
-    cv1HFeven_eta->Print(Form("plots/intv1/intv1_eta/int%s/v1_even_eta_%s.png",AnalNames[anal].data(),AnalNames[anal].data()),"png");
+    cv1HFeven_eta->Print(Form("plots/intv1/intv1_eta/int%s/v1_HFeven_eta_%s.png",AnalNames[anal].data(),AnalNames[anal].data()),"png");
     if (close_plots) cv1HFeven_eta->Close();
 
 
@@ -376,18 +378,20 @@ void intV1_eta()
     anal = 15;
     if (!fopen(Form("plots/intv1/intv1_eta/int%s",AnalNames[anal].data()),"r")) system(Form("mkdir plots/intv1/intv1_eta/int%s",AnalNames[anal].data()));
 
-    TCanvas * cv1Trkpm_eta = new TCanvas("cv1Trkpm_eta","cv1Trkpm_eta",1100,630);
-    TH1D * hv1Trkpm_eta_tmp = new TH1D("hv1Trkpm_eta", "", 40, -2.5, 2.5);
+    TCanvas * cv1Trkpm_eta = new TCanvas("cv1Trkpm_eta","cv1Trkpm_eta",1100,620);
+    TH1D * hv1Trkpm_eta_tmp = new TH1D("hv1Trkpm_eta", "", 40, -2.4, 2.4);
     hv1Trkpm_eta_tmp->SetTitle("");
     hv1Trkpm_eta_tmp->SetStats(0);
     hv1Trkpm_eta_tmp->SetXTitle("#eta");
     hv1Trkpm_eta_tmp->SetYTitle("v_{1}");
     hv1Trkpm_eta_tmp->GetYaxis()->SetRangeUser(-0.19, 0.19);
+    hv1Trkpm_eta_tmp->GetYaxis()->CenterTitle();
     hv1Trkpm_eta_tmp->SetNdivisions(509);
     cv1Trkpm_eta->Divide(4,2,0,0);
     for (int cbin = 0; cbin<ncentbins; cbin++) {
         TPad * padv1Trkpm_eta = (TPad *) cv1Trkpm_eta->cd(cbin+1);
         if (gridlines) padv1Trkpm_eta->SetGrid();
+        if (cbin == 3 || cbin == 7) padv1Trkpm_eta->SetRightMargin(0.02);
         if (cbin == 3 || cbin == 7) padv1Trkpm_eta->SetRightMargin(0.02);
         TH1D * hv1Trkpm_eta = (TH1D *) hv1Trkpm_eta_tmp->Clone(Form("hv1Trkpm_eta_%c",cbin));
         if (cbin == 0) {
@@ -396,7 +400,6 @@ void intV1_eta()
             hv1Trkpm_eta->GetYaxis()->SetLabelSize(0.06);
         }
         if (cbin == 4) {
-            hv1Trkpm_eta->GetXaxis()->CenterTitle();
             hv1Trkpm_eta->GetXaxis()->SetTitleSize(0.06);
             hv1Trkpm_eta->GetXaxis()->SetTitleOffset(1.12);
             hv1Trkpm_eta->GetXaxis()->SetLabelSize(0.06);
@@ -407,7 +410,6 @@ void intV1_eta()
             hv1Trkpm_eta->GetYaxis()->SetLabelOffset(0.010);
         }
         if (cbin >=5) {
-            hv1Trkpm_eta->GetXaxis()->CenterTitle();
             hv1Trkpm_eta->GetXaxis()->SetTitleSize(0.07);
             hv1Trkpm_eta->GetXaxis()->SetTitleOffset(1.00);
             hv1Trkpm_eta->GetXaxis()->SetLabelSize(0.07);
@@ -427,14 +429,19 @@ void intV1_eta()
         txv1Trkpm_eta->Draw();
     }
     cv1Trkpm_eta->cd(1);
-    TPaveText * txv1Trkpm_eta_1 = new TPaveText(0.23, 0.73, 0.82, 0.95,"NDC");
+    TPaveText * txv1Trkpm_eta_1 = new TPaveText(0.22, 0.65, 0.81, 0.86,"NDC");
     SetTPaveTxt(txv1Trkpm_eta_1, 18);
-    txv1Trkpm_eta_1->AddText("#bf{CMS} #it{Preliminary}");
+    txv1Trkpm_eta_1->AddText("PbPb #sqrt{s_{NN}} = 5.02 TeV");
     txv1Trkpm_eta_1->AddText("0.3 < p_{T} < 3.0 (GeV/c)");
     txv1Trkpm_eta_1->Draw();
 
+    TPaveText * txv1Trkpm_eta_2 = new TPaveText(0.18, 0.93, 0.58, 1.0,"NDC");
+    SetTPaveTxt(txv1Trkpm_eta_2, 18);
+    txv1Trkpm_eta_2->AddText("#bf{CMS} #it{Preliminary}");
+    txv1Trkpm_eta_2->Draw();
+
     cv1Trkpm_eta->cd(2);
-    TLegend * legv1Trkpm_eta = new TLegend(0.07, 0.75, 0.26, 0.95);
+    TLegend * legv1Trkpm_eta = new TLegend(0.06, 0.67, 0.25, 0.86);
     SetLegend(legv1Trkpm_eta, 18);
     legv1Trkpm_eta->AddEntry(v1p_eta[anal][0]," Tracker+","p");
     legv1Trkpm_eta->AddEntry(v1m_eta[anal][0]," Tracker-","p");
@@ -447,19 +454,21 @@ void intV1_eta()
 
     // integrated v1^even(eta) using the tracker (actually called v1odd in output file)
 
-    TCanvas * cv1Trkeven_eta = new TCanvas("cv1Trkeven_eta","cv1Trkeven_eta",1100,630);
-    TH1D * hv1Trkeven_eta_tmp = new TH1D("hv1Trkeven_eta", "", 40, -2.5, 2.5);
+    TCanvas * cv1Trkeven_eta = new TCanvas("cv1Trkeven_eta","cv1Trkeven_eta",1100,620);
+    TH1D * hv1Trkeven_eta_tmp = new TH1D("hv1Trkeven_eta", "", 40, -2.4, 2.4);
     hv1Trkeven_eta_tmp->SetTitle("");
     hv1Trkeven_eta_tmp->SetStats(0);
     hv1Trkeven_eta_tmp->SetXTitle("#eta");
     hv1Trkeven_eta_tmp->SetYTitle("v_{1}^{even}");
     hv1Trkeven_eta_tmp->GetYaxis()->SetRangeUser(-0.06, 0.06);
+    hv1Trkeven_eta_tmp->GetYaxis()->CenterTitle();
     hv1Trkeven_eta_tmp->SetNdivisions(509);
     cv1Trkeven_eta->Divide(4,2,0,0);
     for (int cbin = 0; cbin<ncentbins; cbin++) {
         TPad * padv1Trkeven_eta = (TPad *) cv1Trkeven_eta->cd(cbin+1);
         if (gridlines) padv1Trkeven_eta->SetGrid();
         if (cbin == 3 || cbin == 7) padv1Trkeven_eta->SetRightMargin(0.02);
+        if (cbin <= 3) padv1Trkeven_eta->SetTopMargin(0.08);
         TH1D * hv1Trkeven_eta = (TH1D *) hv1Trkeven_eta_tmp->Clone(Form("hv1Trkeven_eta_%c",cbin));
         if (cbin == 0) {
             hv1Trkeven_eta->GetYaxis()->SetTitleSize(0.07);
@@ -467,7 +476,6 @@ void intV1_eta()
             hv1Trkeven_eta->GetYaxis()->SetLabelSize(0.06);
         }
         if (cbin == 4) {
-            hv1Trkeven_eta->GetXaxis()->CenterTitle();
             hv1Trkeven_eta->GetXaxis()->SetTitleSize(0.06);
             hv1Trkeven_eta->GetXaxis()->SetTitleOffset(1.12);
             hv1Trkeven_eta->GetXaxis()->SetLabelSize(0.06);
@@ -478,7 +486,6 @@ void intV1_eta()
             hv1Trkeven_eta->GetYaxis()->SetLabelOffset(0.010);
         }
         if (cbin >=5) {
-            hv1Trkeven_eta->GetXaxis()->CenterTitle();
             hv1Trkeven_eta->GetXaxis()->SetTitleSize(0.07);
             hv1Trkeven_eta->GetXaxis()->SetTitleOffset(1.00);
             hv1Trkeven_eta->GetXaxis()->SetLabelSize(0.07);
@@ -497,11 +504,16 @@ void intV1_eta()
         txv1Trkeven_eta->Draw();
     }
     cv1Trkeven_eta->cd(1);
-    TPaveText * txv1Trkeven_eta_1 = new TPaveText(0.23, 0.73, 0.82, 0.95,"NDC");
+    TPaveText * txv1Trkeven_eta_1 = new TPaveText(0.22, 0.65, 0.81, 0.86,"NDC");
     SetTPaveTxt(txv1Trkeven_eta_1, 18);
-    txv1Trkeven_eta_1->AddText("#bf{CMS} #it{Preliminary}");
+    txv1Trkeven_eta_1->AddText("PbPb #sqrt{s_{NN}} = 5.02 TeV");
     txv1Trkeven_eta_1->AddText("0.3 < p_{T} < 3.0 (GeV/c)");
     txv1Trkeven_eta_1->Draw();
+
+    TPaveText * txv1Trkeven_eta_2 = new TPaveText(0.18, 0.93, 0.58, 1.0,"NDC");
+    SetTPaveTxt(txv1Trkeven_eta_2, 18);
+    txv1Trkeven_eta_2->AddText("#bf{CMS} #it{Preliminary}");
+    txv1Trkeven_eta_2->Draw();
 
     cv1Trkeven_eta->Print(Form("plots/intv1/intv1_eta/int%s/v1_odd_eta_%s.png",AnalNames[anal].data(),AnalNames[anal].data()),"png");
     if (close_plots) cv1Trkeven_eta->Close();
@@ -644,24 +656,24 @@ void intV1_eta()
         double par0E = fit1->GetParError(0);
         double par0Chi2 = fit1->GetChisquare();
 
-        TPaveText * txtxv1HFevenAbsDiff_eta_fit;
-        if (cbin == 0) txtxv1HFevenAbsDiff_eta_fit = new TPaveText(0.24, 0.07, 0.74, 0.27,"NDC");
-        else if (cbin >= 1 && cbin <= 3) txtxv1HFevenAbsDiff_eta_fit = new TPaveText(0.08, 0.07, 0.56, 0.27,"NDC");
-        else if (cbin == 4) txtxv1HFevenAbsDiff_eta_fit = new TPaveText(0.24, 0.21, 0.74, 0.39,"NDC");
-        else txtxv1HFevenAbsDiff_eta_fit = new TPaveText(0.08, 0.21, 0.56, 0.39,"NDC");
-        SetTPaveTxt(txtxv1HFevenAbsDiff_eta_fit, 16);
-        txtxv1HFevenAbsDiff_eta_fit->AddText(Form("mean: %0.4f #pm %0.4f",par0,par0E));
-        txtxv1HFevenAbsDiff_eta_fit->AddText(Form("#chi^{2}: %0.4f",par0Chi2));
-        txtxv1HFevenAbsDiff_eta_fit->Draw();
+        TPaveText * txtxv1HFoddAbsDiff_eta_fit;
+        if (cbin == 0) txtxv1HFoddAbsDiff_eta_fit = new TPaveText(0.24, 0.07, 0.74, 0.27,"NDC");
+        else if (cbin >= 1 && cbin <= 3) txtxv1HFoddAbsDiff_eta_fit = new TPaveText(0.08, 0.07, 0.56, 0.27,"NDC");
+        else if (cbin == 4) txtxv1HFoddAbsDiff_eta_fit = new TPaveText(0.24, 0.21, 0.74, 0.39,"NDC");
+        else txtxv1HFoddAbsDiff_eta_fit = new TPaveText(0.08, 0.21, 0.56, 0.39,"NDC");
+        SetTPaveTxt(txtxv1HFoddAbsDiff_eta_fit, 16);
+        txtxv1HFoddAbsDiff_eta_fit->AddText(Form("mean: %0.4f #pm %0.4f",par0,par0E));
+        txtxv1HFoddAbsDiff_eta_fit->AddText(Form("#chi^{2}: %0.4f",par0Chi2));
+        txtxv1HFoddAbsDiff_eta_fit->Draw();
 
-        TPaveText * txv1HFevenAbsDiff_eta;
-        if (cbin == 0) txv1HFevenAbsDiff_eta = new TPaveText(0.75, 0.78, 0.93, 0.87,"NDC");
-        else if (cbin >= 1 && cbin <= 3) txv1HFevenAbsDiff_eta = new TPaveText(0.68, 0.78, 0.86, 0.87,"NDC");
-        else if (cbin == 4) txv1HFevenAbsDiff_eta = new TPaveText(0.75, 0.86, 0.93, 0.95,"NDC");
-        else txv1HFevenAbsDiff_eta = new TPaveText(0.68, 0.86, 0.86, 0.95,"NDC");
-        SetTPaveTxt(txv1HFevenAbsDiff_eta, 18);
-        txv1HFevenAbsDiff_eta->AddText(Form("%d-%d%%",centBins[cbin],centBins[cbin+1]));
-        txv1HFevenAbsDiff_eta->Draw();
+        TPaveText * txv1HFoddAbsDiff_eta;
+        if (cbin == 0) txv1HFoddAbsDiff_eta = new TPaveText(0.75, 0.78, 0.93, 0.87,"NDC");
+        else if (cbin >= 1 && cbin <= 3) txv1HFoddAbsDiff_eta = new TPaveText(0.68, 0.78, 0.86, 0.87,"NDC");
+        else if (cbin == 4) txv1HFoddAbsDiff_eta = new TPaveText(0.75, 0.86, 0.93, 0.95,"NDC");
+        else txv1HFoddAbsDiff_eta = new TPaveText(0.68, 0.86, 0.86, 0.95,"NDC");
+        SetTPaveTxt(txv1HFoddAbsDiff_eta, 18);
+        txv1HFoddAbsDiff_eta->AddText(Form("%d-%d%%",centBins[cbin],centBins[cbin+1]));
+        txv1HFoddAbsDiff_eta->Draw();
     }
     cv1HFevenAbsDiff_eta->cd(1);
     TPaveText * txv1HFevenAbsDiff_eta_1 = new TPaveText(0.18, 0.93, 0.58, 1.0,"NDC");
@@ -676,77 +688,193 @@ void intV1_eta()
 
     //-- plot both v1odd(eta) and it's absolute differences
     // 0 - 40% centrality
-    TCanvas * cv1HFodd_and_absdiff_eta = new TCanvas("cv1HFodd_and_absdiff_eta","cv1HFodd_and_absdiff_eta",1100,700);
-    TH1D * hv1HFodd_and_absdiff_eta_tmp = new TH1D("hv1HFodd_and_absdiff_eta", "", 40, -2.4, 2.4);
-    hv1HFodd_and_absdiff_eta_tmp->SetTitle("");
-    hv1HFodd_and_absdiff_eta_tmp->SetStats(0);
-    hv1HFodd_and_absdiff_eta_tmp->SetXTitle("#eta");
-    hv1HFodd_and_absdiff_eta_tmp->SetYTitle("v_{1}^{odd}");
-    hv1HFodd_and_absdiff_eta_tmp->GetYaxis()->SetRangeUser(-0.06, 0.06);
-    hv1HFodd_and_absdiff_eta_tmp->GetYaxis()->CenterTitle();
-    hv1HFodd_and_absdiff_eta_tmp->SetNdivisions(509);
-    cv1HFodd_and_absdiff_eta->Divide(4,2,0,0);
+    anal = 7;
+    TCanvas * cv1HFodd_and_absdiff_eta_0to40 = new TCanvas("cv1HFodd_and_absdiff_eta_0to40","cv1HFodd_and_absdiff_eta_0to40",1100,700);
+    TH1D * hv1HFodd_and_absdiff_eta_0to40_tmp = new TH1D("hv1HFodd_and_absdiff_eta_0to40", "", 40, -2.4, 2.4);
+    hv1HFodd_and_absdiff_eta_0to40_tmp->SetTitle("");
+    hv1HFodd_and_absdiff_eta_0to40_tmp->SetStats(0);
+    hv1HFodd_and_absdiff_eta_0to40_tmp->SetXTitle("#eta");
+    hv1HFodd_and_absdiff_eta_0to40_tmp->SetYTitle("v_{1}^{odd}");
+    hv1HFodd_and_absdiff_eta_0to40_tmp->GetYaxis()->SetRangeUser(-0.06, 0.06);
+    hv1HFodd_and_absdiff_eta_0to40_tmp->GetYaxis()->CenterTitle();
+    hv1HFodd_and_absdiff_eta_0to40_tmp->SetNdivisions(509);
+    cv1HFodd_and_absdiff_eta_0to40->Divide(4,2,0,0);
     for (int cbin = 0; cbin<ncentbins; cbin++) {
-        TPad * padv1HFodd_and_absdiff_eta = (TPad *) cv1HFodd_and_absdiff_eta->cd(cbin+1);
-        if (gridlines) padv1HFodd_and_absdiff_eta->SetGrid();
-        if (cbin == 3 || cbin == 7) padv1HFodd_and_absdiff_eta->SetRightMargin(0.02);
+        TPad * padv1HFodd_and_absdiff_eta_0to40 = (TPad *) cv1HFodd_and_absdiff_eta_0to40->cd(cbin+1);
+        if (gridlines) padv1HFodd_and_absdiff_eta_0to40->SetGrid();
+        if (cbin == 3 || cbin == 7) padv1HFodd_and_absdiff_eta_0to40->SetRightMargin(0.02);
         if (cbin <= 3) {
-            padv1HFodd_and_absdiff_eta->SetTopMargin(0.08);
-            padv1HFodd_and_absdiff_eta->SetBottomMargin(0.12);
+            padv1HFodd_and_absdiff_eta_0to40->SetTopMargin(0.08);
+            padv1HFodd_and_absdiff_eta_0to40->SetBottomMargin(0.12);
         }
-        if (cbin >= 4) padv1HFodd_and_absdiff_eta->SetTopMargin(0.14);
-        TH1D * hv1HFodd_and_absdiff_eta = (TH1D *) hv1HFodd_and_absdiff_eta_tmp->Clone(Form("hv1HFodd_and_absdiff_eta_%c",cbin));
+        if (cbin >= 4) padv1HFodd_and_absdiff_eta_0to40->SetTopMargin(0.14);
+        TH1D * hv1HFodd_and_absdiff_eta_0to40 = (TH1D *) hv1HFodd_and_absdiff_eta_0to40_tmp->Clone(Form("hv1HFodd_and_absdiff_eta_0to40_%c",cbin));
         if (cbin == 0) {
-            hv1HFodd_and_absdiff_eta->GetXaxis()->CenterTitle();
-            hv1HFodd_and_absdiff_eta->GetXaxis()->SetTitleSize(0.06);
-            hv1HFodd_and_absdiff_eta->GetXaxis()->SetTitleOffset(1.12);
-            hv1HFodd_and_absdiff_eta->GetXaxis()->SetLabelSize(0.06);
-            hv1HFodd_and_absdiff_eta->GetXaxis()->SetLabelOffset(0.018);
-            hv1HFodd_and_absdiff_eta->GetYaxis()->SetTitleSize(0.07);
-            hv1HFodd_and_absdiff_eta->GetYaxis()->SetTitleOffset(1.33);
-            hv1HFodd_and_absdiff_eta->GetYaxis()->SetLabelSize(0.06);
+            hv1HFodd_and_absdiff_eta_0to40->GetXaxis()->CenterTitle();
+            hv1HFodd_and_absdiff_eta_0to40->GetXaxis()->SetTitleSize(0.06);
+            hv1HFodd_and_absdiff_eta_0to40->GetXaxis()->SetTitleOffset(1.12);
+            hv1HFodd_and_absdiff_eta_0to40->GetXaxis()->SetLabelSize(0.06);
+            hv1HFodd_and_absdiff_eta_0to40->GetXaxis()->SetLabelOffset(0.018);
+            hv1HFodd_and_absdiff_eta_0to40->GetYaxis()->SetTitleSize(0.07);
+            hv1HFodd_and_absdiff_eta_0to40->GetYaxis()->SetTitleOffset(1.33);
+            hv1HFodd_and_absdiff_eta_0to40->GetYaxis()->SetLabelSize(0.06);
         }
         if (cbin >= 1 && cbin <= 3) {
-            hv1HFodd_and_absdiff_eta->GetXaxis()->CenterTitle();
-            hv1HFodd_and_absdiff_eta->GetXaxis()->SetTitleSize(0.07);
-            hv1HFodd_and_absdiff_eta->GetXaxis()->SetTitleOffset(1.00);
-            hv1HFodd_and_absdiff_eta->GetXaxis()->SetLabelSize(0.07);
-            hv1HFodd_and_absdiff_eta->GetXaxis()->SetLabelOffset(0.008);
+            hv1HFodd_and_absdiff_eta_0to40->GetXaxis()->CenterTitle();
+            hv1HFodd_and_absdiff_eta_0to40->GetXaxis()->SetTitleSize(0.07);
+            hv1HFodd_and_absdiff_eta_0to40->GetXaxis()->SetTitleOffset(1.00);
+            hv1HFodd_and_absdiff_eta_0to40->GetXaxis()->SetLabelSize(0.07);
+            hv1HFodd_and_absdiff_eta_0to40->GetXaxis()->SetLabelOffset(0.008);
         }
         if (cbin >= 4) {
-            hv1HFodd_and_absdiff_eta->SetYTitle("|v_{1}(+#eta)| - |v_{1}(-#eta)|");
-            hv1HFodd_and_absdiff_eta->GetXaxis()->SetRangeUser(0, 2.4);
-            hv1HFodd_and_absdiff_eta->GetYaxis()->SetRangeUser(-0.004, 0.004);
+            hv1HFodd_and_absdiff_eta_0to40->SetYTitle("");
+            hv1HFodd_and_absdiff_eta_0to40->GetXaxis()->SetRangeUser(0, 2.4);
+            hv1HFodd_and_absdiff_eta_0to40->GetYaxis()->SetRangeUser(-0.003, 0.003);
         }
         if (cbin == 4) {
-            hv1HFodd_and_absdiff_eta->GetXaxis()->CenterTitle();
-            hv1HFodd_and_absdiff_eta->GetXaxis()->SetTitleSize(0.06);
-            hv1HFodd_and_absdiff_eta->GetXaxis()->SetTitleOffset(1.12);
-            hv1HFodd_and_absdiff_eta->GetXaxis()->SetLabelSize(0.06);
-            hv1HFodd_and_absdiff_eta->GetXaxis()->SetLabelOffset(0.018);
-            hv1HFodd_and_absdiff_eta->GetYaxis()->SetTitleSize(0.06);
-            hv1HFodd_and_absdiff_eta->GetYaxis()->SetTitleOffset(1.50);
-            hv1HFodd_and_absdiff_eta->GetYaxis()->SetLabelSize(0.05);
-            hv1HFodd_and_absdiff_eta->GetYaxis()->SetLabelOffset(0.010);
-            hv1HFodd_and_absdiff_eta->SetXTitle("|#eta|");
+            hv1HFodd_and_absdiff_eta_0to40->GetXaxis()->CenterTitle();
+            hv1HFodd_and_absdiff_eta_0to40->GetXaxis()->SetTitleSize(0.06);
+            hv1HFodd_and_absdiff_eta_0to40->GetXaxis()->SetTitleOffset(1.12);
+            hv1HFodd_and_absdiff_eta_0to40->GetXaxis()->SetLabelSize(0.06);
+            hv1HFodd_and_absdiff_eta_0to40->GetXaxis()->SetLabelOffset(0.018);
+            hv1HFodd_and_absdiff_eta_0to40->GetYaxis()->SetTitleSize(0.06);
+            hv1HFodd_and_absdiff_eta_0to40->GetYaxis()->SetTitleOffset(1.50);
+            hv1HFodd_and_absdiff_eta_0to40->GetYaxis()->SetLabelSize(0.05);
+            hv1HFodd_and_absdiff_eta_0to40->GetYaxis()->SetLabelOffset(0.010);
+            hv1HFodd_and_absdiff_eta_0to40->SetXTitle("|#eta|");
         }
         if (cbin >=5) {
-            hv1HFodd_and_absdiff_eta->GetXaxis()->CenterTitle();
-            hv1HFodd_and_absdiff_eta->GetXaxis()->SetTitleSize(0.07);
-            hv1HFodd_and_absdiff_eta->GetXaxis()->SetTitleOffset(1.00);
-            hv1HFodd_and_absdiff_eta->GetXaxis()->SetLabelSize(0.07);
-            hv1HFodd_and_absdiff_eta->GetXaxis()->SetLabelOffset(0.008);
+            hv1HFodd_and_absdiff_eta_0to40->GetXaxis()->CenterTitle();
+            hv1HFodd_and_absdiff_eta_0to40->GetXaxis()->SetTitleSize(0.07);
+            hv1HFodd_and_absdiff_eta_0to40->GetXaxis()->SetTitleOffset(1.00);
+            hv1HFodd_and_absdiff_eta_0to40->GetXaxis()->SetLabelSize(0.07);
+            hv1HFodd_and_absdiff_eta_0to40->GetXaxis()->SetLabelOffset(0.008);
         }
-        hv1HFodd_and_absdiff_eta->Draw();
+        hv1HFodd_and_absdiff_eta_0to40->Draw();
 
-        TPaveText * txv1HFodd_and_absdiff_eta;
+        TPaveText * txv1HFodd_and_absdiff_eta_0to40;
         if (cbin <= 3) {
             v1odd_eta[anal][cbin]->Draw("same");
-            if (cbin == 0) txv1HFodd_and_absdiff_eta = new TPaveText(0.24, 0.17, 0.46, 0.24,"NDC");
-            else if (cbin >= 1 && cbin <= 3) txv1HFodd_and_absdiff_eta = new TPaveText(0.05, 0.17, 0.25, 0.24,"NDC");
-            SetTPaveTxt(txv1HFodd_and_absdiff_eta, 18);
-            txv1HFodd_and_absdiff_eta->AddText(Form("%d-%d%%",centBins[cbin],centBins[cbin+1]));
-            txv1HFodd_and_absdiff_eta->Draw();
+            if (cbin == 0) txv1HFodd_and_absdiff_eta_0to40 = new TPaveText(0.24, 0.17, 0.46, 0.24,"NDC");
+            else if (cbin >= 1 && cbin <= 3) txv1HFodd_and_absdiff_eta_0to40 = new TPaveText(0.05, 0.17, 0.25, 0.24,"NDC");
+            SetTPaveTxt(txv1HFodd_and_absdiff_eta_0to40, 18);
+            txv1HFodd_and_absdiff_eta_0to40->AddText(Form("%d-%d%%",centBins[cbin],centBins[cbin+1]));
+            txv1HFodd_and_absdiff_eta_0to40->Draw();
+        } else {
+            absDiffv1odd_eta[anal][cbin-4]->Draw("same");
+
+            TF1 * fit1 = new TF1("fit1", "pol0", 0, 2.4);
+            fit1->SetLineColor(kBlue);
+            absDiffv1odd_eta[anal][cbin-4]->Fit(fit1,"QR");
+            double par0 = fit1->GetParameter(0);
+            double par0E = fit1->GetParError(0);
+            double par0Chi2 = fit1->GetChisquare();
+
+            TPaveText * tx1HFodd_and_absdiff_eta_fit;
+            if (cbin == 4) tx1HFodd_and_absdiff_eta_fit = new TPaveText(0.22, 0.21, 0.72, 0.35,"NDC");
+            else tx1HFodd_and_absdiff_eta_fit = new TPaveText(0.06, 0.21, 0.54, 0.35,"NDC");
+            SetTPaveTxt(tx1HFodd_and_absdiff_eta_fit, 16);
+            tx1HFodd_and_absdiff_eta_fit->AddText(Form("mean: %0.4f #pm %0.4f",par0,par0E));
+            tx1HFodd_and_absdiff_eta_fit->AddText(Form("#chi^{2}: %0.4f",par0Chi2));
+            tx1HFodd_and_absdiff_eta_fit->Draw();
+        }
+
+    }
+    cv1HFodd_and_absdiff_eta_0to40->cd(1);
+    TPaveText * txv1HFodd_and_absdiff_eta_0to40_1 = new TPaveText(0.22, 0.68, 0.81, 0.87,"NDC");
+    SetTPaveTxt(txv1HFodd_and_absdiff_eta_0to40_1, 18);
+    txv1HFodd_and_absdiff_eta_0to40_1->AddText("PbPb #sqrt{s_{NN}} = 5.02 TeV");
+    txv1HFodd_and_absdiff_eta_0to40_1->AddText("0.3 < p_{T} < 3.0 (GeV/c)");
+    txv1HFodd_and_absdiff_eta_0to40_1->Draw();
+
+    TPaveText * txv1HFoddAbsDiff_eta_0to40_2 = new TPaveText(0.18, 0.93, 0.58, 1.0,"NDC");
+    SetTPaveTxt(txv1HFoddAbsDiff_eta_0to40_2, 18);
+    txv1HFoddAbsDiff_eta_0to40_2->AddText("#bf{CMS} #it{Preliminary}");
+    txv1HFoddAbsDiff_eta_0to40_2->Draw();
+
+    cv1HFodd_and_absdiff_eta_0to40->cd(5);
+    TLegend * legv1HFoddAbsDiff_eta_0to40 = new TLegend(0.24, 0.67, 0.51, 0.84);
+    SetLegend(legv1HFoddAbsDiff_eta_0to40, 18);
+    legv1HFoddAbsDiff_eta_0to40->SetHeader("|v_{1}(+#eta)| - |v_{1}(-#eta)|");
+    legv1HFoddAbsDiff_eta_0to40->AddEntry(fitleg," pol0 fit","l");
+    legv1HFoddAbsDiff_eta_0to40->Draw();
+
+    cv1HFodd_and_absdiff_eta_0to40->Print(Form("plots/intv1/intv1_eta/int%s/v1odd_with_ratio_eta_%s.png",AnalNames[anal].data(),AnalNames[anal].data()),"png");
+    if (close_plots) cv1HFodd_and_absdiff_eta_0to40->Close();
+
+
+    // 40 - 80% centrality
+    TCanvas * cv1HFodd_and_absdiff_eta_40to80 = new TCanvas("cv1HFodd_and_absdiff_eta_40to80","cv1HFodd_and_absdiff_eta_40to80",1100,700);
+    TH1D * hv1HFodd_and_absdiff_eta_40to80_tmp = new TH1D("hv1HFodd_and_absdiff_eta_40to80", "", 40, -2.4, 2.4);
+    hv1HFodd_and_absdiff_eta_40to80_tmp->SetTitle("");
+    hv1HFodd_and_absdiff_eta_40to80_tmp->SetStats(0);
+    hv1HFodd_and_absdiff_eta_40to80_tmp->SetXTitle("#eta");
+    hv1HFodd_and_absdiff_eta_40to80_tmp->SetYTitle("v_{1}^{odd}");
+    hv1HFodd_and_absdiff_eta_40to80_tmp->GetYaxis()->SetRangeUser(-0.06, 0.06);
+    hv1HFodd_and_absdiff_eta_40to80_tmp->GetYaxis()->CenterTitle();
+    hv1HFodd_and_absdiff_eta_40to80_tmp->SetNdivisions(509);
+    cv1HFodd_and_absdiff_eta_40to80->Divide(4,2,0,0);
+    for (int cbin = 0; cbin<ncentbins; cbin++) {
+        TPad * padv1HFodd_and_absdiff_eta_40to80 = (TPad *) cv1HFodd_and_absdiff_eta_40to80->cd(cbin+1);
+        if (gridlines) padv1HFodd_and_absdiff_eta_40to80->SetGrid();
+        if (cbin == 3 || cbin == 7) padv1HFodd_and_absdiff_eta_40to80->SetRightMargin(0.02);
+        if (cbin <= 3) {
+            padv1HFodd_and_absdiff_eta_40to80->SetTopMargin(0.08);
+            padv1HFodd_and_absdiff_eta_40to80->SetBottomMargin(0.12);
+        }
+        if (cbin >= 4) padv1HFodd_and_absdiff_eta_40to80->SetTopMargin(0.14);
+        TH1D * hv1HFodd_and_absdiff_eta_40to80 = (TH1D *) hv1HFodd_and_absdiff_eta_40to80_tmp->Clone(Form("hv1HFodd_and_absdiff_eta_40to80_%c",cbin));
+        if (cbin == 0) {
+            hv1HFodd_and_absdiff_eta_40to80->GetXaxis()->CenterTitle();
+            hv1HFodd_and_absdiff_eta_40to80->GetXaxis()->SetTitleSize(0.06);
+            hv1HFodd_and_absdiff_eta_40to80->GetXaxis()->SetTitleOffset(1.12);
+            hv1HFodd_and_absdiff_eta_40to80->GetXaxis()->SetLabelSize(0.06);
+            hv1HFodd_and_absdiff_eta_40to80->GetXaxis()->SetLabelOffset(0.018);
+            hv1HFodd_and_absdiff_eta_40to80->GetYaxis()->SetTitleSize(0.07);
+            hv1HFodd_and_absdiff_eta_40to80->GetYaxis()->SetTitleOffset(1.33);
+            hv1HFodd_and_absdiff_eta_40to80->GetYaxis()->SetLabelSize(0.06);
+        }
+        if (cbin >= 1 && cbin <= 3) {
+            hv1HFodd_and_absdiff_eta_40to80->GetXaxis()->CenterTitle();
+            hv1HFodd_and_absdiff_eta_40to80->GetXaxis()->SetTitleSize(0.07);
+            hv1HFodd_and_absdiff_eta_40to80->GetXaxis()->SetTitleOffset(1.00);
+            hv1HFodd_and_absdiff_eta_40to80->GetXaxis()->SetLabelSize(0.07);
+            hv1HFodd_and_absdiff_eta_40to80->GetXaxis()->SetLabelOffset(0.008);
+        }
+        if (cbin >= 4) {
+            hv1HFodd_and_absdiff_eta_40to80->SetYTitle("");
+            hv1HFodd_and_absdiff_eta_40to80->GetXaxis()->SetRangeUser(0, 2.4);
+            hv1HFodd_and_absdiff_eta_40to80->GetYaxis()->SetRangeUser(-0.004, 0.004);
+        }
+        if (cbin == 4) {
+            hv1HFodd_and_absdiff_eta_40to80->GetXaxis()->CenterTitle();
+            hv1HFodd_and_absdiff_eta_40to80->GetXaxis()->SetTitleSize(0.06);
+            hv1HFodd_and_absdiff_eta_40to80->GetXaxis()->SetTitleOffset(1.12);
+            hv1HFodd_and_absdiff_eta_40to80->GetXaxis()->SetLabelSize(0.06);
+            hv1HFodd_and_absdiff_eta_40to80->GetXaxis()->SetLabelOffset(0.018);
+            hv1HFodd_and_absdiff_eta_40to80->GetYaxis()->SetTitleSize(0.06);
+            hv1HFodd_and_absdiff_eta_40to80->GetYaxis()->SetTitleOffset(1.50);
+            hv1HFodd_and_absdiff_eta_40to80->GetYaxis()->SetLabelSize(0.05);
+            hv1HFodd_and_absdiff_eta_40to80->GetYaxis()->SetLabelOffset(0.010);
+            hv1HFodd_and_absdiff_eta_40to80->SetXTitle("|#eta|");
+        }
+        if (cbin >=5) {
+            hv1HFodd_and_absdiff_eta_40to80->GetXaxis()->CenterTitle();
+            hv1HFodd_and_absdiff_eta_40to80->GetXaxis()->SetTitleSize(0.07);
+            hv1HFodd_and_absdiff_eta_40to80->GetXaxis()->SetTitleOffset(1.00);
+            hv1HFodd_and_absdiff_eta_40to80->GetXaxis()->SetLabelSize(0.07);
+            hv1HFodd_and_absdiff_eta_40to80->GetXaxis()->SetLabelOffset(0.008);
+        }
+        hv1HFodd_and_absdiff_eta_40to80->Draw();
+
+        TPaveText * txv1HFodd_and_absdiff_eta_40to80;
+        if (cbin <= 3) {
+            v1odd_eta[anal][cbin+4]->Draw("same");
+            if (cbin == 0) txv1HFodd_and_absdiff_eta_40to80 = new TPaveText(0.24, 0.17, 0.46, 0.24,"NDC");
+            else if (cbin >= 1 && cbin <= 3) txv1HFodd_and_absdiff_eta_40to80 = new TPaveText(0.05, 0.17, 0.25, 0.24,"NDC");
+            SetTPaveTxt(txv1HFodd_and_absdiff_eta_40to80, 18);
+            txv1HFodd_and_absdiff_eta_40to80->AddText(Form("%d-%d%%",centBins[cbin+4],centBins[cbin+5]));
+            txv1HFodd_and_absdiff_eta_40to80->Draw();
         } else {
             absDiffv1odd_eta[anal][cbin]->Draw("same");
 
@@ -767,20 +895,27 @@ void intV1_eta()
         }
 
     }
-    cv1HFodd_and_absdiff_eta->cd(1);
-    TPaveText * txv1HFodd_and_absdiff_eta_1 = new TPaveText(0.22, 0.68, 0.81, 0.87,"NDC");
-    SetTPaveTxt(txv1HFodd_and_absdiff_eta_1, 18);
-    txv1HFodd_and_absdiff_eta_1->AddText("PbPb #sqrt{s_{NN}} = 5.02 TeV");
-    txv1HFodd_and_absdiff_eta_1->AddText("0.3 < p_{T} < 3.0 (GeV/c)");
-    txv1HFodd_and_absdiff_eta_1->Draw();
+    cv1HFodd_and_absdiff_eta_40to80->cd(1);
+    TPaveText * txv1HFodd_and_absdiff_eta_40to80_1 = new TPaveText(0.22, 0.68, 0.81, 0.87,"NDC");
+    SetTPaveTxt(txv1HFodd_and_absdiff_eta_40to80_1, 18);
+    txv1HFodd_and_absdiff_eta_40to80_1->AddText("PbPb #sqrt{s_{NN}} = 5.02 TeV");
+    txv1HFodd_and_absdiff_eta_40to80_1->AddText("0.3 < p_{T} < 3.0 (GeV/c)");
+    txv1HFodd_and_absdiff_eta_40to80_1->Draw();
 
-    TPaveText * txv1HFevenAbsDiff_eta_2 = new TPaveText(0.18, 0.93, 0.58, 1.0,"NDC");
-    SetTPaveTxt(txv1HFevenAbsDiff_eta_2, 18);
-    txv1HFevenAbsDiff_eta_2->AddText("#bf{CMS} #it{Preliminary}");
-    txv1HFevenAbsDiff_eta_2->Draw();
+    TPaveText * txv1HFoddAbsDiff_eta_40to80_2 = new TPaveText(0.18, 0.93, 0.58, 1.0,"NDC");
+    SetTPaveTxt(txv1HFoddAbsDiff_eta_40to80_2, 18);
+    txv1HFoddAbsDiff_eta_40to80_2->AddText("#bf{CMS} #it{Preliminary}");
+    txv1HFoddAbsDiff_eta_40to80_2->Draw();
 
-    cv1HFodd_and_absdiff_eta->Print(Form("plots/intv1/intv1_eta/int%s/v1odd_with_ratio_eta_%s.png",AnalNames[anal].data(),AnalNames[anal].data()),"png");
-    if (close_plots) cv1HFodd_and_absdiff_eta->Close();
+    cv1HFodd_and_absdiff_eta_40to80->cd(5);
+    TLegend * legv1HFoddAbsDiff_eta_40to80 = new TLegend(0.24, 0.67, 0.51, 0.84);
+    SetLegend(legv1HFoddAbsDiff_eta_40to80, 18);
+    legv1HFoddAbsDiff_eta_40to80->SetHeader("|v_{1}(+#eta)| - |v_{1}(-#eta)|");
+    legv1HFoddAbsDiff_eta_40to80->AddEntry(fitleg," pol0 fit","l");
+    legv1HFoddAbsDiff_eta_40to80->Draw();
+
+    cv1HFodd_and_absdiff_eta_40to80->Print(Form("plots/intv1/intv1_eta/int%s/v1odd_with_ratio_eta_%s.png",AnalNames[anal].data(),AnalNames[anal].data()),"png");
+    if (close_plots) cv1HFodd_and_absdiff_eta_40to80->Close();
 
 
 }
