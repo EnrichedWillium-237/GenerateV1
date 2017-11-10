@@ -12,7 +12,7 @@
 
 static const int nptbins = 18;
 static const double ptbins[] = {0.30,  0.40,  0.50,  0.60,  0.80,  1.00,  1.25,  1.50,  2.00,  2.50,  3.00,
-                   3.50,  4.00,  4.50,  5.00,  6.00,  7.00,  8.00, 10.00, 12.00};
+                     3.50,  4.00,  5.00,  6.00,  7.00,  8.00,  10.00,  12.00};
 static const int netabins = 12;
 static const double etabins[] = {-2.4, -2.0, -1.6, -1.2, -0.8, -0.4,  0.0,
                      0.4,  0.8,  1.2,  1.6, 2.0,  2.4};
@@ -84,9 +84,12 @@ void AnalyzeIntV1()
     double ptmin = 0.3;
     double ptmax = 3.0;
 
+    int minanal = 0;
+    int maxanal = nanals;
+
     cout << "\nBeginning integral v1 analyzer...\n" << endl;
 
-    for (int i = 0; i<nanals; i++) {
+    for (int i = minanal; i<maxanal; i++) {
         for (int cbin = 0; cbin<ncentbins; cbin++) {
             v1p_pt[i][cbin] = new TH1D(Form("v1p_pt_%s_%d",AnalNames[i].data(),cbin), "", nptbins, ptbins);
             v1m_pt[i][cbin] = new TH1D(Form("v1m_pt_%s_%d",AnalNames[i].data(),cbin), "", nptbins, ptbins);
@@ -119,7 +122,7 @@ void AnalyzeIntV1()
 
     //-- make histograms
     string tag = "3sub";
-    for (int i = 0; i<nanals; i++) {
+    for (int i = minanal; i<maxanal; i++) {
         cout << "  processing file: " << AnalNames[i].data() << endl;
         if (i>7) tag+="2sub";
         for (int cbin = 0; cbin<ncentbins; cbin++) {
@@ -188,7 +191,7 @@ void AnalyzeIntV1()
     if (!fopen("outputs","r")) system("mkdir outputs");
     if (!fopen("outputs/final_outputs","r")) system("mkdir outputs/final_outputs");
     TFile * tfout = new TFile("outputs/final_outputs/v1Int.root","recreate");
-    for (int i = 0; i<nanals; i++) {
+    for (int i = minanal; i<maxanal; i++) {
         TDirectory * tdir = (TDirectory *) tfout->mkdir(Form("%s",AnalNames[i].data()));
         TDirectory * tdpt = (TDirectory *) tdir->mkdir("v1_pt");
         for (int cbin = 0; cbin<ncentbins; cbin++) {
