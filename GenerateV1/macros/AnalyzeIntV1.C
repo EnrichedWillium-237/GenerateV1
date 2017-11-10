@@ -1,8 +1,9 @@
 # include "TFile.h"
 # include "TGraphErrors.h"
 # include "TCanvas.h"
-# include "TH1D.h"
-# include "TH2D.h"
+# include "TF1.h"
+# include "TH1.h"
+# include "TH2.h"
 # include "TLegend.h"
 # include "TMath.h"
 # include "TPaveText.h"
@@ -241,7 +242,7 @@ void AnalyzeIntV1()
     tfout->Close();
 
     ErrCalcIntV1();
-    
+
 }
 
 
