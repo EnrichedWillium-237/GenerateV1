@@ -53,7 +53,7 @@ TH1D * absDiffv1_pt[nanals][ncentbins];
 
 TH1D * runParms[nanals];
 
-void intV1_pT()
+void absDif_intV1_pt()
 {
 
     TH1::SetDefaultSumw2();

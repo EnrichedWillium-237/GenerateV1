@@ -1,6 +1,10 @@
 // style.h
 // little plotting classes to make Will's life easier
 
+# include "TGraphErrors.h"
+# include "TH1.h"
+# include "TH2.h"
+
 void SetTPaveTxt( TPaveText * txtemplate, int txtsize ) {
     txtemplate->SetFillColor(0);
     txtemplate->SetBorderSize(0);
