@@ -58,6 +58,8 @@ TH1D * v123even_eta[nanals][ncentbins];
 
 TH1D * runParms[nanals];
 
+# include "ErrCalcIntV1.C"
+
 TGraphErrors * GetV1IntPt( string anal, string tag, int cbin, double etamin, double etamax, TGraphErrors * &g_p, TGraphErrors * &g_m );
 TGraphErrors * GetV1IntEta( string anal, string tag, int cbin, double etamin, double etamax, TGraphErrors * &g_p, TGraphErrors * &g_m );
 
@@ -115,7 +117,7 @@ void AnalyzeIntV1()
             v123m_eta[i][cbin] = new TH1D(Form("v123m_eta_%s_%d",AnalNames[i].data(),cbin), "", netabins, etabins);
             v123odd_eta[i][cbin] = new TH1D(Form("v123odd_eta_%s_%d",AnalNames[i].data(),cbin), "", netabins, etabins);
         }
-        TFile * tfParms = new TFile(Form("outputs/raw_outputs/results/%s.root",AnalNames[i].data()),"read");
+        TFile * tfParms = new TFile(Form("../outputs/raw_outputs/results/%s.root",AnalNames[i].data()),"read");
         runParms[i] = (TH1D *) tfParms->Get(Form("%d-%d/runParms",centBins[0],centBins[1]));
     }
 
@@ -188,9 +190,9 @@ void AnalyzeIntV1()
             v123even_eta[i][cbin]->Scale(0.5);
         }
     }
-    if (!fopen("outputs","r")) system("mkdir outputs");
-    if (!fopen("outputs/final_outputs","r")) system("mkdir outputs/final_outputs");
-    TFile * tfout = new TFile("outputs/final_outputs/v1Int.root","recreate");
+    if (!fopen("../outputs","r")) system("mkdir ../outputs");
+    if (!fopen("../outputs/final_outputs","r")) system("mkdir ../outputs/final_outputs");
+    TFile * tfout = new TFile("../outputs/final_outputs/v1Int.root","recreate");
     for (int i = minanal; i<maxanal; i++) {
         TDirectory * tdir = (TDirectory *) tfout->mkdir(Form("%s",AnalNames[i].data()));
         TDirectory * tdpt = (TDirectory *) tdir->mkdir("v1_pt");
@@ -235,8 +237,11 @@ void AnalyzeIntV1()
         runParms[i]->Write();
     }
 
-    cout << "\n...Integral v1 results written out to outputs/final_outputs/v1Int.root \n" << endl;
+    cout << "\n...Integral v1 results written out to ../outputs/final_outputs/v1Int.root \n" << endl;
+    tfout->Close();
 
+    ErrCalcIntV1();
+    
 }
 
 
@@ -248,7 +253,7 @@ TGraphErrors * GetV1IntPt( string anal, string tag, int cbin, double etamin, dou
     if (tag == "2sub") sub2 = kTRUE;
     else if (tag == "112") mix112 = kTRUE;
     else if (tag == "123") mix123 = kTRUE;
-    TFile * tfin = new TFile(Form("outputs/raw_outputs/results/%s.root",anal.data()),"read");
+    TFile * tfin = new TFile(Form("../outputs/raw_outputs/results/%s.root",anal.data()),"read");
 
     TH1D * centbins = (TH1D *) tfin->Get(Form("%d-%d/centbins",centBins[cbin],centBins[cbin+1]));
     TH2D * ptav = (TH2D *) tfin->Get(Form("%d-%d/ptav_%d",centBins[cbin],centBins[cbin+1],cbin));
@@ -608,7 +613,7 @@ TGraphErrors * GetV1IntEta( string anal, string tag, int cbin, double ptmin, dou
     if (tag == "2sub") sub2 = kTRUE;
     else if (tag == "112") mix112 = kTRUE;
     else if (tag == "123") mix123 = kTRUE;
-    TFile * tfin = new TFile(Form("outputs/raw_outputs/results/%s.root",anal.data()),"read");
+    TFile * tfin = new TFile(Form("../outputs/raw_outputs/results/%s.root",anal.data()),"read");
 
     TH1D * centbins = (TH1D *) tfin->Get(Form("%d-%d/centbins",centBins[cbin],centBins[cbin+1]));
     TH2D * ptav = (TH2D *) tfin->Get(Form("%d-%d/ptav_%d",centBins[cbin],centBins[cbin+1],cbin));
