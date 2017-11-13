@@ -27,6 +27,8 @@ string AnalNames[] = {
 
 using namespace std;
 
+static const bool subEvt2 = kTRUE;
+
 TH1D * v1p_pt[nanals][ncentbins];
 TH1D * v1m_pt[nanals][ncentbins];
 TH1D * v1odd_pt[nanals][ncentbins];
@@ -125,9 +127,9 @@ void AnalyzeIntV1()
 
     //-- make histograms
     string tag = "3sub";
+    if (subEvt2) tag = "2sub";
     for (int i = minanal; i<maxanal; i++) {
         cout << "  processing file: " << AnalNames[i].data() << endl;
-        if (i>7) tag+="2sub";
         for (int cbin = 0; cbin<ncentbins; cbin++) {
             TGraphErrors * gA1;
             TGraphErrors * gB1;
@@ -193,7 +195,9 @@ void AnalyzeIntV1()
     }
     if (!fopen("../outputs","r")) system("mkdir ../outputs");
     if (!fopen("../outputs/final_outputs","r")) system("mkdir ../outputs/final_outputs");
-    TFile * tfout = new TFile("../outputs/final_outputs/v1Int.root","recreate");
+    TFile * tfout;
+    if (subEvt2) tfout = new TFile("../outputs/final_outputs/v1Int_2sub.root","recreate");
+    else tfout = new TFile("../outputs/final_outputs/v1Int.root","recreate");
     for (int i = minanal; i<maxanal; i++) {
         TDirectory * tdir = (TDirectory *) tfout->mkdir(Form("%s",AnalNames[i].data()));
         TDirectory * tdpt = (TDirectory *) tdir->mkdir("v1_pt");

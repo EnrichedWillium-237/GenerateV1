@@ -127,7 +127,9 @@ void ErrCalcIntV1()
     }
 
 
-    TFile * tfout = new TFile("../outputs/final_outputs/v1Int_ErrCalc.root","recreate");
+    TFile * tfout;
+    if (subEvt2) tfout = new TFile("../outputs/final_outputs/v1Int_2sub_ErrCalc.root","recreate");
+    else tfout = new TFile("../outputs/final_outputs/v1Int_ErrCalc.root","recreate");
     for (int i = 0; i<nanals; i++) {
         TDirectory * tdAnal = (TDirectory *) tfout->mkdir(Form("%s",AnalNames[i].data()));
         TDirectory * tdPt = (TDirectory *) tdAnal->mkdir("v1_pt");
