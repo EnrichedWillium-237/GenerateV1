@@ -27,7 +27,7 @@ string AnalNames[] = {
 
 using namespace std;
 
-static const bool subEvt2 = kTRUE;
+static const bool subEvt2 = kFALSE;
 
 TH1D * v1p_pt[nanals][ncentbins];
 TH1D * v1m_pt[nanals][ncentbins];
@@ -255,7 +255,7 @@ TGraphErrors * GetV1IntPt( string anal, string tag, int cbin, double etamin, dou
     bool sub2 = kFALSE;
     bool mix112 = kFALSE;
     bool mix123 = kFALSE;
-    if (tag == "2sub") sub2 = kTRUE;
+    if (subEvt2) sub2 = kTRUE;
     else if (tag == "112") mix112 = kTRUE;
     else if (tag == "123") mix123 = kTRUE;
     TFile * tfin = new TFile(Form("../outputs/raw_outputs/results/%s.root",anal.data()),"read");
@@ -615,7 +615,7 @@ TGraphErrors * GetV1IntEta( string anal, string tag, int cbin, double ptmin, dou
     bool sub2 = kFALSE;
     bool mix112 = kFALSE;
     bool mix123 = kFALSE;
-    if (tag == "2sub") sub2 = kTRUE;
+    if (subEvt2) sub2 = kTRUE;
     else if (tag == "112") mix112 = kTRUE;
     else if (tag == "123") mix123 = kTRUE;
     TFile * tfin = new TFile(Form("../outputs/raw_outputs/results/%s.root",anal.data()),"read");
