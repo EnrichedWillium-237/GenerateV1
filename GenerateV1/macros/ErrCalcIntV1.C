@@ -137,7 +137,6 @@ void ErrCalcIntV1()
             v1Stat_pt[i][cbin]->Write();
             v1Syst_pt[i][cbin]->Write();
             RelErrv1_pt[i][cbin]->Write();
-            AbsErrv1_pt[i][cbin]->Write();
             fitRel_pt[i][cbin]->Write();
         }
         TDirectory * tdEta = (TDirectory *) tdAnal->mkdir("v1_eta");
