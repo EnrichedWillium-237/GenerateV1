@@ -44,7 +44,7 @@ TGraphErrors * grv1Syst_pt[nanals][ncentbins];
 
 TFile * tfin;
 
-void intV1_pt()
+void intV1_pt( int anal = 15 )
 {
 
     TH1::SetDefaultSumw2();
@@ -105,147 +105,144 @@ void intV1_pt()
     if (!fopen("plots/intv1","r")) system("mkdir plots/intv1");
     if (!fopen("plots/intv1/intv1_pt","r")) system("mkdir plots/intv1/intv1_pt");
 
-    int anal; // choice of analysis
 
-
-    // v1odd(eta) using the tracker event planes
-    anal = 15;
+    // v1(eta) using the tracker event planes
     if (!fopen(Form("plots/intv1/intv1_pt/int%s",AnalNames[anal].data()),"r")) system(Form("mkdir plots/intv1/intv1_pt/int%s",AnalNames[anal].data()));
 
-    TCanvas * cv1oddIntTrk_pt = new TCanvas("cv1oddIntTrk_pt","cv1oddIntTrk_pt",1100,620);
-    cv1oddIntTrk_pt->Divide(4,2,0,0);
-    TH1D * hv1oddIntTrk_pt_tmp = new TH1D("hv1oddIntTrk_pt_tmp", "", 100, 0, 12);
-    hv1oddIntTrk_pt_tmp->SetTitle("");
-    hv1oddIntTrk_pt_tmp->SetStats(0);
-    hv1oddIntTrk_pt_tmp->SetXTitle("p_{T} (GeV/c)");
-    hv1oddIntTrk_pt_tmp->SetYTitle("v_{1}^{even}");
-    hv1oddIntTrk_pt_tmp->GetYaxis()->SetRangeUser(-0.06, 0.26);
-    hv1oddIntTrk_pt_tmp->GetXaxis()->CenterTitle();
-    hv1oddIntTrk_pt_tmp->GetYaxis()->CenterTitle();
-    hv1oddIntTrk_pt_tmp->GetYaxis()->SetNdivisions(509);
+    TCanvas * cv1IntTrk_pt = new TCanvas("cv1IntTrk_pt","cv1IntTrk_pt",1100,620);
+    cv1IntTrk_pt->Divide(4,2,0,0);
+    TH1D * hv1IntTrk_pt_tmp = new TH1D("hv1IntTrk_pt_tmp", "", 100, 0, 12);
+    hv1IntTrk_pt_tmp->SetTitle("");
+    hv1IntTrk_pt_tmp->SetStats(0);
+    hv1IntTrk_pt_tmp->SetXTitle("p_{T} (GeV/c)");
+    hv1IntTrk_pt_tmp->SetYTitle("v_{1}^{even}");
+    hv1IntTrk_pt_tmp->GetYaxis()->SetRangeUser(-0.06, 0.26);
+    hv1IntTrk_pt_tmp->GetXaxis()->CenterTitle();
+    hv1IntTrk_pt_tmp->GetYaxis()->CenterTitle();
+    hv1IntTrk_pt_tmp->GetYaxis()->SetNdivisions(509);
     for (int cbin = 0; cbin<ncentbins; cbin++) {
-        TPad * padv1oddIntTrk_pt = (TPad *) cv1oddIntTrk_pt->cd(cbin+1);
-        if (gridlines) padv1oddIntTrk_pt->SetGrid();
-        if (cbin == 3 || cbin == 7) padv1oddIntTrk_pt->SetRightMargin(0.02);
-        if (cbin<=3) padv1oddIntTrk_pt->SetTopMargin(0.08);
-        TH1D * hv1oddIntTrk_pt = (TH1D *) hv1oddIntTrk_pt_tmp->Clone(Form("hv1oddIntTrk_pt_%c",cbin));
+        TPad * padv1IntTrk_pt = (TPad *) cv1IntTrk_pt->cd(cbin+1);
+        if (gridlines) padv1IntTrk_pt->SetGrid();
+        if (cbin == 3 || cbin == 7) padv1IntTrk_pt->SetRightMargin(0.02);
+        if (cbin<=3) padv1IntTrk_pt->SetTopMargin(0.08);
+        TH1D * hv1IntTrk_pt = (TH1D *) hv1IntTrk_pt_tmp->Clone(Form("hv1IntTrk_pt_%c",cbin));
         if (cbin == 0) {
-            hv1oddIntTrk_pt->GetYaxis()->SetTitleSize(0.07);
-            hv1oddIntTrk_pt->GetYaxis()->SetTitleOffset(1.33);
-            hv1oddIntTrk_pt->GetYaxis()->SetLabelSize(0.06);
+            hv1IntTrk_pt->GetYaxis()->SetTitleSize(0.07);
+            hv1IntTrk_pt->GetYaxis()->SetTitleOffset(1.33);
+            hv1IntTrk_pt->GetYaxis()->SetLabelSize(0.06);
         }
         if (cbin == 4) {
-            hv1oddIntTrk_pt->GetXaxis()->SetTitleSize(0.06);
-            hv1oddIntTrk_pt->GetXaxis()->SetTitleOffset(1.12);
-            hv1oddIntTrk_pt->GetXaxis()->SetLabelSize(0.06);
-            hv1oddIntTrk_pt->GetXaxis()->SetLabelOffset(0.018);
-            hv1oddIntTrk_pt->GetYaxis()->SetTitleSize(0.06);
-            hv1oddIntTrk_pt->GetYaxis()->SetTitleOffset(1.50);
-            hv1oddIntTrk_pt->GetYaxis()->SetLabelSize(0.05);
-            hv1oddIntTrk_pt->GetYaxis()->SetLabelOffset(0.010);
+            hv1IntTrk_pt->GetXaxis()->SetTitleSize(0.06);
+            hv1IntTrk_pt->GetXaxis()->SetTitleOffset(1.12);
+            hv1IntTrk_pt->GetXaxis()->SetLabelSize(0.06);
+            hv1IntTrk_pt->GetXaxis()->SetLabelOffset(0.018);
+            hv1IntTrk_pt->GetYaxis()->SetTitleSize(0.06);
+            hv1IntTrk_pt->GetYaxis()->SetTitleOffset(1.50);
+            hv1IntTrk_pt->GetYaxis()->SetLabelSize(0.05);
+            hv1IntTrk_pt->GetYaxis()->SetLabelOffset(0.010);
         }
         if (cbin >=5) {
-            hv1oddIntTrk_pt->GetXaxis()->SetTitleSize(0.07);
-            hv1oddIntTrk_pt->GetXaxis()->SetTitleOffset(1.00);
-            hv1oddIntTrk_pt->GetXaxis()->SetLabelSize(0.07);
-            hv1oddIntTrk_pt->GetXaxis()->SetLabelOffset(0.008);
+            hv1IntTrk_pt->GetXaxis()->SetTitleSize(0.07);
+            hv1IntTrk_pt->GetXaxis()->SetTitleOffset(1.00);
+            hv1IntTrk_pt->GetXaxis()->SetLabelSize(0.07);
+            hv1IntTrk_pt->GetXaxis()->SetLabelOffset(0.008);
         }
-        hv1oddIntTrk_pt->Draw();
-        v1Stat_pt[anal][cbin]->Draw("same");
+        hv1IntTrk_pt->Draw();
+        //v1Stat_pt[anal][cbin]->Draw("same");
         grv1Stat_pt[anal][cbin]->Draw("same p");
 
-        TPaveText * txv1oddIntTrk_pt_0;
-        if (cbin == 0) txv1oddIntTrk_pt_0 = new TPaveText(0.24, 0.54, 0.45, 0.67,"NDC");
-        else if (cbin >= 1 && cbin <= 3) txv1oddIntTrk_pt_0 = new TPaveText(0.71, 0.76, 0.91, 0.88,"NDC");
-        else if (cbin == 4) txv1oddIntTrk_pt_0 = new TPaveText(0.73, 0.85, 0.95, 0.95,"NDC");
-        else txv1oddIntTrk_pt_0 = new TPaveText(0.71, 0.85, 0.91, 0.95,"NDC");
-        SetTPaveTxt(txv1oddIntTrk_pt_0, 18);
-        txv1oddIntTrk_pt_0->AddText(Form("%d-%d%%",centBins[cbin],centBins[cbin+1]));
-        txv1oddIntTrk_pt_0->Draw();
+        TPaveText * txv1IntTrk_pt_0;
+        if (cbin == 0) txv1IntTrk_pt_0 = new TPaveText(0.24, 0.54, 0.45, 0.67,"NDC");
+        else if (cbin >= 1 && cbin <= 3) txv1IntTrk_pt_0 = new TPaveText(0.71, 0.76, 0.91, 0.88,"NDC");
+        else if (cbin == 4) txv1IntTrk_pt_0 = new TPaveText(0.73, 0.85, 0.95, 0.95,"NDC");
+        else txv1IntTrk_pt_0 = new TPaveText(0.71, 0.85, 0.91, 0.95,"NDC");
+        SetTPaveTxt(txv1IntTrk_pt_0, 18);
+        txv1IntTrk_pt_0->AddText(Form("%d-%d%%",centBins[cbin],centBins[cbin+1]));
+        txv1IntTrk_pt_0->Draw();
     }
-    cv1oddIntTrk_pt->cd(1);
-    TPaveText * txv1oddIntTrk_pt_1 = new TPaveText(0.22, 0.65, 0.81, 0.86,"NDC");
-    SetTPaveTxt(txv1oddIntTrk_pt_1, 18);
-    txv1oddIntTrk_pt_1->AddText("PbPb #sqrt{s_{NN}} = 5.02 TeV");
-    txv1oddIntTrk_pt_1->AddText("|#eta| < 2.4");
-    txv1oddIntTrk_pt_1->Draw();
+    cv1IntTrk_pt->cd(1);
+    TPaveText * txv1IntTrk_pt_1 = new TPaveText(0.22, 0.65, 0.81, 0.86,"NDC");
+    SetTPaveTxt(txv1IntTrk_pt_1, 18);
+    txv1IntTrk_pt_1->AddText("PbPb #sqrt{s_{NN}} = 5.02 TeV");
+    txv1IntTrk_pt_1->AddText("|#eta| < 2.4");
+    txv1IntTrk_pt_1->Draw();
 
-    TPaveText * txv1oddIntTrk_pt_2 = new TPaveText(0.18, 0.93, 0.58, 1.0,"NDC");
-    SetTPaveTxt(txv1oddIntTrk_pt_2, 18);
-    txv1oddIntTrk_pt_2->AddText("#bf{CMS} #it{Preliminary}");
-    txv1oddIntTrk_pt_2->Draw();
+    TPaveText * txv1IntTrk_pt_2 = new TPaveText(0.18, 0.93, 0.58, 1.0,"NDC");
+    SetTPaveTxt(txv1IntTrk_pt_2, 18);
+    txv1IntTrk_pt_2->AddText("#bf{CMS} #it{Preliminary}");
+    txv1IntTrk_pt_2->Draw();
 
-    cv1oddIntTrk_pt->Print(Form("plots/intv1/intv1_pt/int%s/v1oddIntTrk_pt_%s.png",AnalNames[anal].data(),AnalNames[anal].data()),"png");
-    if (close_plots) cv1oddIntTrk_pt->Close();
+    cv1IntTrk_pt->Print(Form("plots/intv1/intv1_pt/int%s/v1IntTrk_pt_%s.png",AnalNames[anal].data(),AnalNames[anal].data()),"png");
+    if (close_plots) cv1IntTrk_pt->Close();
 
 
 
-    // v1odd(eta) using the HF event planes with systematics due to antisymmetry
-    TCanvas * cv1oddIntTrk_pt_syst = new TCanvas("cv1oddIntTrk_pt_syst","cv1oddIntTrk_pt_syst",1100,620);
-    cv1oddIntTrk_pt_syst->Divide(4,2,0,0);
-    TH1D * hv1oddIntTrk_pt_syst_tmp = new TH1D("hv1oddIntTrk_pt_syst_tmp", "", 100, 0, 12);
-    hv1oddIntTrk_pt_syst_tmp->SetTitle("");
-    hv1oddIntTrk_pt_syst_tmp->SetStats(0);
-    hv1oddIntTrk_pt_syst_tmp->SetXTitle("p_{T} (GeV/c)");
-    hv1oddIntTrk_pt_syst_tmp->SetYTitle("v_{1}^{even}");
-    hv1oddIntTrk_pt_syst_tmp->GetYaxis()->SetRangeUser(-0.06, 0.26);
-    hv1oddIntTrk_pt_syst_tmp->GetXaxis()->CenterTitle();
-    hv1oddIntTrk_pt_syst_tmp->GetYaxis()->CenterTitle();
-    hv1oddIntTrk_pt_syst_tmp->GetYaxis()->SetNdivisions(509);
+    // v1(eta) using the tracker event planes with systematics due to symmetry
+    TCanvas * cv1IntTrk_pt_syst = new TCanvas("cv1IntTrk_pt_syst","cv1IntTrk_pt_syst",1100,620);
+    cv1IntTrk_pt_syst->Divide(4,2,0,0);
+    TH1D * hv1IntTrk_pt_syst_tmp = new TH1D("hv1IntTrk_pt_syst_tmp", "", 100, 0, 12);
+    hv1IntTrk_pt_syst_tmp->SetTitle("");
+    hv1IntTrk_pt_syst_tmp->SetStats(0);
+    hv1IntTrk_pt_syst_tmp->SetXTitle("p_{T} (GeV/c)");
+    hv1IntTrk_pt_syst_tmp->SetYTitle("v_{1}^{even}");
+    hv1IntTrk_pt_syst_tmp->GetYaxis()->SetRangeUser(-0.06, 0.26);
+    hv1IntTrk_pt_syst_tmp->GetXaxis()->CenterTitle();
+    hv1IntTrk_pt_syst_tmp->GetYaxis()->CenterTitle();
+    hv1IntTrk_pt_syst_tmp->GetYaxis()->SetNdivisions(509);
     for (int cbin = 0; cbin<ncentbins; cbin++) {
-        TPad * padv1oddIntTrk_pt_syst = (TPad *) cv1oddIntTrk_pt_syst->cd(cbin+1);
-        if (gridlines) padv1oddIntTrk_pt_syst->SetGrid();
-        if (cbin == 3 || cbin == 7) padv1oddIntTrk_pt_syst->SetRightMargin(0.02);
-        if (cbin<=3) padv1oddIntTrk_pt_syst->SetTopMargin(0.08);
-        TH1D * hv1oddIntTrk_pt_syst = (TH1D *) hv1oddIntTrk_pt_syst_tmp->Clone(Form("hv1oddIntTrk_pt_syst_%c",cbin));
+        TPad * padv1IntTrk_pt_syst = (TPad *) cv1IntTrk_pt_syst->cd(cbin+1);
+        if (gridlines) padv1IntTrk_pt_syst->SetGrid();
+        if (cbin == 3 || cbin == 7) padv1IntTrk_pt_syst->SetRightMargin(0.02);
+        if (cbin<=3) padv1IntTrk_pt_syst->SetTopMargin(0.08);
+        TH1D * hv1IntTrk_pt_syst = (TH1D *) hv1IntTrk_pt_syst_tmp->Clone(Form("hv1IntTrk_pt_syst_%c",cbin));
         if (cbin == 0) {
-            hv1oddIntTrk_pt_syst->GetYaxis()->SetTitleSize(0.07);
-            hv1oddIntTrk_pt_syst->GetYaxis()->SetTitleOffset(1.33);
-            hv1oddIntTrk_pt_syst->GetYaxis()->SetLabelSize(0.06);
+            hv1IntTrk_pt_syst->GetYaxis()->SetTitleSize(0.07);
+            hv1IntTrk_pt_syst->GetYaxis()->SetTitleOffset(1.33);
+            hv1IntTrk_pt_syst->GetYaxis()->SetLabelSize(0.06);
         }
         if (cbin == 4) {
-            hv1oddIntTrk_pt_syst->GetXaxis()->SetTitleSize(0.06);
-            hv1oddIntTrk_pt_syst->GetXaxis()->SetTitleOffset(1.12);
-            hv1oddIntTrk_pt_syst->GetXaxis()->SetLabelSize(0.06);
-            hv1oddIntTrk_pt_syst->GetXaxis()->SetLabelOffset(0.018);
-            hv1oddIntTrk_pt_syst->GetYaxis()->SetTitleSize(0.06);
-            hv1oddIntTrk_pt_syst->GetYaxis()->SetTitleOffset(1.50);
-            hv1oddIntTrk_pt_syst->GetYaxis()->SetLabelSize(0.05);
-            hv1oddIntTrk_pt_syst->GetYaxis()->SetLabelOffset(0.010);
+            hv1IntTrk_pt_syst->GetXaxis()->SetTitleSize(0.06);
+            hv1IntTrk_pt_syst->GetXaxis()->SetTitleOffset(1.12);
+            hv1IntTrk_pt_syst->GetXaxis()->SetLabelSize(0.06);
+            hv1IntTrk_pt_syst->GetXaxis()->SetLabelOffset(0.018);
+            hv1IntTrk_pt_syst->GetYaxis()->SetTitleSize(0.06);
+            hv1IntTrk_pt_syst->GetYaxis()->SetTitleOffset(1.50);
+            hv1IntTrk_pt_syst->GetYaxis()->SetLabelSize(0.05);
+            hv1IntTrk_pt_syst->GetYaxis()->SetLabelOffset(0.010);
         }
         if (cbin >=5) {
-            hv1oddIntTrk_pt_syst->GetXaxis()->SetTitleSize(0.07);
-            hv1oddIntTrk_pt_syst->GetXaxis()->SetTitleOffset(1.00);
-            hv1oddIntTrk_pt_syst->GetXaxis()->SetLabelSize(0.07);
-            hv1oddIntTrk_pt_syst->GetXaxis()->SetLabelOffset(0.008);
+            hv1IntTrk_pt_syst->GetXaxis()->SetTitleSize(0.07);
+            hv1IntTrk_pt_syst->GetXaxis()->SetTitleOffset(1.00);
+            hv1IntTrk_pt_syst->GetXaxis()->SetLabelSize(0.07);
+            hv1IntTrk_pt_syst->GetXaxis()->SetLabelOffset(0.008);
         }
-        hv1oddIntTrk_pt_syst->Draw();
+        hv1IntTrk_pt_syst->Draw();
         grv1Syst_pt[anal][cbin]->Draw("same []2");
         grv1Stat_pt[anal][cbin]->Draw("same p");
 
-        TPaveText * txv1oddIntTrk_pt_syst_0;
-        if (cbin == 0) txv1oddIntTrk_pt_syst_0 = new TPaveText(0.24, 0.54, 0.45, 0.67,"NDC");
-        else if (cbin >= 1 && cbin <= 3) txv1oddIntTrk_pt_syst_0 = new TPaveText(0.71, 0.76, 0.91, 0.88,"NDC");
-        else if (cbin == 4) txv1oddIntTrk_pt_syst_0 = new TPaveText(0.73, 0.85, 0.95, 0.95,"NDC");
-        else txv1oddIntTrk_pt_syst_0 = new TPaveText(0.71, 0.85, 0.91, 0.95,"NDC");
-        SetTPaveTxt(txv1oddIntTrk_pt_syst_0, 18);
-        txv1oddIntTrk_pt_syst_0->AddText(Form("%d-%d%%",centBins[cbin],centBins[cbin+1]));
-        txv1oddIntTrk_pt_syst_0->Draw();
+        TPaveText * txv1IntTrk_pt_syst_0;
+        if (cbin == 0) txv1IntTrk_pt_syst_0 = new TPaveText(0.24, 0.54, 0.45, 0.67,"NDC");
+        else if (cbin >= 1 && cbin <= 3) txv1IntTrk_pt_syst_0 = new TPaveText(0.71, 0.76, 0.91, 0.88,"NDC");
+        else if (cbin == 4) txv1IntTrk_pt_syst_0 = new TPaveText(0.73, 0.85, 0.95, 0.95,"NDC");
+        else txv1IntTrk_pt_syst_0 = new TPaveText(0.71, 0.85, 0.91, 0.95,"NDC");
+        SetTPaveTxt(txv1IntTrk_pt_syst_0, 18);
+        txv1IntTrk_pt_syst_0->AddText(Form("%d-%d%%",centBins[cbin],centBins[cbin+1]));
+        txv1IntTrk_pt_syst_0->Draw();
     }
-    cv1oddIntTrk_pt_syst->cd(1);
-    TPaveText * txv1oddIntTrk_pt_syst_1 = new TPaveText(0.22, 0.65, 0.81, 0.86,"NDC");
-    SetTPaveTxt(txv1oddIntTrk_pt_syst_1, 18);
-    txv1oddIntTrk_pt_syst_1->AddText("PbPb #sqrt{s_{NN}} = 5.02 TeV");
-    txv1oddIntTrk_pt_syst_1->AddText("|#eta| < 2.4");
-    txv1oddIntTrk_pt_syst_1->Draw();
+    cv1IntTrk_pt_syst->cd(1);
+    TPaveText * txv1IntTrk_pt_syst_1 = new TPaveText(0.22, 0.65, 0.81, 0.86,"NDC");
+    SetTPaveTxt(txv1IntTrk_pt_syst_1, 18);
+    txv1IntTrk_pt_syst_1->AddText("PbPb #sqrt{s_{NN}} = 5.02 TeV");
+    txv1IntTrk_pt_syst_1->AddText("|#eta| < 2.4");
+    txv1IntTrk_pt_syst_1->Draw();
 
-    TPaveText * txv1oddIntTrk_pt_syst_2 = new TPaveText(0.18, 0.93, 0.58, 1.0,"NDC");
-    SetTPaveTxt(txv1oddIntTrk_pt_syst_2, 18);
-    txv1oddIntTrk_pt_syst_2->AddText("#bf{CMS} #it{Preliminary}");
-    txv1oddIntTrk_pt_syst_2->Draw();
+    TPaveText * txv1IntTrk_pt_syst_2 = new TPaveText(0.18, 0.93, 0.58, 1.0,"NDC");
+    SetTPaveTxt(txv1IntTrk_pt_syst_2, 18);
+    txv1IntTrk_pt_syst_2->AddText("#bf{CMS} #it{Preliminary}");
+    txv1IntTrk_pt_syst_2->Draw();
 
-    cv1oddIntTrk_pt_syst->Print(Form("plots/intv1/intv1_pt/int%s/v1oddIntTrk_pt_syst_%s.png",AnalNames[anal].data(),AnalNames[anal].data()),"png");
-    if (close_plots) cv1oddIntTrk_pt_syst->Close();
+    cv1IntTrk_pt_syst->Print(Form("plots/intv1/intv1_pt/int%s/v1IntTrk_pt_syst_%s.png",AnalNames[anal].data(),AnalNames[anal].data()),"png");
+    if (close_plots) cv1IntTrk_pt_syst->Close();
 
 
 }

@@ -53,7 +53,7 @@ TH1D * absDiffv1_pt[nanals][ncentbins];
 
 TH1D * runParms[nanals];
 
-void absDif_intV1_pt()
+void absDif_intV1_pt( int anal = 15 )
 {
 
     TH1::SetDefaultSumw2();
@@ -138,11 +138,9 @@ void absDif_intV1_pt()
     if (!fopen("plots/intv1","r")) system("mkdir plots/intv1");
     if (!fopen("plots/intv1/intv1_pt","r")) system("mkdir plots/intv1/intv1_pt");
 
-    int anal; // choice of analysis
 
 
     // integrated v1(pT) using HF+/- for each centrality bin
-    anal = 7;
     if (!fopen(Form("plots/intv1/intv1_pt/int%s",AnalNames[anal].data()),"r")) system(Form("mkdir plots/intv1/intv1_pt/int%s",AnalNames[anal].data()));
 
     TCanvas * cv1HFpm_pt = new TCanvas("cv1HFpm_pt","cv1HFpm_pt",1100,620);

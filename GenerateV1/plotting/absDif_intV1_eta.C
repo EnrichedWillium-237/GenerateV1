@@ -56,7 +56,7 @@ TH1D * absDiffv1even_eta[nanals][ncentbins];
 
 TH1D * runParms[nanals];
 
-void absDif_intV1_eta()
+void absDif_intV1_eta( int anal = 1 )
 {
 
     TH1::SetDefaultSumw2();
@@ -157,11 +157,9 @@ void absDif_intV1_eta()
     if (!fopen("plots/intv1","r")) system("mkdir plots/intv1");
     if (!fopen("plots/intv1/intv1_eta","r")) system("mkdir plots/intv1/intv1_eta");
 
-    int anal; // choice of analysis
 
 
     // integrated v1(eta) using HF+/- for each centrality bin
-    anal = 7;
     if (!fopen(Form("plots/intv1/intv1_eta/int%s",AnalNames[anal].data()),"r")) system(Form("mkdir plots/intv1/intv1_eta/int%s",AnalNames[anal].data()));
 
     TCanvas * cv1HFpm_eta = new TCanvas("cv1HFpm_eta","cv1HFpm_eta",1100,620);

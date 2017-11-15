@@ -44,7 +44,7 @@ TGraphErrors * grv1Syst_eta[nanals][ncentbins];
 
 TFile * tfin;
 
-void intV1_eta()
+void intV1_eta( int anal = 1 )
 {
 
     TH1::SetDefaultSumw2();
@@ -104,11 +104,8 @@ void intV1_eta()
     if (!fopen("plots/intv1","r")) system("mkdir plots/intv1");
     if (!fopen("plots/intv1/intv1_eta","r")) system("mkdir plots/intv1/intv1_eta");
 
-    int anal; // choice of analysis
-
 
     // v1odd(eta) using the HF event planes
-    anal = 7;
     if (!fopen(Form("plots/intv1/intv1_eta/int%s",AnalNames[anal].data()),"r")) system(Form("mkdir plots/intv1/intv1_eta/int%s",AnalNames[anal].data()));
 
     TCanvas * cv1oddIntHF_eta = new TCanvas("cv1oddIntHF_eta","cv1oddIntHF_eta",1100,620);
